@@ -77,7 +77,6 @@ public class ReportActivity extends AppCompatActivity {
         sb.append("ATTENDANCE REPORT\n");
         sb.append("================\n\n");
         sb.append("Class: ").append(className != null ? className : "N/A").append("\n");
-        sb.append("Subject: ").append(subjectName != null ? subjectName : "N/A").append("\n");
         sb.append("Date: ").append(new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date())).append("\n");
         sb.append("Time: ").append(new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date())).append("\n\n");
         
@@ -112,7 +111,7 @@ public class ReportActivity extends AppCompatActivity {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_TEXT, reportText);
-        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Attendance Report - " + className + " - " + subjectName);
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Attendance Report - " + className);
         
         try {
             startActivity(Intent.createChooser(shareIntent, "Share Attendance Report"));

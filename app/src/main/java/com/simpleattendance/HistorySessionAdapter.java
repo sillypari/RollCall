@@ -41,7 +41,7 @@ public class HistorySessionAdapter extends RecyclerView.Adapter<HistorySessionAd
         AttendanceSession session = sessionList.get(position);
         
         holder.sessionTitle.setText(session.getClassName());
-        holder.sessionSubject.setText("General"); // Since we removed subject selection
+        holder.sessionSubject.setVisibility(View.GONE); // Hide subject field
         holder.sessionDate.setText(formatDate(session.getDate()) + " • " + session.getTime());
         holder.presentCount.setText(session.getPresentCount() + " Present");
         holder.absentCount.setText(session.getAbsentCount() + " Absent");

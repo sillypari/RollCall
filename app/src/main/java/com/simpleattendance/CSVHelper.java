@@ -89,13 +89,15 @@ public class CSVHelper {
     public static String getCSVFormatExample() {
         return "CSV Format Examples:\n\n" +
                "Option 1 (Roll No, Name):\n" +
-               "101,John Doe\n" +
-               "102,Jane Smith\n" +
-               "103,Bob Johnson\n\n" +
+               "101,Rahul Sharma\n" +
+               "102,Priya Patel\n" +
+               "103,Arjun Singh\n" +
+               "104,Sneha Gupta\n\n" +
                "Option 2 (Name only):\n" +
-               "John Doe\n" +
-               "Jane Smith\n" +
-               "Bob Johnson\n\n" +
+               "Rahul Sharma\n" +
+               "Priya Patel\n" +
+               "Arjun Singh\n" +
+               "Sneha Gupta\n\n" +
                "Note: First line can be a header (will be skipped automatically)";
     }
 }

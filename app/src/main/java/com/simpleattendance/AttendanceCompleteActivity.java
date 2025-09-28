@@ -22,7 +22,6 @@ public class AttendanceCompleteActivity extends AppCompatActivity {
     private MaterialButton viewReportButton, backToHomeButton;
     
     private String className;
-    private String subjectName;
     private int presentCount;
     private int absentCount;
     private java.util.ArrayList<String> absentStudents;
@@ -40,7 +39,6 @@ public class AttendanceCompleteActivity extends AppCompatActivity {
 
     private void getIntentData() {
         className = getIntent().getStringExtra("CLASS_NAME");
-        subjectName = getIntent().getStringExtra("SUBJECT_NAME");
         presentCount = getIntent().getIntExtra("PRESENT_COUNT", 0);
         absentCount = getIntent().getIntExtra("ABSENT_COUNT", 0);
         absentStudents = getIntent().getStringArrayListExtra("ABSENT_STUDENTS");
@@ -120,7 +118,6 @@ public class AttendanceCompleteActivity extends AppCompatActivity {
     private void openReportActivity() {
         Intent intent = new Intent(this, ReportActivity.class);
         intent.putExtra("CLASS_NAME", className);
-        intent.putExtra("SUBJECT_NAME", subjectName);
         intent.putExtra("PRESENT_COUNT", presentCount);
         intent.putExtra("ABSENT_COUNT", absentCount);
         intent.putStringArrayListExtra("ABSENT_STUDENTS", absentStudents);

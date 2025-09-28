@@ -157,7 +157,6 @@ public class HistoryActivity extends AppCompatActivity {
         
         Intent intent = new Intent(this, ReportActivity.class);
         intent.putExtra("CLASS_NAME", session.getClassName());
-        intent.putExtra("SUBJECT_NAME", "General");
         intent.putExtra("SESSION_DATE", session.getDate());
         intent.putExtra("SESSION_TIME", session.getTime());
         intent.putExtra("PRESENT_COUNT", report.getPresentCount());

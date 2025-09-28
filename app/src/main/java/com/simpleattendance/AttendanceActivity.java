@@ -328,7 +328,6 @@ public class AttendanceActivity extends AppCompatActivity {
     private void showCompletionScreen(AttendanceReport report) {
         Intent intent = new Intent(this, AttendanceCompleteActivity.class);
         intent.putExtra("CLASS_NAME", className);
-        intent.putExtra("SUBJECT_NAME", "General");
         intent.putExtra("PRESENT_COUNT", report.getPresentCount());
         intent.putExtra("ABSENT_COUNT", report.getAbsentCount());
         intent.putStringArrayListExtra("ABSENT_STUDENTS", new ArrayList<>(report.getAbsentStudents()));
