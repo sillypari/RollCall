@@ -54,16 +54,18 @@ A simple, offline-first Android attendance management application designed for t
 
 ### Option 1: Roll Number and Name
 ```csv
-101,John Doe
-102,Jane Smith
-103,Bob Johnson
+101,Rahul Sharma
+102,Priya Patel
+103,Arjun Singh
+104,Sneha Gupta
 ```
 
 ### Option 2: Name Only
 ```csv
-John Doe
-Jane Smith
-Bob Johnson
+Rahul Sharma
+Priya Patel
+Arjun Singh
+Sneha Gupta
 ```
 
 *Note: Headers are automatically detected and skipped*
