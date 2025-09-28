@@ -1,11 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Base application theme. -->
-    <style name="Theme.SimpleAttendance" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <!-- Roll Call - UnAcademy inspired theme -->
+    <style name="Theme.RollCall" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/unacademy_green</item>
+        <item name="colorPrimaryDark">@color/unacademy_dark_green</item>
+        <item name="colorAccent">@color/unacademy_green</item>
+        
+        <!-- Background colors -->
+        <item name="android:windowBackground">@color/background_secondary</item>
+        <item name="colorSurface">@color/background_card</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        
+        <!-- Status bar -->
+        <item name="android:statusBarColor">@color/unacademy_green</item>
+        <item name="android:windowLightStatusBar">false</item>
+        
+        <!-- Text appearance -->
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        
+        <!-- Button styles -->
+        <item name="materialButtonStyle">@style/Widget.RollCall.Button</item>
+        <item name="materialButtonOutlinedStyle">@style/Widget.RollCall.Button.Outlined</item>
+        
+        <!-- Card style -->
+        <item name="materialCardViewStyle">@style/Widget.RollCall.CardView</item>
+    </style>
+    
+    <!-- Custom Button Style -->
+    <style name="Widget.RollCall.Button" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/unacademy_green</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="cornerRadius">12dp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:paddingTop">14dp</item>
+        <item name="android:paddingBottom">14dp</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:letterSpacing">0.01</item>
+    </style>
+    
+    <!-- Custom Outlined Button Style -->
+    <style name="Widget.RollCall.Button.Outlined" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="strokeColor">@color/unacademy_green</item>
+        <item name="android:textColor">@color/unacademy_green</item>
+        <item name="cornerRadius">12dp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:paddingTop">14dp</item>
+        <item name="android:paddingBottom">14dp</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:letterSpacing">0.01</item>
+    </style>
+    
+    <!-- Custom CardView Style -->
+    <style name="Widget.RollCall.CardView" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/card_elevated</item>
+        <item name="cardCornerRadius">16dp</item>
+        <item name="cardElevation">4dp</item>
+        <item name="rippleColor">@color/unacademy_light_green</item>
+    </style>
+    
+    <!-- Text Styles -->
+    <style name="TextAppearance.RollCall.Headline1" parent="TextAppearance.MaterialComponents.Headline4">
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">32sp</item>
+        <item name="android:letterSpacing">-0.01</item>
+    </style>
+    
+    <style name="TextAppearance.RollCall.Headline2" parent="TextAppearance.MaterialComponents.Headline5">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+    
+    <style name="TextAppearance.RollCall.Body1" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:letterSpacing">0.01</item>
+    </style>
+    
+    <style name="TextAppearance.RollCall.Body2" parent="TextAppearance.MaterialComponents.Body2">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:letterSpacing">0.01</item>
+    </style>
+    
+    <style name="TextAppearance.RollCall.Caption" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/text_tertiary</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:letterSpacing">0.02</item>
     </style>
 </resources>

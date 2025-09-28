@@ -5,14 +5,25 @@ public class ClassModel {
     private String branch;
     private String semester;
     private String section;
+    private String subject;
     private String createdDate;
 
     public ClassModel() {}
 
+    public ClassModel(String branch, String semester, String section, String subject, String createdDate) {
+        this.branch = branch;
+        this.semester = semester;
+        this.section = section;
+        this.subject = subject;
+        this.createdDate = createdDate;
+    }
+
+    // Legacy constructor for backwards compatibility
     public ClassModel(String branch, String semester, String section, String createdDate) {
         this.branch = branch;
         this.semester = semester;
         this.section = section;
+        this.subject = "";
         this.createdDate = createdDate;
     }
 
@@ -49,6 +60,14 @@ public class ClassModel {
         this.section = section;
     }
 
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
     public String getCreatedDate() {
         return createdDate;
     }
@@ -58,7 +77,11 @@ public class ClassModel {
     }
 
     public String getDisplayName() {
-        return branch + " - " + semester + " - " + section;
+        String displayName = branch + " - " + semester + " - " + section;
+        if (subject != null && !subject.trim().isEmpty()) {
+            displayName += " (" + subject + ")";
+        }
+        return displayName;
     }
 
     @Override

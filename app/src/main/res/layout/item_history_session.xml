@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="@color/unacademy_white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Header Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:id="@+id/sessionTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Computer Science - 3rd Sem A"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/inter_semibold"
+                android:textColor="@color/unacademy_dark_gray" />
+
+            <TextView
+                android:id="@+id/sessionDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Dec 15, 2024"
+                android:textSize="12sp"
+                android:fontFamily="@font/inter_medium"
+                android:textColor="@color/unacademy_light_gray" />
+
+        </LinearLayout>
+
+        <!-- Subject -->
+        <TextView
+            android:id="@+id/sessionSubject"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mathematics"
+            android:textSize="14sp"
+            android:fontFamily="@font/inter_medium"
+            android:textColor="@color/unacademy_primary"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Stats Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <!-- Present Count -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <View
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:background="@drawable/dot_green"
+                    android:layout_marginEnd="6dp" />
+
+                <TextView
+                    android:id="@+id/presentCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="28 Present"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/inter_medium"
+                    android:textColor="@color/unacademy_dark_gray" />
+
+            </LinearLayout>
+
+            <!-- Absent Count -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <View
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:background="@drawable/dot_red"
+                    android:layout_marginEnd="6dp" />
+
+                <TextView
+                    android:id="@+id/absentCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2 Absent"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/inter_medium"
+                    android:textColor="@color/unacademy_dark_gray" />
+
+            </LinearLayout>
+
+            <!-- Attendance Percentage -->
+            <TextView
+                android:id="@+id/attendancePercentage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="93%"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/inter_semibold"
+                android:textColor="@color/unacademy_primary"
+                android:background="@drawable/percentage_background"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

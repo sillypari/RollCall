@@ -3,6 +3,7 @@ package com.simpleattendance;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,6 +14,7 @@ public class MainActivity extends AppCompatActivity {
     
     private RecyclerView classesRecyclerView;
     private FloatingActionButton addClassButton;
+    private ImageView historyButton;
     private ClassAdapter classAdapter;
     private DatabaseHelper databaseHelper;
 
@@ -30,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private void initViews() {
         classesRecyclerView = findViewById(R.id.classesRecyclerView);
         addClassButton = findViewById(R.id.addClassButton);
+        historyButton = findViewById(R.id.historyButton);
         databaseHelper = new DatabaseHelper(this);
     }
 
@@ -56,6 +59,16 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        if (historyButton != null) {
+            historyButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
+                    startActivity(intent);
+                }
+            });
+        }
     }
 
     private void openAttendanceActivity(ClassModel classModel) {

@@ -1,10 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
-    <color name="green">#4CAF50</color>
-    <color name="red">#F44336</color>
-    <color name="light_green">#8BC34A</color>
-    <color name="light_red">#EF5350</color>
+    <!-- UnAcademy inspired color palette -->
+    <color name="colorPrimary">#08BD80</color>
+    <color name="colorPrimaryDark">#06A06B</color>
+    <color name="colorAccent">#2ECC71</color>
+    
+    <!-- Additional brand colors -->
+    <color name="unacademy_green">#08BD80</color>
+    <color name="unacademy_dark_green">#06A06B</color>
+    <color name="unacademy_light_green">#E8F8F5</color>
+    
+    <!-- Background colors -->
+    <color name="background_primary">#FFFFFF</color>
+    <color name="background_secondary">#F8F9FA</color>
+    <color name="background_card">#FFFFFF</color>
+    
+    <!-- Text colors -->
+    <color name="text_primary">#1A202C</color>
+    <color name="text_secondary">#718096</color>
+    <color name="text_tertiary">#A0AEC0</color>
+    
+    <!-- Accent colors -->
+    <color name="accent_blue">#3182CE</color>
+    <color name="accent_purple">#805AD5</color>
+    <color name="accent_orange">#ED8936</color>
+    
+    <!-- Status colors -->
+    <color name="success_green">#38A169</color>
+    <color name="error_red">#E53E3E</color>
+    <color name="warning_orange">#DD6B20</color>
+    <color name="info_blue">#3182CE</color>
+    
+    <!-- Legacy colors for compatibility -->
+    <color name="green">#38A169</color>
+    <color name="red">#E53E3E</color>
+    <color name="light_green">#C6F6D5</color>
+    <color name="light_red">#FED7D7</color>
+    
+    <!-- Card and surface colors -->
+    <color name="card_elevated">#FFFFFF</color>
+    <color name="divider_color">#E2E8F0</color>
+    <color name="border_color">#CBD5E0</color>
 </resources>

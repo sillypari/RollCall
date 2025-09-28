@@ -1,36 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:background="?android:attr/selectableItemBackground"
+    android:layout_marginBottom="16dp"
+    style="@style/Widget.RollCall.CardView"
     android:clickable="true"
-    android:focusable="true">
+    android:focusable="true"
+    app:rippleColor="@color/unacademy_light_green">
 
-    <TextView
-        android:id="@+id/classNameText"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Computer Science - Semester 1 - Section A"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="@android:color/black" />
+        android:orientation="horizontal"
+        android:padding="20dp">
+        
+        <!-- Class Icon -->
+        <LinearLayout
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="@drawable/class_icon_background"
+            android:gravity="center"
+            android:layout_marginEnd="16dp">
+            
+            <TextView
+                android:id="@+id/classInitialText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CS"
+                android:textColor="@color/unacademy_green"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-medium" />
+                
+        </LinearLayout>
+        
+        <!-- Class Info -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_gravity="center_vertical">
 
-    <TextView
-        android:id="@+id/createdDateText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Created: 2023-12-01 10:30"
-        android:textSize="14sp"
-        android:layout_marginTop="4dp"
-        android:textColor="@android:color/darker_gray" />
+            <TextView
+                android:id="@+id/classNameText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Computer Science - Semester 1 - Section A"
+                android:textAppearance="@style/TextAppearance.RollCall.Body1"
+                android:textStyle="bold"
+                android:maxLines="2"
+                android:ellipsize="end" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray"
-        android:layout_marginTop="8dp"
-        android:alpha="0.3" />
+            <TextView
+                android:id="@+id/createdDateText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Created: Dec 01, 2023"
+                android:textAppearance="@style/TextAppearance.RollCall.Body2"
+                android:layout_marginTop="4dp" />
+                
+            <!-- Subject tag if available -->
+            <TextView
+                android:id="@+id/subjectText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mathematics"
+                android:background="@drawable/subject_tag_background"
+                android:textAppearance="@style/TextAppearance.RollCall.Caption"
+                android:textColor="@color/unacademy_green"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:layout_marginTop="8dp"
+                android:visibility="gone" />
 
-</LinearLayout>
+        </LinearLayout>
+        
+        <!-- Arrow Icon -->
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_arrow_forward"
+            android:layout_gravity="center_vertical"
+            app:tint="@color/text_tertiary" />
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

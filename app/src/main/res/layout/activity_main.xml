@@ -1,63 +1,181 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/background_secondary"
     tools:context=".MainActivity">
 
+    <!-- Custom Toolbar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/unacademy_green"
+        android:orientation="vertical"
+        android:paddingBottom="24dp">
+        
+        <!-- Status bar padding -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="24dp" />
+        
+        <!-- Header with title and history button -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="20dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="16dp"
+            android:gravity="center_vertical">
+            
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app_name"
+                    android:textSize="28sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/white"
+                    android:fontFamily="sans-serif-light"
+                    android:letterSpacing="-0.01" />
+                
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/welcome_message"
+                    android:textSize="16sp"
+                    android:textColor="#E8F8F5"
+                    android:fontFamily="sans-serif"
+                    android:layout_marginTop="4dp" />
+                
+            </LinearLayout>
+            
+            <ImageButton
+                android:id="@+id/historyButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_history"
+                android:contentDescription="@string/attendance_history"
+                app:tint="@android:color/white"
+                android:padding="12dp" />
+            
+        </LinearLayout>
+        
+    </LinearLayout>
+
+    <!-- Main Content -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="20dp">
 
+        <!-- Classes Section -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="SimpleAttendance"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textAlignment="center"
-            android:layout_marginBottom="16dp"
-            android:textColor="@color/design_default_color_primary" />
+            android:text="Your Classes"
+            android:textAppearance="@style/TextAppearance.RollCall.Headline2"
+            android:layout_marginBottom="16dp" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Select a class to take attendance"
-            android:textSize="16sp"
-            android:textAlignment="center"
-            android:layout_marginBottom="24dp" />
-
+        <!-- Classes RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/classesRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:clipToPadding="false"
+            android:paddingBottom="16dp"
             tools:listitem="@layout/item_class" />
 
-        <TextView
-            android:id="@+id/emptyStateText"
+        <!-- Empty State -->
+        <LinearLayout
+            android:id="@+id/emptyStateLayout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:visibility="gone">
+            
+            <ImageView
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:src="@drawable/ic_rollcall_foreground"
+                android:layout_marginBottom="24dp"
+                app:tint="@color/text_tertiary" />
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No classes yet"
+                android:textAppearance="@style/TextAppearance.RollCall.Headline2"
+                android:layout_marginBottom="8dp" />
+                
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tap the + button to create your first class"
+                android:textAppearance="@style/TextAppearance.RollCall.Body2"
+                android:textAlignment="center"
+                android:layout_marginBottom="24dp" />
+            
+        </LinearLayout>
+
+        <!-- Developer Info -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="No classes found.\nTap the + button to create your first class."
-            android:textAlignment="center"
-            android:textSize="16sp"
-            android:layout_margin="32dp"
-            android:visibility="gone"
-            android:textColor="@android:color/darker_gray" />
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="16dp"
+            android:paddingTop="16dp">
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/developer_info"
+                android:textAppearance="@style/TextAppearance.RollCall.Caption"
+                android:layout_marginEnd="8dp" />
+                
+            <View
+                android:layout_width="4dp"
+                android:layout_height="4dp"
+                android:background="@color/text_tertiary"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="8dp" />
+                
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/app_version"
+                android:textAppearance="@style/TextAppearance.RollCall.Caption" />
+                
+        </LinearLayout>
 
     </LinearLayout>
 
+    <!-- Floating Action Button -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addClassButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
+        android:layout_margin="24dp"
         app:srcCompat="@drawable/ic_add"
+        app:backgroundTint="@color/unacademy_green"
         app:tint="@android:color/white"
+        app:fabSize="auto"
+        app:elevation="8dp"
         android:contentDescription="Add new class" />
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</LinearLayout>

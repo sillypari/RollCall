@@ -10,7 +10,7 @@ import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "attendance.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     // Tables
     private static final String TABLE_CLASSES = "classes";
@@ -26,6 +26,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String KEY_BRANCH = "branch";
     private static final String KEY_SEMESTER = "semester";
     private static final String KEY_SECTION = "section";
+    private static final String KEY_SUBJECT = "subject";
     private static final String KEY_CREATED_DATE = "created_date";
 
     // Students table columns
@@ -59,6 +60,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + KEY_BRANCH + " TEXT NOT NULL,"
                 + KEY_SEMESTER + " TEXT NOT NULL,"
                 + KEY_SECTION + " TEXT NOT NULL,"
+                + KEY_SUBJECT + " TEXT DEFAULT '',"
                 + KEY_CREATED_DATE + " TEXT,"
                 + "UNIQUE(" + KEY_BRANCH + "," + KEY_SEMESTER + "," + KEY_SECTION + ")"
                 + ")";
@@ -122,12 +124,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ATTENDANCE_RECORDS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ATTENDANCE_SESSIONS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SUBJECTS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_STUDENTS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CLASSES);
-        onCreate(db);
+        if (oldVersion < 2) {
+            // Add subject column to classes table
+            db.execSQL("ALTER TABLE " + TABLE_CLASSES + " ADD COLUMN " + KEY_SUBJECT + " TEXT DEFAULT ''");
+        }
     }
 
     // Class operations
@@ -137,6 +137,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_BRANCH, classModel.getBranch());
         values.put(KEY_SEMESTER, classModel.getSemester());
         values.put(KEY_SECTION, classModel.getSection());
+        values.put(KEY_SUBJECT, classModel.getSubject());
         values.put(KEY_CREATED_DATE, classModel.getCreatedDate());
         
         long result = db.insert(TABLE_CLASSES, null, values);
@@ -158,6 +159,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 classModel.setBranch(cursor.getString(cursor.getColumnIndexOrThrow(KEY_BRANCH)));
                 classModel.setSemester(cursor.getString(cursor.getColumnIndexOrThrow(KEY_SEMESTER)));
                 classModel.setSection(cursor.getString(cursor.getColumnIndexOrThrow(KEY_SECTION)));
+                
+                // Handle subject field with backwards compatibility
+                int subjectColumnIndex = cursor.getColumnIndex(KEY_SUBJECT);
+                if (subjectColumnIndex != -1) {
+                    classModel.setSubject(cursor.getString(subjectColumnIndex));
+                } else {
+                    classModel.setSubject("");
+                }
+                
                 classModel.setCreatedDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_CREATED_DATE)));
                 classList.add(classModel);
             } while (cursor.moveToNext());
@@ -202,6 +212,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return studentList;
+    }
+
+    public Cursor getStudentsCursorByClass(int classId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selectQuery = "SELECT * FROM " + TABLE_STUDENTS + " WHERE " + KEY_CLASS_ID + " = ?";
+        return db.rawQuery(selectQuery, new String[]{String.valueOf(classId)});
     }
 
     // Subject operations

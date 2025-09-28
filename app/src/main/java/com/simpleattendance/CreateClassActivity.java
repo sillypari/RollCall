@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.activity.result.ActivityResult;
@@ -22,7 +23,7 @@ import java.util.Locale;
 
 public class CreateClassActivity extends AppCompatActivity {
     
-    private EditText branchInput, semesterInput, sectionInput;
+    private EditText branchInput, semesterInput, sectionInput, subjectInput;
     private Button selectCSVButton, saveClassButton, formatInfoButton;
     private TextView selectedFileText;
     private DatabaseHelper databaseHelper;
@@ -38,17 +39,26 @@ public class CreateClassActivity extends AppCompatActivity {
         initViews();
         setupFilePickerLauncher();
         setupClickListeners();
+        setupToolbar();
     }
 
     private void initViews() {
         branchInput = findViewById(R.id.branchInput);
         semesterInput = findViewById(R.id.semesterInput);
         sectionInput = findViewById(R.id.sectionInput);
+        subjectInput = findViewById(R.id.subjectInput);
         selectCSVButton = findViewById(R.id.selectCSVButton);
         saveClassButton = findViewById(R.id.saveClassButton);
         formatInfoButton = findViewById(R.id.formatInfoButton);
         selectedFileText = findViewById(R.id.selectedFileText);
         databaseHelper = new DatabaseHelper(this);
+    }
+
+    private void setupToolbar() {
+        ImageView backButton = findViewById(R.id.backButton);
+        if (backButton != null) {
+            backButton.setOnClickListener(v -> onBackPressed());
+        }
     }
 
     private void setupFilePickerLauncher() {
@@ -116,15 +126,16 @@ public class CreateClassActivity extends AppCompatActivity {
         String branch = branchInput.getText().toString().trim();
         String semester = semesterInput.getText().toString().trim();
         String section = sectionInput.getText().toString().trim();
+        String subject = subjectInput.getText().toString().trim();
 
         if (branch.isEmpty() || semester.isEmpty() || section.isEmpty()) {
-            Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please fill all required fields", Toast.LENGTH_SHORT).show();
             return;
         }
 
         // Create class
         String currentDate = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(new Date());
-        ClassModel classModel = new ClassModel(branch, semester, section, currentDate);
+        ClassModel classModel = new ClassModel(branch, semester, section, subject, currentDate);
         
         long classId = databaseHelper.insertClass(classModel);
         if (classId == -1) {
