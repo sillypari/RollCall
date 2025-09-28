@@ -11,13 +11,13 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import android.widget.LinearLayout;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     
     private RecyclerView classesRecyclerView;
-    private FloatingActionButton addClassButton;
+    private LinearLayout addClassButton;
     private ImageView historyButton;
     private ClassAdapter classAdapter;
     private DatabaseHelper databaseHelper;

@@ -4,146 +4,179 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
     tools:context=".AttendanceActivity">
 
-    <!-- Header Section -->
-    <TextView
-        android:id="@+id/classNameText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Computer Science - 1st - A"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textAlignment="center"
-        android:layout_marginBottom="16dp"
-        android:textColor="@color/design_default_color_primary" />
-
-    <!-- Sort button only -->
+    <!-- Header Section with Background Strip -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="end"
-        android:layout_marginBottom="24dp">
-
-        <Button
-            android:id="@+id/sortButton"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:text="Sort: CSV Order"
-            android:textSize="12sp"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
-
+        android:background="@drawable/background_header_strip_rectangular"
+        android:padding="16dp"
+        android:layout_marginBottom="16dp">
+        
+        <TextView
+            android:id="@+id/classNameText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Computer Science - 1st - A"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            android:textColor="@android:color/white" />
+            
     </LinearLayout>
 
-    <!-- Student display area -->
+    <!-- Main Content Container -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:gravity="center">
+        android:padding="16dp">
 
-        <TextView
-            android:id="@+id/studentNameText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Student Name"
-            android:textSize="28sp"
-            android:textAlignment="center"
-            android:layout_marginBottom="4dp"
-            android:textColor="@android:color/black"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/studentEnrollmentText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Enrollment No."
-            android:textSize="16sp"
-            android:textAlignment="center"
-            android:layout_marginBottom="16dp"
-            android:textColor="@android:color/darker_gray" />
-
-        <TextView
-            android:id="@+id/counterText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="1 / 30"
-            android:textAlignment="center"
-            android:textSize="16sp"
-            android:layout_marginBottom="48dp"
-            android:textColor="@android:color/darker_gray" />
-
-        <!-- Attendance buttons -->
+        <!-- Sort and Reset buttons -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginBottom="32dp">
+            android:gravity="center_vertical"
+            android:layout_marginBottom="24dp">
 
             <Button
-                android:id="@+id/presentButton"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_marginEnd="32dp"
-                android:text="P"
-                android:textSize="36sp"
-                android:textStyle="bold"
-                android:backgroundTint="@android:color/holo_green_light"
-                android:textColor="@android:color/white" />
+                android:id="@+id/sortButton"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:text="Sort: CSV Order"
+                android:textSize="12sp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+                
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
 
             <Button
-                android:id="@+id/absentButton"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:text="A"
-                android:textSize="36sp"
-                android:textStyle="bold"
-                android:backgroundTint="@android:color/holo_red_light"
-                android:textColor="@android:color/white" />
+                android:id="@+id/resetButton"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:text="Reset"
+                android:textSize="12sp"
+                android:textColor="@android:color/holo_red_dark"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
 
         </LinearLayout>
 
-        <!-- Navigation buttons -->
+        <!-- Student display area -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
 
-            <Button
-                android:id="@+id/prevButton"
-                android:layout_width="0dp"
+            <TextView
+                android:id="@+id/studentNameText"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:text="@string/previous"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+                android:text="Student Name"
+                android:textSize="24sp"
+                android:textAlignment="center"
+                android:layout_marginBottom="4dp"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:lineSpacingExtra="4dp" />
 
-            <Button
-                android:id="@+id/nextButton"
-                android:layout_width="0dp"
+            <TextView
+                android:id="@+id/studentEnrollmentText"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="8dp"
-                android:text="@string/next"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+                android:text="Enrollment No."
+                android:textSize="16sp"
+                android:textAlignment="center"
+                android:layout_marginBottom="16dp"
+                android:textColor="@android:color/darker_gray" />
+
+            <TextView
+                android:id="@+id/counterText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="1 / 30"
+                android:textAlignment="center"
+                android:textSize="16sp"
+                android:layout_marginBottom="48dp"
+                android:textColor="@android:color/darker_gray" />
+
+            <!-- Attendance buttons -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginBottom="32dp">
+
+                <Button
+                    android:id="@+id/presentButton"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_marginEnd="32dp"
+                    android:text="P"
+                    android:textSize="36sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/present_button_green_bg"
+                    android:textColor="@color/button_text_color" />
+
+                <Button
+                    android:id="@+id/absentButton"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:text="A"
+                    android:textSize="36sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/absent_button_red_bg"
+                    android:textColor="@color/button_text_color" />
+
+            </LinearLayout>
+
+            <!-- Navigation buttons -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/prevButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    android:text="@string/previous"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+
+                <Button
+                    android:id="@+id/nextButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/next"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
-    </LinearLayout>
+        <!-- Finish button -->
+        <Button
+            android:id="@+id/finishButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/finish_generate_report"
+            android:textSize="16sp"
+            android:padding="16dp"
+            android:layout_marginTop="16dp"
+            style="@style/Widget.MaterialComponents.Button" />
 
-    <!-- Finish button -->
-    <Button
-        android:id="@+id/finishButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/finish_generate_report"
-        android:textSize="16sp"
-        android:padding="16dp"
-        android:layout_marginTop="16dp"
-        style="@style/Widget.MaterialComponents.Button" />
+    </LinearLayout>
 
 </LinearLayout>

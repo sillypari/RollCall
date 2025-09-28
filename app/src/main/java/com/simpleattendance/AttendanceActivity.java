@@ -24,7 +24,7 @@ public class AttendanceActivity extends AppCompatActivity {
     
     private TextView studentNameText, studentEnrollmentText, counterText, classNameText;
     private Button presentButton, absentButton, prevButton, nextButton;
-    private Button sortButton, finishButton;
+    private Button sortButton, resetButton, finishButton;
     
     private DatabaseHelper databaseHelper;
     private List<Student> students;
@@ -68,6 +68,7 @@ public class AttendanceActivity extends AppCompatActivity {
         prevButton = findViewById(R.id.prevButton);
         nextButton = findViewById(R.id.nextButton);
         sortButton = findViewById(R.id.sortButton);
+        resetButton = findViewById(R.id.resetButton);
         finishButton = findViewById(R.id.finishButton);
         
         databaseHelper = new DatabaseHelper(this);
@@ -147,6 +148,13 @@ public class AttendanceActivity extends AppCompatActivity {
             }
         });
 
+        resetButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resetAttendance();
+            }
+        });
+
         finishButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -160,8 +168,16 @@ public class AttendanceActivity extends AppCompatActivity {
             Student currentStudent = students.get(currentStudentIndex);
             attendanceMap.put(currentStudent.getId(), status);
             
-            // Update button colors to show marked status
+            // Add haptic feedback for acknowledgment
+            presentButton.performHapticFeedback(android.view.HapticFeedbackConstants.VIRTUAL_KEY);
+            
+            // Show brief acknowledgment
+            String statusText = "P".equals(status) ? "Present" : "Absent";
+            Toast.makeText(this, statusText + " ✓", Toast.LENGTH_SHORT).show();
+            
+            // Update button colors and student name color to show marked status
             updateButtonColors();
+            updateStudentNameColor();
             
             // Auto-move to next student
             if (currentStudentIndex < students.size() - 1) {
@@ -202,6 +218,23 @@ public class AttendanceActivity extends AppCompatActivity {
         updateDisplay();
     }
 
+    private void resetAttendance() {
+        // Show confirmation dialog
+        new AlertDialog.Builder(this)
+            .setTitle("Reset Attendance")
+            .setMessage("Are you sure you want to clear all attendance records? This action cannot be undone.")
+            .setPositiveButton("Reset", (dialog, which) -> {
+                // Clear all attendance data
+                attendanceMap.clear();
+                currentStudentIndex = 0;
+                updateDisplay();
+                Toast.makeText(this, "Attendance reset successfully", Toast.LENGTH_SHORT).show();
+            })
+            .setNegativeButton("Cancel", null)
+            .setIcon(android.R.drawable.ic_dialog_alert)
+            .show();
+    }
+
     private void updateDisplay() {
         if (students != null && !students.isEmpty() && currentStudentIndex < students.size()) {
             Student currentStudent = students.get(currentStudentIndex);
@@ -210,14 +243,15 @@ public class AttendanceActivity extends AppCompatActivity {
             counterText.setText((currentStudentIndex + 1) + " / " + students.size());
             
             updateButtonColors();
+            updateStudentNameColor();
             updateNavigationButtons();
         }
     }
 
     private void updateButtonColors() {
-        // Reset button colors
-        presentButton.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, android.R.color.holo_green_light)));
-        absentButton.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, android.R.color.holo_red_light)));
+        // Reset button selection states
+        presentButton.setSelected(false);
+        absentButton.setSelected(false);
         
         // Highlight current selection
         if (currentStudentIndex < students.size()) {
@@ -225,9 +259,24 @@ public class AttendanceActivity extends AppCompatActivity {
             String status = attendanceMap.get(currentStudent.getId());
             
             if ("P".equals(status)) {
-                presentButton.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, android.R.color.holo_green_dark)));
+                presentButton.setSelected(true);
             } else if ("A".equals(status)) {
-                absentButton.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, android.R.color.holo_red_dark)));
+                absentButton.setSelected(true);
+            }
+        }
+    }
+    
+    private void updateStudentNameColor() {
+        if (currentStudentIndex < students.size()) {
+            Student currentStudent = students.get(currentStudentIndex);
+            String status = attendanceMap.get(currentStudent.getId());
+            
+            if ("A".equals(status)) {
+                // Highlight absent student name in red
+                studentNameText.setTextColor(ContextCompat.getColor(this, android.R.color.holo_red_dark));
+            } else {
+                // Default color for present or unmarked students
+                studentNameText.setTextColor(ContextCompat.getColor(this, android.R.color.black));
             }
         }
     }

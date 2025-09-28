@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@android:color/white">
+    <item>
+        <selector>
+            <!-- Selected state with outline -->
+            <item android:state_selected="true">
+                <shape android:shape="rectangle">
+                    <solid android:color="@android:color/holo_green_light"/>
+                    <stroke android:width="3dp" android:color="@android:color/white"/>
+                    <corners android:radius="8dp"/>
+                </shape>
+            </item>
+            <!-- Normal state without outline -->
+            <item>
+                <shape android:shape="rectangle">
+                    <solid android:color="@android:color/holo_green_light"/>
+                    <corners android:radius="8dp"/>
+                </shape>
+            </item>
+        </selector>
+    </item>
+</ripple>

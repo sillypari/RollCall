@@ -164,18 +164,43 @@
 
     </LinearLayout>
 
-    <!-- Floating Action Button -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/addClassButton"
+    <!-- Pill-shaped Add Class Button -->
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="24dp"
-        app:srcCompat="@drawable/ic_add"
-        app:backgroundTint="@color/unacademy_green"
-        app:tint="@android:color/white"
-        app:fabSize="auto"
-        app:elevation="8dp"
-        android:contentDescription="Add new class" />
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="80dp"
+        android:background="@drawable/pill_shape_ripple"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:elevation="8dp"
+        android:id="@+id/addClassButton"
+        android:clickable="true"
+        android:focusable="true">
+        
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:layout_marginEnd="8dp" />
+            
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Class"
+            android:textSize="16sp"
+            android:textColor="@android:color/white" />
+            
+    </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
