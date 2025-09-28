@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="#F5F7FA"
+    android:padding="24dp">
+
+    <!-- Success Animation Container -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_marginBottom="40dp">
+
+        <!-- Checkmark Circle -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/successCard"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            app:cardCornerRadius="60dp"
+            app:cardElevation="8dp"
+            app:cardBackgroundColor="#22C55E"
+            android:layout_marginBottom="24dp">
+
+            <ImageView
+                android:id="@+id/checkmarkIcon"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_check_tick"
+                android:alpha="0" />
+
+        </androidx.cardview.widget.CardView>
+
+        <!-- Success Message -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Attendance Completed!"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="#1F2937"
+            android:textAlignment="center"
+            android:layout_marginBottom="12dp" />
+
+        <TextView
+            android:id="@+id/completionSummary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Marked attendance for 17 students"
+            android:textSize="18sp"
+            android:textColor="#6B7280"
+            android:textAlignment="center"
+            android:layout_marginBottom="16dp" />
+
+    </LinearLayout>
+
+    <!-- Action Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginHorizontal="16dp">
+
+        <!-- View Report Button -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="2dp"
+            app:cardBackgroundColor="#22C55E"
+            android:layout_marginBottom="16dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/viewReportButton"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:text="View Report"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:backgroundTint="#22C55E"
+                app:cornerRadius="12dp"
+                style="?android:attr/borderlessButtonStyle" />
+
+        </androidx.cardview.widget.CardView>
+
+        <!-- Save and Back to Home Button -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="2dp"
+            app:cardBackgroundColor="@android:color/white">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/backToHomeButton"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:text="Save and Back to Home"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#22C55E"
+                android:backgroundTint="@android:color/white"
+                app:cornerRadius="12dp"
+                style="?android:attr/borderlessButtonStyle" />
+
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+
+</LinearLayout>

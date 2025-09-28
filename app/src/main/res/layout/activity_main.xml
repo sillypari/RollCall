@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/background_secondary"
     tools:context=".MainActivity">
+
+    <!-- Main Content -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
     <!-- Custom Toolbar -->
     <LinearLayout
@@ -72,12 +77,12 @@
         
     </LinearLayout>
 
-    <!-- Main Content -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="20dp">
+        <!-- Main Content -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="20dp">
 
         <!-- Classes Section -->
         <TextView
@@ -135,7 +140,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:gravity="center"
             android:layout_marginTop="16dp"
             android:paddingTop="16dp">
@@ -145,14 +150,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/developer_info"
                 android:textAppearance="@style/TextAppearance.RollCall.Caption"
-                android:layout_marginEnd="8dp" />
-                
-            <View
-                android:layout_width="4dp"
-                android:layout_height="4dp"
-                android:background="@color/text_tertiary"
-                android:layout_gravity="center_vertical"
-                android:layout_marginEnd="8dp" />
+                android:layout_marginBottom="4dp" />
                 
             <TextView
                 android:layout_width="wrap_content"
@@ -160,6 +158,8 @@
                 android:text="@string/app_version"
                 android:textAppearance="@style/TextAppearance.RollCall.Caption" />
                 
+        </LinearLayout>
+
         </LinearLayout>
 
     </LinearLayout>
@@ -178,4 +178,4 @@
         app:elevation="8dp"
         android:contentDescription="Add new class" />
 
-</LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

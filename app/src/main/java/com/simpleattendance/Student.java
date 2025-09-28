@@ -51,6 +51,10 @@ public class Student {
         return rollNo != null && !rollNo.isEmpty() ? rollNo + " - " + name : name;
     }
 
+    public String getEnrollmentNumber() {
+        return rollNo != null ? rollNo : "";
+    }
+
     @Override
     public String toString() {
         return getDisplayName();

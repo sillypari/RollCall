@@ -29,6 +29,10 @@ public class CreateClassActivity extends AppCompatActivity {
     private DatabaseHelper databaseHelper;
     private Uri selectedFileUri;
     
+    // Edit mode variables
+    private boolean isEditMode = false;
+    private int editClassId = -1;
+    
     private ActivityResultLauncher<Intent> filePickerLauncher;
 
     @Override
@@ -36,10 +40,23 @@ public class CreateClassActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_class);
 
+        checkEditMode();
         initViews();
         setupFilePickerLauncher();
         setupClickListeners();
         setupToolbar();
+        
+        if (isEditMode) {
+            loadClassDataForEditing();
+        }
+    }
+
+    private void checkEditMode() {
+        Intent intent = getIntent();
+        isEditMode = intent.getBooleanExtra("EDIT_MODE", false);
+        if (isEditMode) {
+            editClassId = intent.getIntExtra("CLASS_ID", -1);
+        }
     }
 
     private void initViews() {
@@ -52,6 +69,32 @@ public class CreateClassActivity extends AppCompatActivity {
         formatInfoButton = findViewById(R.id.formatInfoButton);
         selectedFileText = findViewById(R.id.selectedFileText);
         databaseHelper = new DatabaseHelper(this);
+        
+        // Update UI based on mode
+        if (isEditMode) {
+            saveClassButton.setText("Update Class");
+            selectCSVButton.setText("Replace CSV File");
+        }
+    }
+
+    private void loadClassDataForEditing() {
+        Intent intent = getIntent();
+        String branch = intent.getStringExtra("BRANCH");
+        String semester = intent.getStringExtra("SEMESTER");
+        String section = intent.getStringExtra("SECTION");
+        String subject = intent.getStringExtra("SUBJECT");
+        
+        if (branch != null) branchInput.setText(branch);
+        if (semester != null) semesterInput.setText(semester);
+        if (section != null) sectionInput.setText(section);
+        if (subject != null) subjectInput.setText(subject);
+        
+        // Show current students count
+        List<Student> currentStudents = databaseHelper.getStudentsByClass(editClassId);
+        if (!currentStudents.isEmpty()) {
+            selectedFileText.setText("Current: " + currentStudents.size() + " students loaded");
+            selectedFileText.setVisibility(View.VISIBLE);
+        }
     }
 
     private void setupToolbar() {
@@ -133,6 +176,14 @@ public class CreateClassActivity extends AppCompatActivity {
             return;
         }
 
+        if (isEditMode) {
+            updateExistingClass(branch, semester, section, subject);
+        } else {
+            createNewClass(branch, semester, section, subject);
+        }
+    }
+
+    private void createNewClass(String branch, String semester, String section, String subject) {
         // Create class
         String currentDate = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(new Date());
         ClassModel classModel = new ClassModel(branch, semester, section, subject, currentDate);
@@ -150,6 +201,42 @@ public class CreateClassActivity extends AppCompatActivity {
 
         Toast.makeText(this, "Class created successfully!", Toast.LENGTH_SHORT).show();
         finish();
+    }
+
+    private void updateExistingClass(String branch, String semester, String section, String subject) {
+        // Update class information
+        ClassModel classModel = databaseHelper.getClassById(editClassId);
+        if (classModel == null) {
+            Toast.makeText(this, "Error: Class not found", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
+        classModel.setBranch(branch);
+        classModel.setSemester(semester);
+        classModel.setSection(section);
+        classModel.setSubject(subject);
+        
+        boolean success = databaseHelper.updateClass(classModel);
+        if (!success) {
+            Toast.makeText(this, "Failed to update class", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // If new CSV file is selected, replace students
+        if (selectedFileUri != null) {
+            replaceStudentsFromCSV();
+        }
+
+        Toast.makeText(this, "Class updated successfully!", Toast.LENGTH_SHORT).show();
+        finish();
+    }
+
+    private void replaceStudentsFromCSV() {
+        // Delete existing students
+        databaseHelper.deleteStudentsByClass(editClassId);
+        
+        // Import new students from CSV
+        importStudentsFromCSV(editClassId);
     }
 
     private void importStudentsFromCSV(int classId) {

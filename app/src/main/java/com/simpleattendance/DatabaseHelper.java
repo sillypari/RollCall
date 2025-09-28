@@ -338,4 +338,161 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return subject;
     }
+
+    // Get all attendance sessions
+    public List<AttendanceSession> getAllAttendanceSessions() {
+        List<AttendanceSession> sessionList = new ArrayList<>();
+        String query = "SELECT asessions." + KEY_ID + " as session_id, asessions." + KEY_CLASS_ID + ", asessions." + KEY_SUBJECT_ID + ", " +
+                      "asessions." + KEY_DATE + ", asessions." + KEY_TIME + ", asessions." + KEY_NOTES + ", " +
+                      "c." + KEY_BRANCH + ", c." + KEY_SEMESTER + ", c." + KEY_SECTION + 
+                      " FROM " + TABLE_ATTENDANCE_SESSIONS + " asessions" +
+                      " INNER JOIN " + TABLE_CLASSES + " c ON asessions." + KEY_CLASS_ID + " = c." + KEY_ID +
+                      " ORDER BY asessions." + KEY_DATE + " DESC, asessions." + KEY_TIME + " DESC";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                AttendanceSession session = new AttendanceSession();
+                session.setId(cursor.getInt(cursor.getColumnIndexOrThrow("session_id")));
+                session.setClassId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_CLASS_ID)));
+                session.setSubjectId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_SUBJECT_ID)));
+                session.setDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
+                session.setTime(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TIME)));
+                session.setNotes(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTES)));
+                
+                // Build class name
+                String className = cursor.getString(cursor.getColumnIndexOrThrow(KEY_BRANCH)) + " - " +
+                                 cursor.getString(cursor.getColumnIndexOrThrow(KEY_SEMESTER)) + " " +
+                                 cursor.getString(cursor.getColumnIndexOrThrow(KEY_SECTION));
+                session.setClassName(className);
+
+                // Get attendance counts for this session
+                AttendanceReport report = generateReport(session.getId());
+                session.setPresentCount(report.getPresentCount());
+                session.setAbsentCount(report.getAbsentCount());
+                session.setAttendancePercentage(calculateAttendancePercentage(report.getPresentCount(), report.getAbsentCount()));
+
+                sessionList.add(session);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return sessionList;
+    }
+
+    // Get attendance sessions by class
+    public List<AttendanceSession> getAttendanceSessionsByClass(int classId) {
+        List<AttendanceSession> sessionList = new ArrayList<>();
+        String query = "SELECT asessions." + KEY_ID + " as session_id, asessions." + KEY_CLASS_ID + ", asessions." + KEY_SUBJECT_ID + ", " +
+                      "asessions." + KEY_DATE + ", asessions." + KEY_TIME + ", asessions." + KEY_NOTES + ", " +
+                      "c." + KEY_BRANCH + ", c." + KEY_SEMESTER + ", c." + KEY_SECTION + 
+                      " FROM " + TABLE_ATTENDANCE_SESSIONS + " asessions" +
+                      " INNER JOIN " + TABLE_CLASSES + " c ON asessions." + KEY_CLASS_ID + " = c." + KEY_ID +
+                      " WHERE asessions." + KEY_CLASS_ID + " = ?" +
+                      " ORDER BY asessions." + KEY_DATE + " DESC, asessions." + KEY_TIME + " DESC";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(classId)});
+
+        if (cursor.moveToFirst()) {
+            do {
+                AttendanceSession session = new AttendanceSession();
+                session.setId(cursor.getInt(cursor.getColumnIndexOrThrow("session_id")));
+                session.setClassId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_CLASS_ID)));
+                session.setSubjectId(cursor.getInt(cursor.getColumnIndexOrThrow(KEY_SUBJECT_ID)));
+                session.setDate(cursor.getString(cursor.getColumnIndexOrThrow(KEY_DATE)));
+                session.setTime(cursor.getString(cursor.getColumnIndexOrThrow(KEY_TIME)));
+                session.setNotes(cursor.getString(cursor.getColumnIndexOrThrow(KEY_NOTES)));
+                
+                // Build class name
+                String className = cursor.getString(cursor.getColumnIndexOrThrow(KEY_BRANCH)) + " - " +
+                                 cursor.getString(cursor.getColumnIndexOrThrow(KEY_SEMESTER)) + " " +
+                                 cursor.getString(cursor.getColumnIndexOrThrow(KEY_SECTION));
+                session.setClassName(className);
+
+                // Get attendance counts for this session
+                AttendanceReport report = generateReport(session.getId());
+                session.setPresentCount(report.getPresentCount());
+                session.setAbsentCount(report.getAbsentCount());
+                session.setAttendancePercentage(calculateAttendancePercentage(report.getPresentCount(), report.getAbsentCount()));
+
+                sessionList.add(session);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return sessionList;
+    }
+
+    private double calculateAttendancePercentage(int present, int absent) {
+        int total = present + absent;
+        if (total == 0) return 0;
+        return Math.round(((double) present / total) * 100 * 100.0) / 100.0;
+    }
+
+    // Delete class and all related data
+    public boolean deleteClass(int classId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        try {
+            db.beginTransaction();
+            
+            // Delete attendance records for this class
+            String deleteAttendanceRecords = "DELETE FROM " + TABLE_ATTENDANCE_RECORDS + 
+                                           " WHERE " + KEY_SESSION_ID + " IN (" +
+                                           "SELECT " + KEY_ID + " FROM " + TABLE_ATTENDANCE_SESSIONS + 
+                                           " WHERE " + KEY_CLASS_ID + " = ?)";
+            db.execSQL(deleteAttendanceRecords, new String[]{String.valueOf(classId)});
+            
+            // Delete attendance sessions for this class
+            String deleteAttendanceSessions = "DELETE FROM " + TABLE_ATTENDANCE_SESSIONS + 
+                                            " WHERE " + KEY_CLASS_ID + " = ?";
+            db.execSQL(deleteAttendanceSessions, new String[]{String.valueOf(classId)});
+            
+            // Delete students for this class
+            String deleteStudents = "DELETE FROM " + TABLE_STUDENTS + 
+                                   " WHERE " + KEY_CLASS_ID + " = ?";
+            db.execSQL(deleteStudents, new String[]{String.valueOf(classId)});
+            
+            // Delete the class itself
+            int rowsDeleted = db.delete(TABLE_CLASSES, KEY_ID + " = ?", 
+                                       new String[]{String.valueOf(classId)});
+            
+            db.setTransactionSuccessful();
+            return rowsDeleted > 0;
+            
+        } catch (Exception e) {
+            return false;
+        } finally {
+            db.endTransaction();
+            db.close();
+        }
+    }
+
+    // Update class information
+    public boolean updateClass(ClassModel classModel) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(KEY_BRANCH, classModel.getBranch());
+        values.put(KEY_SEMESTER, classModel.getSemester());
+        values.put(KEY_SECTION, classModel.getSection());
+        values.put(KEY_SUBJECT, classModel.getSubject());
+        
+        int rowsUpdated = db.update(TABLE_CLASSES, values, KEY_ID + " = ?", 
+                                   new String[]{String.valueOf(classModel.getId())});
+        db.close();
+        return rowsUpdated > 0;
+    }
+
+    // Delete all students for a specific class
+    public boolean deleteStudentsByClass(int classId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int rowsDeleted = db.delete(TABLE_STUDENTS, KEY_CLASS_ID + " = ?", 
+                                   new String[]{String.valueOf(classId)});
+        db.close();
+        return rowsDeleted > 0;
+    }
 }

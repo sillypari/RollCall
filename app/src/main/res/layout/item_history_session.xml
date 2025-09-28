@@ -29,7 +29,7 @@
                 android:text="Computer Science - 3rd Sem A"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:fontFamily="@font/inter_semibold"
+                android:fontFamily="sans-serif-medium"
                 android:textColor="@color/unacademy_dark_gray" />
 
             <TextView
@@ -38,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:text="Dec 15, 2024"
                 android:textSize="12sp"
-                android:fontFamily="@font/inter_medium"
+                android:fontFamily="sans-serif-medium"
                 android:textColor="@color/unacademy_light_gray" />
 
         </LinearLayout>
@@ -50,7 +50,7 @@
             android:layout_height="wrap_content"
             android:text="Mathematics"
             android:textSize="14sp"
-            android:fontFamily="@font/inter_medium"
+            android:fontFamily="sans-serif-medium"
             android:textColor="@color/unacademy_primary"
             android:layout_marginBottom="12dp" />
 
@@ -80,7 +80,7 @@
                     android:layout_height="wrap_content"
                     android:text="28 Present"
                     android:textSize="12sp"
-                    android:fontFamily="@font/inter_medium"
+                    android:fontFamily="sans-serif-medium"
                     android:textColor="@color/unacademy_dark_gray" />
 
             </LinearLayout>
@@ -105,7 +105,7 @@
                     android:layout_height="wrap_content"
                     android:text="2 Absent"
                     android:textSize="12sp"
-                    android:fontFamily="@font/inter_medium"
+                    android:fontFamily="sans-serif-medium"
                     android:textColor="@color/unacademy_dark_gray" />
 
             </LinearLayout>
@@ -118,7 +118,7 @@
                 android:text="93%"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                android:fontFamily="@font/inter_semibold"
+                android:fontFamily="sans-serif-medium"
                 android:textColor="@color/unacademy_primary"
                 android:background="@drawable/percentage_background"
                 android:paddingHorizontal="8dp"

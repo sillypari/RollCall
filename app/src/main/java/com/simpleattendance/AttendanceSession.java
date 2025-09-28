@@ -9,6 +9,9 @@ public class AttendanceSession {
     private String notes;
     private String className;
     private String subjectName;
+    private int presentCount;
+    private int absentCount;
+    private double attendancePercentage;
 
     public AttendanceSession() {}
 
@@ -83,5 +86,33 @@ public class AttendanceSession {
 
     public void setSubjectName(String subjectName) {
         this.subjectName = subjectName;
+    }
+
+    public String getSubject() {
+        return subjectName;
+    }
+
+    public int getPresentCount() {
+        return presentCount;
+    }
+
+    public void setPresentCount(int presentCount) {
+        this.presentCount = presentCount;
+    }
+
+    public int getAbsentCount() {
+        return absentCount;
+    }
+
+    public void setAbsentCount(int absentCount) {
+        this.absentCount = absentCount;
+    }
+
+    public double getAttendancePercentage() {
+        return attendancePercentage;
+    }
+
+    public void setAttendancePercentage(double attendancePercentage) {
+        this.attendancePercentage = attendancePercentage;
     }
 }

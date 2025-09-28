@@ -28,7 +28,6 @@ public class HistoryActivity extends AppCompatActivity {
     private Spinner classFilterSpinner;
     private RecyclerView historyRecyclerView;
     private LinearLayout emptyStateLayout;
-    private MaterialButton generateReportButton, exportReportButton;
     
     private List<ClassModel> classList;
     private List<AttendanceSession> sessionList;
@@ -55,8 +54,6 @@ public class HistoryActivity extends AppCompatActivity {
         classFilterSpinner = findViewById(R.id.classFilterSpinner);
         historyRecyclerView = findViewById(R.id.historyRecyclerView);
         emptyStateLayout = findViewById(R.id.emptyStateLayout);
-        generateReportButton = findViewById(R.id.generateReportButton);
-        exportReportButton = findViewById(R.id.exportReportButton);
     }
 
     private void setupToolbar() {
@@ -107,20 +104,27 @@ public class HistoryActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView() {
-        historyAdapter = new HistorySessionAdapter(sessionList);
+        historyAdapter = new HistorySessionAdapter(sessionList, new HistorySessionAdapter.OnSessionClickListener() {
+            @Override
+            public void onSessionClick(AttendanceSession session) {
+                openSessionReport(session);
+            }
+        });
         historyRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         historyRecyclerView.setAdapter(historyAdapter);
-        
-        generateReportButton.setOnClickListener(v -> generateReport());
-        exportReportButton.setOnClickListener(v -> exportReport());
     }
 
     private void loadAttendanceSessions() {
         sessionList.clear();
         
-        // This is a placeholder implementation
-        // In a real app, you would load actual attendance sessions from the database
-        // For now, we'll show empty state
+        // Load actual attendance sessions from database
+        if (selectedClassId == -1) {
+            // Load all attendance sessions
+            sessionList.addAll(databaseHelper.getAllAttendanceSessions());
+        } else {
+            // Load sessions for specific class
+            sessionList.addAll(databaseHelper.getAttendanceSessionsByClass(selectedClassId));
+        }
         
         if (sessionList.isEmpty()) {
             historyRecyclerView.setVisibility(View.GONE);
@@ -131,6 +135,7 @@ public class HistoryActivity extends AppCompatActivity {
         }
         
         historyAdapter.notifyDataSetChanged();
+        updateSummaryStats();
     }
 
     private void updateSummaryStats() {
@@ -146,72 +151,18 @@ public class HistoryActivity extends AppCompatActivity {
         totalStudentsCount.setText(String.valueOf(totalStudents));
     }
 
-    private void generateReport() {
-        if (selectedClassId == -1) {
-            Toast.makeText(this, "Please select a specific class to generate report", 
-                Toast.LENGTH_SHORT).show();
-            return;
-        }
+    private void openSessionReport(AttendanceSession session) {
+        // Navigate to report activity for this specific session
+        AttendanceReport report = databaseHelper.generateReport(session.getId());
         
-        // Navigate to reports activity with selected class
         Intent intent = new Intent(this, ReportActivity.class);
-        intent.putExtra("classId", selectedClassId);
+        intent.putExtra("CLASS_NAME", session.getClassName());
+        intent.putExtra("SUBJECT_NAME", "General");
+        intent.putExtra("SESSION_DATE", session.getDate());
+        intent.putExtra("SESSION_TIME", session.getTime());
+        intent.putExtra("PRESENT_COUNT", report.getPresentCount());
+        intent.putExtra("ABSENT_COUNT", report.getAbsentCount());
+        intent.putStringArrayListExtra("ABSENT_STUDENTS", new ArrayList<>(report.getAbsentStudents()));
         startActivity(intent);
-    }
-
-    private void exportReport() {
-        if (selectedClassId == -1) {
-            Toast.makeText(this, "Please select a specific class to export report", 
-                Toast.LENGTH_SHORT).show();
-            return;
-        }
-        
-        // Implement CSV export functionality
-        Toast.makeText(this, "Export functionality coming soon!", 
-            Toast.LENGTH_SHORT).show();
-    }
-
-    // Inner class for attendance session data (if not already in AttendanceSession.java)
-    public static class HistoryAttendanceSession {
-        private String className;
-        private String subject;
-        private String date;
-        private int presentCount;
-        private int absentCount;
-        private int totalStudents;
-
-        public HistoryAttendanceSession(String className, String subject, String date, 
-                               int presentCount, int absentCount) {
-            this.className = className;
-            this.subject = subject;
-            this.date = date;
-            this.presentCount = presentCount;
-            this.absentCount = absentCount;
-            this.totalStudents = presentCount + absentCount;
-        }
-
-        // Getters and setters
-        public String getClassName() { return className; }
-        public void setClassName(String className) { this.className = className; }
-        
-        public String getSubject() { return subject; }
-        public void setSubject(String subject) { this.subject = subject; }
-        
-        public String getDate() { return date; }
-        public void setDate(String date) { this.date = date; }
-        
-        public int getPresentCount() { return presentCount; }
-        public void setPresentCount(int presentCount) { this.presentCount = presentCount; }
-        
-        public int getAbsentCount() { return absentCount; }
-        public void setAbsentCount(int absentCount) { this.absentCount = absentCount; }
-        
-        public int getTotalStudents() { return totalStudents; }
-        public void setTotalStudents(int totalStudents) { this.totalStudents = totalStudents; }
-        
-        public int getAttendancePercentage() {
-            if (totalStudents == 0) return 0;
-            return Math.round((float) presentCount / totalStudents * 100);
-        }
     }
 }

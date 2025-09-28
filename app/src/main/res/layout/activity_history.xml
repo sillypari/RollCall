@@ -40,7 +40,7 @@
                 android:text="Attendance History"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:fontFamily="@font/inter_semibold"
+                android:fontFamily="sans-serif"
                 android:textColor="@color/unacademy_dark_gray" />
 
         </RelativeLayout>
@@ -86,7 +86,7 @@
                         android:text="0"
                         android:textSize="24sp"
                         android:textStyle="bold"
-                        android:fontFamily="@font/inter_bold"
+                        android:fontFamily="sans-serif-black"
                         android:textColor="@color/unacademy_primary" />
 
                     <TextView
@@ -94,7 +94,7 @@
                         android:layout_height="wrap_content"
                         android:text="Total Classes"
                         android:textSize="12sp"
-                        android:fontFamily="@font/inter_medium"
+                        android:fontFamily="sans-serif-medium"
                         android:textColor="@color/unacademy_dark_gray"
                         android:textAlignment="center" />
 
@@ -126,7 +126,7 @@
                         android:text="0"
                         android:textSize="24sp"
                         android:textStyle="bold"
-                        android:fontFamily="@font/inter_bold"
+                        android:fontFamily="sans-serif-black"
                         android:textColor="@color/unacademy_primary" />
 
                     <TextView
@@ -134,7 +134,7 @@
                         android:layout_height="wrap_content"
                         android:text="Total Students"
                         android:textSize="12sp"
-                        android:fontFamily="@font/inter_medium"
+                        android:fontFamily="sans-serif-medium"
                         android:textColor="@color/unacademy_dark_gray"
                         android:textAlignment="center" />
 
@@ -162,10 +162,10 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Filter Reports"
+                    android:text="Filter by Class"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    android:fontFamily="@font/inter_semibold"
+                    android:fontFamily="sans-serif-medium"
                     android:textColor="@color/unacademy_dark_gray"
                     android:layout_marginBottom="12dp" />
 
@@ -173,42 +173,7 @@
                     android:id="@+id/classFilterSpinner"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:layout_marginBottom="12dp"
                     android:background="@drawable/spinner_background" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/generateReportButton"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Generate Report"
-                        android:textSize="14sp"
-                        android:fontFamily="@font/inter_medium"
-                        android:textColor="@color/white"
-                        android:backgroundTint="@color/unacademy_primary"
-                        android:layout_marginEnd="8dp"
-                        app:cornerRadius="8dp" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/exportReportButton"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Export CSV"
-                        android:textSize="14sp"
-                        android:fontFamily="@font/inter_medium"
-                        android:textColor="@color/unacademy_primary"
-                        android:layout_marginStart="8dp"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                        app:strokeColor="@color/unacademy_primary"
-                        app:cornerRadius="8dp" />
-
-                </LinearLayout>
 
             </LinearLayout>
 
@@ -218,10 +183,10 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Recent Sessions"
+            android:text="Attendance History"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:fontFamily="@font/inter_semibold"
+            android:fontFamily="sans-serif-medium"
             android:textColor="@color/unacademy_dark_gray"
             android:layout_marginBottom="12dp" />
 
@@ -254,7 +219,7 @@
                 android:layout_height="wrap_content"
                 android:text="No attendance sessions found"
                 android:textSize="16sp"
-                android:fontFamily="@font/inter_medium"
+                android:fontFamily="sans-serif-medium"
                 android:textColor="@color/unacademy_light_gray"
                 android:textAlignment="center" />
 
@@ -263,7 +228,7 @@
                 android:layout_height="wrap_content"
                 android:text="Start taking attendance to see reports here"
                 android:textSize="14sp"
-                android:fontFamily="@font/inter_regular"
+                android:fontFamily="sans-serif"
                 android:textColor="@color/unacademy_light_gray"
                 android:textAlignment="center"
                 android:layout_marginTop="4dp" />

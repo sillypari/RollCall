@@ -22,10 +22,9 @@ import java.util.Map;
 
 public class AttendanceActivity extends AppCompatActivity {
     
-    private TextView studentNameText, counterText, classNameText;
+    private TextView studentNameText, studentEnrollmentText, counterText, classNameText;
     private Button presentButton, absentButton, prevButton, nextButton;
     private Button sortButton, finishButton;
-    private Spinner subjectSpinner;
     
     private DatabaseHelper databaseHelper;
     private List<Student> students;
@@ -44,7 +43,6 @@ public class AttendanceActivity extends AppCompatActivity {
         getIntentData();
         initViews();
         loadData();
-        setupSpinner();
         setupClickListeners();
         updateDisplay();
     }
@@ -62,6 +60,7 @@ public class AttendanceActivity extends AppCompatActivity {
 
     private void initViews() {
         studentNameText = findViewById(R.id.studentNameText);
+        studentEnrollmentText = findViewById(R.id.studentEnrollmentText);
         counterText = findViewById(R.id.counterText);
         classNameText = findViewById(R.id.classNameText);
         presentButton = findViewById(R.id.presentButton);
@@ -70,7 +69,6 @@ public class AttendanceActivity extends AppCompatActivity {
         nextButton = findViewById(R.id.nextButton);
         sortButton = findViewById(R.id.sortButton);
         finishButton = findViewById(R.id.finishButton);
-        subjectSpinner = findViewById(R.id.subjectSpinner);
         
         databaseHelper = new DatabaseHelper(this);
         attendanceMap = new HashMap<>();
@@ -78,7 +76,6 @@ public class AttendanceActivity extends AppCompatActivity {
 
     private void loadData() {
         students = databaseHelper.getStudentsByClass(classId);
-        subjects = databaseHelper.getAllSubjects();
         
         classNameText.setText(className);
         
@@ -89,13 +86,29 @@ public class AttendanceActivity extends AppCompatActivity {
         }
     }
 
-    private void setupSpinner() {
-        if (subjects != null && !subjects.isEmpty()) {
-            ArrayAdapter<Subject> adapter = new ArrayAdapter<>(this, 
-                android.R.layout.simple_spinner_item, subjects);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            subjectSpinner.setAdapter(adapter);
+    private void finishAttendance() {
+        if (attendanceMap.isEmpty()) {
+            Toast.makeText(this, "Please mark attendance for at least one student", Toast.LENGTH_SHORT).show();
+            return;
         }
+
+        // Show confirmation dialog without subject selection
+        showConfirmationDialog();
+    }
+
+    private void showConfirmationDialog() {
+        int markedCount = attendanceMap.size();
+        int totalCount = students.size();
+        
+        String message = "You have marked " + markedCount + " out of " + totalCount + " students.\n\n" +
+                        "Do you want to save the attendance?";
+
+        new AlertDialog.Builder(this)
+            .setTitle("Confirm Attendance")
+            .setMessage(message)
+            .setPositiveButton("Save", (dialog, which) -> saveAttendance())
+            .setNegativeButton("Cancel", null)
+            .show();
     }
 
     private void setupClickListeners() {
@@ -192,7 +205,8 @@ public class AttendanceActivity extends AppCompatActivity {
     private void updateDisplay() {
         if (students != null && !students.isEmpty() && currentStudentIndex < students.size()) {
             Student currentStudent = students.get(currentStudentIndex);
-            studentNameText.setText(currentStudent.getDisplayName());
+            studentNameText.setText(currentStudent.getName());
+            studentEnrollmentText.setText(currentStudent.getEnrollmentNumber());
             counterText.setText((currentStudentIndex + 1) + " / " + students.size());
             
             updateButtonColors();
@@ -223,46 +237,14 @@ public class AttendanceActivity extends AppCompatActivity {
         nextButton.setEnabled(currentStudentIndex < students.size() - 1);
     }
 
-    private void finishAttendance() {
-        if (attendanceMap.isEmpty()) {
-            Toast.makeText(this, "Please mark attendance for at least one student", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        Subject selectedSubject = (Subject) subjectSpinner.getSelectedItem();
-        if (selectedSubject == null) {
-            Toast.makeText(this, "Please select a subject", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // Show confirmation dialog
-        showConfirmationDialog(selectedSubject);
-    }
-
-    private void showConfirmationDialog(Subject selectedSubject) {
-        int markedCount = attendanceMap.size();
-        int totalCount = students.size();
-        
-        String message = "You have marked " + markedCount + " out of " + totalCount + " students.\n" +
-                        "Subject: " + selectedSubject.getName() + "\n\n" +
-                        "Do you want to save the attendance?";
-
-        new AlertDialog.Builder(this)
-            .setTitle("Confirm Attendance")
-            .setMessage(message)
-            .setPositiveButton("Save", (dialog, which) -> saveAttendance(selectedSubject))
-            .setNegativeButton("Cancel", null)
-            .show();
-    }
-
-    private void saveAttendance(Subject selectedSubject) {
+    private void saveAttendance() {
         try {
             String currentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
             String currentTime = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());
             
-            // Create attendance session
+            // Create attendance session without subject
             AttendanceSession session = new AttendanceSession(
-                classId, selectedSubject.getId(), currentDate, currentTime, null);
+                classId, -1, currentDate, currentTime, null);
             long sessionId = databaseHelper.insertAttendanceSession(session);
             
             if (sessionId == -1) {
@@ -282,9 +264,9 @@ public class AttendanceActivity extends AppCompatActivity {
             }
 
             if (savedCount > 0) {
-                // Generate and show report
+                // Generate and show completion screen
                 AttendanceReport report = databaseHelper.generateReport((int) sessionId);
-                showAttendanceReport(report, selectedSubject);
+                showCompletionScreen(report);
             } else {
                 Toast.makeText(this, "Error saving attendance records", Toast.LENGTH_SHORT).show();
             }
@@ -294,10 +276,10 @@ public class AttendanceActivity extends AppCompatActivity {
         }
     }
 
-    private void showAttendanceReport(AttendanceReport report, Subject subject) {
-        Intent intent = new Intent(this, ReportActivity.class);
+    private void showCompletionScreen(AttendanceReport report) {
+        Intent intent = new Intent(this, AttendanceCompleteActivity.class);
         intent.putExtra("CLASS_NAME", className);
-        intent.putExtra("SUBJECT_NAME", subject.getName());
+        intent.putExtra("SUBJECT_NAME", "General");
         intent.putExtra("PRESENT_COUNT", report.getPresentCount());
         intent.putExtra("ABSENT_COUNT", report.getAbsentCount());
         intent.putStringArrayListExtra("ABSENT_STUDENTS", new ArrayList<>(report.getAbsentStudents()));

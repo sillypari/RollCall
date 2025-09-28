@@ -8,14 +8,24 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class HistorySessionAdapter extends RecyclerView.Adapter<HistorySessionAdapter.ViewHolder> {
 
     private List<AttendanceSession> sessionList;
+    private OnSessionClickListener listener;
 
-    public HistorySessionAdapter(List<AttendanceSession> sessionList) {
+    public interface OnSessionClickListener {
+        void onSessionClick(AttendanceSession session);
+    }
+
+    public HistorySessionAdapter(List<AttendanceSession> sessionList, OnSessionClickListener listener) {
         this.sessionList = sessionList;
+        this.listener = listener;
     }
 
     @NonNull
@@ -31,11 +41,28 @@ public class HistorySessionAdapter extends RecyclerView.Adapter<HistorySessionAd
         AttendanceSession session = sessionList.get(position);
         
         holder.sessionTitle.setText(session.getClassName());
-        holder.sessionSubject.setText(session.getSubject());
-        holder.sessionDate.setText(session.getDate());
+        holder.sessionSubject.setText("General"); // Since we removed subject selection
+        holder.sessionDate.setText(formatDate(session.getDate()) + " • " + session.getTime());
         holder.presentCount.setText(session.getPresentCount() + " Present");
         holder.absentCount.setText(session.getAbsentCount() + " Absent");
-        holder.attendancePercentage.setText(session.getAttendancePercentage() + "%");
+        holder.attendancePercentage.setText(String.format("%.0f%%", session.getAttendancePercentage()));
+        
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onSessionClick(session);
+            }
+        });
+    }
+
+    private String formatDate(String dateString) {
+        try {
+            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            SimpleDateFormat outputFormat = new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault());
+            Date date = inputFormat.parse(dateString);
+            return outputFormat.format(date);
+        } catch (ParseException e) {
+            return dateString; // Return original if parsing fails
+        }
     }
 
     @Override

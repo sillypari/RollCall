@@ -15,6 +15,7 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ClassViewHol
 
     public interface OnClassClickListener {
         void onClassClick(ClassModel classModel);
+        void onClassLongClick(ClassModel classModel, View anchorView);
     }
 
     public ClassAdapter(List<ClassModel> classList, OnClassClickListener listener) {
@@ -61,6 +62,17 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ClassViewHol
                     if (listener != null) {
                         listener.onClassClick(classModel);
                     }
+                }
+            });
+
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    if (listener != null) {
+                        listener.onClassLongClick(classModel, v);
+                        return true;
+                    }
+                    return false;
                 }
             });
         }

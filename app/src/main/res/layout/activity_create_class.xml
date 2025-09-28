@@ -42,7 +42,7 @@
                 android:text="Create Class"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:fontFamily="@font/inter_semibold"
+                android:fontFamily="sans-serif"
                 android:textColor="@color/unacademy_dark_gray" />
 
         </RelativeLayout>
@@ -69,7 +69,7 @@
                 android:text="Create New Class"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                android:fontFamily="@font/inter_bold"
+                android:fontFamily="sans-serif"
                 android:textAlignment="center"
                 android:layout_marginBottom="32dp"
                 android:textColor="@color/unacademy_dark_gray" />
@@ -91,7 +91,7 @@
                     android:layout_height="wrap_content"
                     android:hint="Branch (e.g., Computer Science)"
                     android:textSize="16sp"
-                    android:fontFamily="@font/inter_medium"
+                    android:fontFamily="sans-serif"
                     android:textColor="@color/unacademy_dark_gray"
                     android:textColorHint="@color/unacademy_light_gray"
                     android:inputType="textCapWords" />
@@ -115,7 +115,7 @@
                     android:layout_height="wrap_content"
                     android:hint="Subject (e.g., Mathematics, Physics)"
                     android:textSize="16sp"
-                    android:fontFamily="@font/inter_medium"
+                    android:fontFamily="sans-serif"
                     android:textColor="@color/unacademy_dark_gray"
                     android:textColorHint="@color/unacademy_light_gray"
                     android:inputType="textCapWords" />
@@ -139,7 +139,7 @@
                     android:layout_height="wrap_content"
                     android:hint="Semester (e.g., 1st, 2nd, 3rd)"
                     android:textSize="16sp"
-                    android:fontFamily="@font/inter_medium"
+                    android:fontFamily="sans-serif"
                     android:textColor="@color/unacademy_dark_gray"
                     android:textColorHint="@color/unacademy_light_gray"
                     android:inputType="textCapWords" />
@@ -163,7 +163,7 @@
                     android:layout_height="wrap_content"
                     android:hint="Section (e.g., A, B, C)"
                     android:textSize="16sp"
-                    android:fontFamily="@font/inter_medium"
+                    android:fontFamily="sans-serif"
                     android:textColor="@color/unacademy_dark_gray"
                     android:textColorHint="@color/unacademy_light_gray"
                     android:inputType="textCapWords" />
@@ -191,7 +191,7 @@
                         android:text="Import Students (Optional)"
                         android:textSize="18sp"
                         android:textStyle="bold"
-                        android:fontFamily="@font/inter_semibold"
+                        android:fontFamily="sans-serif"
                         android:textColor="@color/unacademy_dark_gray"
                         android:layout_marginBottom="16dp" />
 
@@ -208,7 +208,7 @@
                             android:layout_weight="1"
                             android:text="Select CSV File"
                             android:textSize="14sp"
-                            android:fontFamily="@font/inter_medium"
+                            android:fontFamily="sans-serif"
                             android:layout_marginEnd="8dp"
                             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                             app:strokeColor="@color/unacademy_primary"
@@ -220,7 +220,7 @@
                             android:layout_height="wrap_content"
                             android:text="?"
                             android:textSize="14sp"
-                            android:fontFamily="@font/inter_medium"
+                            android:fontFamily="sans-serif"
                             android:minWidth="48dp"
                             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                             app:strokeColor="@color/unacademy_primary"
@@ -234,7 +234,7 @@
                         android:layout_height="wrap_content"
                         android:text="File selected: students.csv"
                         android:textSize="14sp"
-                        android:fontFamily="@font/inter_medium"
+                        android:fontFamily="sans-serif"
                         android:textColor="@color/unacademy_primary"
                         android:layout_marginBottom="12dp"
                         android:visibility="gone" />
@@ -244,7 +244,7 @@
                         android:layout_height="wrap_content"
                         android:text="Note: You can add students later or manually if no CSV file is selected."
                         android:textSize="12sp"
-                        android:fontFamily="@font/inter_regular"
+                        android:fontFamily="sans-serif"
                         android:textColor="@color/unacademy_light_gray" />
 
                 </LinearLayout>
@@ -259,7 +259,7 @@
                 android:text="Create Class"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:fontFamily="@font/inter_semibold"
+                android:fontFamily="sans-serif"
                 android:textColor="@color/white"
                 android:backgroundTint="@color/unacademy_primary"
                 android:elevation="2dp"
