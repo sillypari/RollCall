@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:attr/windowBackground">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Header -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Settings"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="?android:attr/textColorPrimary"
+            android:paddingBottom="24dp" />
+
+        <!-- Theme Section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Theme"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="?android:attr/textColorPrimary"
+            android:paddingBottom="12dp" />
+
+        <RadioGroup
+            android:id="@+id/themeRadioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="32dp">
+
+            <RadioButton
+                android:id="@+id/radioLight"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Light Theme"
+                android:textSize="16sp"
+                android:padding="12dp" />
+
+            <RadioButton
+                android:id="@+id/radioDark"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Dark Theme"
+                android:textSize="16sp"
+                android:padding="12dp" />
+
+            <RadioButton
+                android:id="@+id/radioSystem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="System Default"
+                android:textSize="16sp"
+                android:padding="12dp" />
+        </RadioGroup>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#CCCCCC"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Report Template Section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Report Template"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="?android:attr/textColorPrimary"
+            android:paddingBottom="12dp" />
+
+        <RadioGroup
+            android:id="@+id/reportTemplateRadioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="32dp">
+
+            <RadioButton
+                android:id="@+id/radioShowBoth"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Show Both"
+                android:textSize="16sp"
+                android:padding="12dp" />
+
+            <RadioButton
+                android:id="@+id/radioShowAbsent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Show Absent Only"
+                android:textSize="16sp"
+                android:padding="12dp" />
+
+            <RadioButton
+                android:id="@+id/radioShowPresent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Show Present Only"
+                android:textSize="16sp"
+                android:padding="12dp" />
+        </RadioGroup>
+
+        <!-- Save Button -->
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Save Settings"
+            android:textColor="@android:color/white"
+            android:background="@drawable/pill_shape_ripple"
+            android:paddingHorizontal="48dp"
+            android:paddingVertical="12dp"
+            android:layout_marginTop="16dp"
+            android:layout_gravity="center" />
+
+    </LinearLayout>
+</ScrollView>

@@ -42,6 +42,11 @@ public class ClassAdapter extends RecyclerView.Adapter<ClassAdapter.ClassViewHol
         return classList.size();
     }
 
+    public void updateList(List<ClassModel> newList) {
+        this.classList = newList;
+        notifyDataSetChanged();
+    }
+
     static class ClassViewHolder extends RecyclerView.ViewHolder {
         TextView classNameText;
         TextView createdDateText;

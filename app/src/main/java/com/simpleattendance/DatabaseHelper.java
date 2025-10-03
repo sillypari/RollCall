@@ -274,6 +274,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         int presentCount = 0;
         int absentCount = 0;
         List<String> absentStudents = new ArrayList<>();
+        List<String> presentStudents = new ArrayList<>();
         
         String query = "SELECT s." + KEY_NAME + ", ar." + KEY_STATUS + 
                       " FROM " + TABLE_ATTENDANCE_RECORDS + " ar " +
@@ -285,12 +286,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         
         if (cursor.moveToFirst()) {
             do {
+                String name = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME));
                 String status = cursor.getString(cursor.getColumnIndexOrThrow(KEY_STATUS));
                 if ("P".equals(status)) {
                     presentCount++;
+                    presentStudents.add(name);
                 } else {
                     absentCount++;
-                    String name = cursor.getString(cursor.getColumnIndexOrThrow(KEY_NAME));
                     absentStudents.add(name);
                 }
             } while (cursor.moveToNext());
@@ -299,7 +301,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         
-        return new AttendanceReport(presentCount, absentCount, absentStudents);
+        return new AttendanceReport(presentCount, absentCount, absentStudents, presentStudents);
     }
 
     public ClassModel getClassById(int classId) {

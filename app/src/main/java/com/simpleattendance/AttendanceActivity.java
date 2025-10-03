@@ -116,6 +116,8 @@ public class AttendanceActivity extends AppCompatActivity {
         presentButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Haptic on the actual tapped view
+                v.performHapticFeedback(android.view.HapticFeedbackConstants.VIRTUAL_KEY);
                 markAttendance("P");
             }
         });
@@ -123,6 +125,8 @@ public class AttendanceActivity extends AppCompatActivity {
         absentButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Haptic on the actual tapped view
+                v.performHapticFeedback(android.view.HapticFeedbackConstants.VIRTUAL_KEY);
                 markAttendance("A");
             }
         });
@@ -168,9 +172,6 @@ public class AttendanceActivity extends AppCompatActivity {
             Student currentStudent = students.get(currentStudentIndex);
             attendanceMap.put(currentStudent.getId(), status);
             
-            // Add haptic feedback for acknowledgment
-            presentButton.performHapticFeedback(android.view.HapticFeedbackConstants.VIRTUAL_KEY);
-            
             // Show brief acknowledgment
             String statusText = "P".equals(status) ? "Present" : "Absent";
             Toast.makeText(this, statusText + " ✓", Toast.LENGTH_SHORT).show();
@@ -178,10 +179,21 @@ public class AttendanceActivity extends AppCompatActivity {
             // Update button colors and student name color to show marked status
             updateButtonColors();
             updateStudentNameColor();
+
+            // Force selected state immediately for smoother visual feedback
+            presentButton.setSelected("P".equals(status));
+            absentButton.setSelected("A".equals(status));
             
             // Auto-move to next student
             if (currentStudentIndex < students.size() - 1) {
-                moveToNextStudent();
+                // Small delay so the selected state (red/green) is visible before advancing
+                new android.os.Handler(android.os.Looper.getMainLooper())
+                        .postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                moveToNextStudent();
+                            }
+                        }, 180);
             } else {
                 Toast.makeText(this, "All students marked! Click Finish to save.", Toast.LENGTH_SHORT).show();
             }
@@ -274,8 +286,11 @@ public class AttendanceActivity extends AppCompatActivity {
             if ("A".equals(status)) {
                 // Highlight absent student name in red
                 studentNameText.setTextColor(ContextCompat.getColor(this, android.R.color.holo_red_dark));
+            } else if ("P".equals(status)) {
+                // Highlight present student name in green
+                studentNameText.setTextColor(ContextCompat.getColor(this, android.R.color.holo_green_dark));
             } else {
-                // Default color for present or unmarked students
+                // Default color for unmarked students
                 studentNameText.setTextColor(ContextCompat.getColor(this, android.R.color.black));
             }
         }
@@ -331,6 +346,7 @@ public class AttendanceActivity extends AppCompatActivity {
         intent.putExtra("PRESENT_COUNT", report.getPresentCount());
         intent.putExtra("ABSENT_COUNT", report.getAbsentCount());
         intent.putStringArrayListExtra("ABSENT_STUDENTS", new ArrayList<>(report.getAbsentStudents()));
+        intent.putStringArrayListExtra("PRESENT_STUDENTS", new ArrayList<>(report.getPresentStudents()));
         startActivity(intent);
         
         Toast.makeText(this, "Attendance saved successfully!", Toast.LENGTH_SHORT).show();

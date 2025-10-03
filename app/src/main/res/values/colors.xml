@@ -52,4 +52,14 @@
     <color name="card_elevated">#FFFFFF</color>
     <color name="divider_color">#E2E8F0</color>
     <color name="border_color">#CBD5E0</color>
+    
+    <!-- Report template colors -->
+    <color name="report_absent_light">#8B0000</color>
+    <color name="report_present_light">#008B8B</color>
+    <color name="report_absent_dark">#FF6B6B</color>
+    <color name="report_present_dark">#4ECDC4</color>
+    
+    <!-- Ripple overlay colors for P/A buttons -->
+    <color name="ripple_present">#3322C55E</color>
+    <color name="ripple_absent">#33E53E3E</color>
 </resources>

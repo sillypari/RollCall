@@ -6,6 +6,7 @@ public class AttendanceReport {
     private int presentCount;
     private int absentCount;
     private List<String> absentStudents;
+    private List<String> presentStudents;
 
     public AttendanceReport() {}
 
@@ -13,6 +14,13 @@ public class AttendanceReport {
         this.presentCount = presentCount;
         this.absentCount = absentCount;
         this.absentStudents = absentStudents;
+    }
+
+    public AttendanceReport(int presentCount, int absentCount, List<String> absentStudents, List<String> presentStudents) {
+        this.presentCount = presentCount;
+        this.absentCount = absentCount;
+        this.absentStudents = absentStudents;
+        this.presentStudents = presentStudents;
     }
 
     // Getters and Setters
@@ -38,6 +46,14 @@ public class AttendanceReport {
 
     public void setAbsentStudents(List<String> absentStudents) {
         this.absentStudents = absentStudents;
+    }
+
+    public List<String> getPresentStudents() {
+        return presentStudents;
+    }
+
+    public void setPresentStudents(List<String> presentStudents) {
+        this.presentStudents = presentStudents;
     }
 
     public int getTotalCount() {

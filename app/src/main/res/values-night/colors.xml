@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Report template colors - Light theme -->
+    <color name="report_absent_light">#8B0000</color>
+    <color name="report_present_light">#008B8B</color>
+    
+    <!-- Report template colors - Dark theme -->
+    <color name="report_absent_dark">#FF6B6B</color>
+    <color name="report_present_dark">#4ECDC4</color>
+</resources>

@@ -1,17 +1,22 @@
 package com.simpleattendance;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+// removed SwitchCompat; using ImageButton for theme toggle
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.widget.LinearLayout;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -19,25 +24,37 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView classesRecyclerView;
     private LinearLayout addClassButton;
     private ImageView historyButton;
+    private ImageButton settingsButton;
+    // Theme toggle temporarily removed
     private ClassAdapter classAdapter;
     private DatabaseHelper databaseHelper;
+    private SharedPreferences prefs;
+    private List<ClassModel> allClasses;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Apply saved theme before calling super.onCreate()
+        prefs = getSharedPreferences(SettingsActivity.PREFS_NAME, MODE_PRIVATE);
+        int themeMode = prefs.getInt(SettingsActivity.THEME_KEY, SettingsActivity.THEME_SYSTEM);
+        applyTheme(themeMode);
+        
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         initViews();
         setupRecyclerView();
         loadClasses();
-        setupClickListeners();
+    setupClickListeners();
+    // setupThemeToggle(); // removed for now
     }
 
     private void initViews() {
         classesRecyclerView = findViewById(R.id.classesRecyclerView);
         addClassButton = findViewById(R.id.addClassButton);
         historyButton = findViewById(R.id.historyButton);
-        databaseHelper = new DatabaseHelper(this);
+        settingsButton = findViewById(R.id.settingsButton);
+        // themeToggleButton = findViewById(R.id.themeToggleButton);
+    databaseHelper = new DatabaseHelper(this);
     }
 
     private void setupRecyclerView() {
@@ -45,8 +62,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadClasses() {
-        List<ClassModel> classList = databaseHelper.getAllClasses();
-        classAdapter = new ClassAdapter(classList, new ClassAdapter.OnClassClickListener() {
+        allClasses = databaseHelper.getAllClasses();
+        classAdapter = new ClassAdapter(allClasses, new ClassAdapter.OnClassClickListener() {
             @Override
             public void onClassClick(ClassModel classModel) {
                 openAttendanceActivity(classModel);
@@ -77,6 +94,34 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
             });
+        }
+
+        if (settingsButton != null) {
+            settingsButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+                    startActivity(intent);
+                }
+            });
+        }
+
+    }
+
+    // Theme toggle temporarily removed
+
+    private void applyTheme(int themeMode) {
+        switch (themeMode) {
+            case SettingsActivity.THEME_LIGHT:
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                break;
+            case SettingsActivity.THEME_DARK:
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                break;
+            case SettingsActivity.THEME_SYSTEM:
+            default:
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+                break;
         }
     }
 
@@ -150,4 +195,6 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Error deleting class: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
+
+    // Search removed from main page; simple header text remains.
 }

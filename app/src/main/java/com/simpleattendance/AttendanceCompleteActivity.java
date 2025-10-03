@@ -25,6 +25,7 @@ public class AttendanceCompleteActivity extends AppCompatActivity {
     private int presentCount;
     private int absentCount;
     private java.util.ArrayList<String> absentStudents;
+    private java.util.ArrayList<String> presentStudents;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +43,7 @@ public class AttendanceCompleteActivity extends AppCompatActivity {
         presentCount = getIntent().getIntExtra("PRESENT_COUNT", 0);
         absentCount = getIntent().getIntExtra("ABSENT_COUNT", 0);
         absentStudents = getIntent().getStringArrayListExtra("ABSENT_STUDENTS");
+        presentStudents = getIntent().getStringArrayListExtra("PRESENT_STUDENTS");
     }
 
     private void initViews() {
@@ -121,6 +123,7 @@ public class AttendanceCompleteActivity extends AppCompatActivity {
         intent.putExtra("PRESENT_COUNT", presentCount);
         intent.putExtra("ABSENT_COUNT", absentCount);
         intent.putStringArrayListExtra("ABSENT_STUDENTS", absentStudents);
+        intent.putStringArrayListExtra("PRESENT_STUDENTS", presentStudents);
         startActivity(intent);
         finish();
     }

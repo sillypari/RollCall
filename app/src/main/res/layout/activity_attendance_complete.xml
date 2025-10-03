@@ -22,7 +22,7 @@
             android:layout_width="120dp"
             android:layout_height="120dp"
             app:cardCornerRadius="60dp"
-            app:cardElevation="8dp"
+            app:cardElevation="0dp"
             app:cardBackgroundColor="#22C55E"
             android:layout_marginBottom="24dp">
 
@@ -64,49 +64,54 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:gravity="center"
         android:layout_marginHorizontal="16dp">
 
         <!-- View Report Button -->
         <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="2dp"
+            app:cardCornerRadius="50dp"
+            app:cardElevation="0dp"
             app:cardBackgroundColor="#22C55E"
             android:layout_marginBottom="16dp">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/viewReportButton"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="View Report"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="@android:color/white"
                 android:backgroundTint="#22C55E"
-                app:cornerRadius="12dp"
+                android:paddingHorizontal="48dp"
+                android:paddingVertical="12dp"
+                app:cornerRadius="50dp"
                 style="?android:attr/borderlessButtonStyle" />
 
         </androidx.cardview.widget.CardView>
 
         <!-- Save and Back to Home Button -->
         <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="2dp"
+            app:cardCornerRadius="50dp"
+            app:cardElevation="0dp"
             app:cardBackgroundColor="@android:color/white">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/backToHomeButton"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="Save and Back to Home"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="#22C55E"
                 android:backgroundTint="@android:color/white"
-                app:cornerRadius="12dp"
+                android:paddingHorizontal="48dp"
+                android:paddingVertical="12dp"
+                app:cornerRadius="50dp"
                 style="?android:attr/borderlessButtonStyle" />
 
         </androidx.cardview.widget.CardView>
