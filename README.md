@@ -4,38 +4,38 @@ A simple, offline-first Android attendance management application designed for t
 
 ## Features
 
-### 📚 Class Management
+###  Class Management
 - Create and manage multiple classes (Branch, Semester, Section)
 - Import student lists via CSV files
 - Support for roll numbers and names
 
-### 👥 Student Management
+### Student Management
 - CSV import with flexible formats:
   - `Roll Number, Student Name`
   - `Student Name` only
 - Automatic header detection and parsing
 - Manual student entry capability
 
-### ✅ Attendance Taking
+### Attendance Taking
 - Simple Present/Absent (P/A) interface
 - Large, color-coded buttons for easy marking
 - Forward/backward navigation for corrections
 - Real-time student counter (current/total)
 - Subject selection for each session
 
-### 📊 Sorting & Organization
+###  Sorting & Organization
 - Toggle between CSV order and alphabetical sorting
 - Maintain original import order when needed
 - Easy navigation through student lists
 
-### 📈 Report Generation
+###  Report Generation
 - Comprehensive attendance reports
 - Present/Absent counts and percentages
 - List of absent students
 - Date and time stamps
 - Easy sharing via email, messaging, or other apps
 
-### 💾 Offline-First Design
+###  Offline-First Design
 - Complete SQLite database storage
 - No internet connection required
 - All data stored locally on device
