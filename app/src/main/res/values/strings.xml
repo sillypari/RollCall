@@ -1,0 +1,171 @@
+<resources>
+    <string name="app_name">Pesky</string>
+    <string name="app_description">Secure Offline Password Manager</string>
+    
+    <!-- Login Screen -->
+    <string name="open_database">Open Database</string>
+    <string name="create_new_database">Create New Database</string>
+    <string name="master_password">Master Password</string>
+    <string name="enter_master_password">Enter your master password</string>
+    <string name="unlock">Unlock</string>
+    <string name="remember_database_location">Remember database location</string>
+    <string name="wrong_password">Incorrect master password</string>
+    <string name="attempts_remaining">%d attempts remaining</string>
+    <string name="vault_locked">Vault locked due to too many failed attempts</string>
+    
+    <!-- Create Database Screen -->
+    <string name="database_name">Database Name</string>
+    <string name="default_database_name">My Passwords</string>
+    <string name="save_location">Save Location</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="passwords_dont_match">Passwords don\'t match</string>
+    <string name="password_warning">Your master password cannot be recovered. Store it securely.</string>
+    <string name="create">Create</string>
+    <string name="cancel">Cancel</string>
+    
+    <!-- Vault Screen -->
+    <string name="all_items">All Items</string>
+    <string name="favorites">Favorites</string>
+    <string name="recently_used">Recently Used</string>
+    <string name="categories">Categories</string>
+    <string name="add_category">Add Category</string>
+    <string name="weak_passwords">Weak Passwords</string>
+    <string name="duplicate_passwords">Duplicate Passwords</string>
+    <string name="expiring_soon">Expiring Soon</string>
+    <string name="secure_notes">Secure Notes</string>
+    <string name="trash">Trash</string>
+    <string name="search_entries">Search entries…</string>
+    <string name="no_entries">No password entries yet</string>
+    <string name="add_first_entry">Add your first password entry</string>
+    
+    <!-- Entry Detail -->
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="website">Website</string>
+    <string name="notes">Notes</string>
+    <string name="custom_fields">Custom Fields</string>
+    <string name="tags">Tags</string>
+    <string name="password_history">Password History</string>
+    <string name="created">Created</string>
+    <string name="modified">Modified</string>
+    <string name="last_accessed">Last accessed</string>
+    <string name="delete_entry">Delete Entry</string>
+    <string name="edit">Edit</string>
+    <string name="copy">Copy</string>
+    <string name="show">Show</string>
+    <string name="hide">Hide</string>
+    <string name="open_url">Open</string>
+    <string name="copied">Copied!</string>
+    
+    <!-- Add/Edit Entry -->
+    <string name="add_entry">Add Entry</string>
+    <string name="edit_entry">Edit Entry</string>
+    <string name="title">Title</string>
+    <string name="title_hint">e.g., Gmail Account</string>
+    <string name="username_hint">email or username</string>
+    <string name="url_hint">https://example.com</string>
+    <string name="category">Category</string>
+    <string name="add_field">Add Field</string>
+    <string name="field_key">Field Name</string>
+    <string name="field_value">Field Value</string>
+    <string name="protected_field">Protected</string>
+    <string name="save">Save</string>
+    <string name="title_required">Title is required</string>
+    
+    <!-- Categories -->
+    <string name="category_social_media">Social Media</string>
+    <string name="category_banking">Banking</string>
+    <string name="category_email">Email</string>
+    <string name="category_shopping">Shopping</string>
+    <string name="category_work">Work</string>
+    <string name="category_other">Other</string>
+    
+    <!-- Password Generator -->
+    <string name="password_generator">Password Generator</string>
+    <string name="regenerate">Regenerate</string>
+    <string name="length">Length</string>
+    <string name="uppercase">Uppercase (A-Z)</string>
+    <string name="lowercase">Lowercase (a-z)</string>
+    <string name="numbers">Numbers (0-9)</string>
+    <string name="symbols">Symbols (!@#$%^&amp;*)</string>
+    <string name="exclude_ambiguous">Exclude Ambiguous (0,O,l,1)</string>
+    <string name="use_password">Use Password</string>
+    
+    <!-- Password Strength -->
+    <string name="strength_very_weak">Very Weak</string>
+    <string name="strength_weak">Weak</string>
+    <string name="strength_fair">Fair</string>
+    <string name="strength_strong">Strong</string>
+    <string name="strength_very_strong">Very Strong</string>
+    
+    <!-- Settings -->
+    <string name="settings">Settings</string>
+    <string name="security">Security</string>
+    <string name="database">Database</string>
+    <string name="appearance">Appearance</string>
+    <string name="advanced">Advanced</string>
+    <string name="about">About</string>
+    <string name="auto_lock_timeout">Auto-lock Timeout</string>
+    <string name="clipboard_clear_timeout">Clipboard Clear Timeout</string>
+    <string name="failed_attempts_limit">Failed Attempts Limit</string>
+    <string name="change_master_password">Change Master Password</string>
+    <string name="enable_biometric">Enable Biometric Unlock</string>
+    <string name="require_password_sensitive">Require Password for Sensitive Actions</string>
+    <string name="database_location">Database Location</string>
+    <string name="database_size">Database Size</string>
+    <string name="auto_backup">Auto Backup</string>
+    <string name="auto_backup_interval">Backup Interval</string>
+    <string name="backup_location">Backup Location</string>
+    <string name="manual_backup">Create Manual Backup</string>
+    <string name="export_database">Export Database</string>
+    <string name="import_entries">Import Entries</string>
+    <string name="theme">Theme</string>
+    <string name="font_size">Font Size</string>
+    <string name="compact_view">Compact View</string>
+    <string name="show_favicons">Show Favicons</string>
+    <string name="encryption_algorithm">Encryption Algorithm</string>
+    <string name="key_derivation">Key Derivation</string>
+    <string name="integrity_check">Database Integrity Check</string>
+    <string name="clear_recent_files">Clear Recent Files</string>
+    <string name="app_version">App Version</string>
+    <string name="developer">Developer</string>
+    <string name="open_source_licenses">Open Source Licenses</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    
+    <!-- Backup Manager -->
+    <string name="backup_manager">Backup Manager</string>
+    <string name="next_backup">Next Backup</string>
+    <string name="available_backups">Available Backups</string>
+    <string name="restore">Restore</string>
+    <string name="delete">Delete</string>
+    <string name="backup_created">Backup created successfully</string>
+    <string name="restore_warning">This will replace your current database. Are you sure?</string>
+    <string name="delete_backup_confirm">Delete this backup?</string>
+    
+    <!-- Biometric -->
+    <string name="biometric_title">Unlock Pesky</string>
+    <string name="biometric_subtitle">Use fingerprint to unlock vault</string>
+    
+    <!-- Dialogs -->
+    <string name="confirm">Confirm</string>
+    <string name="delete_confirm">Are you sure you want to delete this entry?</string>
+    <string name="lock_vault">Lock Vault</string>
+    <string name="lock_vault_confirm">Lock the vault now?</string>
+    
+    <!-- Time -->
+    <string name="just_now">Just now</string>
+    <string name="minutes_ago">%d minutes ago</string>
+    <string name="hours_ago">%d hours ago</string>
+    <string name="days_ago">%d days ago</string>
+    <string name="never">Never</string>
+    
+    <!-- Intervals -->
+    <string name="seconds_30">30 seconds</string>
+    <string name="minute_1">1 minute</string>
+    <string name="minutes_2">2 minutes</string>
+    <string name="minutes_5">5 minutes</string>
+    <string name="minutes_10">10 minutes</string>
+    <string name="daily">Daily</string>
+    <string name="weekly">Weekly</string>
+    <string name="monthly">Monthly</string>
+</resources>

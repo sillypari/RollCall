@@ -1,0 +1,37 @@
+# Gradle files
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Local configuration file
+local.properties
+
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# Android Studio
+*.apk
+*.aab
+*.ap_
+*.dex
+
+# Generated files
+gen/
+out/
+
+# Captures
+captures/
+
+# Keystore files
+*.jks
+*.keystore
+
+# Mac OS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Log files
+*.log
