@@ -18,23 +18,23 @@
 
 ---
 
-## 🔐 About Pesky
+## About Pesky
 
 Pesky is a **completely offline**, privacy-focused password manager built with modern Android technologies. Your passwords never leave your device – no cloud sync, no servers, no tracking. Just you and your encrypted vault.
 
 ### Why Pesky?
 
-- **🔒 100% Offline** - Your data stays on your device. Period.
-- **🛡️ Military-Grade Encryption** - AES-256 encryption with Argon2 key derivation
-- **🎨 Beautiful UI** - Clean, modern Material 3 design with smooth animations
-- **⚡ Fast & Lightweight** - No bloat, no unnecessary permissions
-- **🆓 Free & Open Source** - No ads, no subscriptions, no data collection
+- **100% Offline** - Your data stays on your device. Period.
+- **Military-Grade Encryption** - AES-256 encryption with Argon2 key derivation
+- **Beautiful UI** - Clean, modern Material 3 design with smooth animations
+- **Fast & Lightweight** - No bloat, no unnecessary permissions
+- **Free & Open Source** - No ads, no subscriptions, no data collection
 
 ---
 
-## ✨ Features
+## Features
 
-### 🔑 Password Management
+### Password Management
 - **Secure Vault** - Store unlimited passwords with strong encryption
 - **Smart Search** - Instantly find entries by typing keywords like `weak`, `duplicate`, `expiring`, `favorites`, `recent`
 - **Groups/Categories** - Organize passwords into custom groups (Social, Banking, Work, etc.)
@@ -42,7 +42,7 @@ Pesky is a **completely offline**, privacy-focused password manager built with m
 - **Notes** - Add secure notes to any entry
 - **Password History** - Track previous passwords for each entry
 
-### 🔐 Security
+### Security
 - **AES-256 Encryption** - Industry-standard encryption for your vault
 - **Argon2 Key Derivation** - Memory-hard function resistant to brute-force attacks
 - **Master Password** - Single strong password protects everything
@@ -52,7 +52,7 @@ Pesky is a **completely offline**, privacy-focused password manager built with m
 - **Screenshot Protection** - Prevent screenshots in sensitive screens
 - **Clipboard Auto-Clear** - Automatically clears copied passwords (configurable: 10-90 seconds)
 
-### 🎲 Password Generator
+### Password Generator
 - **Customizable Length** - Generate passwords from 4 to 64 characters
 - **Character Options** - Include/exclude:
   - Uppercase letters (A-Z)
@@ -62,19 +62,19 @@ Pesky is a **completely offline**, privacy-focused password manager built with m
 - **Easy-to-Read Mode** - Exclude ambiguous characters (0, O, l, 1, etc.)
 - **Password Strength Meter** - Real-time strength analysis
 
-### 📊 Password Health Analysis
+### Password Health Analysis
 - **Strength Analysis** - Visual strength indicator for each password
 - **Weak Password Detection** - Identify passwords that need improvement
 - **Duplicate Detection** - Find reused passwords across entries
 - **Expiry Tracking** - Set and monitor password expiration dates
 - **Security Dashboard** - Overview of your vault's security health
 
-### 💾 Backup & Restore
+### Backup & Restore
 - **Encrypted Backups** - Export your vault as an encrypted `.pesky` file
 - **Easy Restore** - Import backups with your master password
 - **No Cloud Required** - Store backups wherever you want (USB, SD card, etc.)
 
-### 🎨 User Experience
+### User Experience
 - **Material 3 Design** - Modern, clean interface following Google's design guidelines
 - **Animated Icons** - Smooth, delightful animations throughout the app
 - **Dark Theme** - Easy on the eyes, optimized for AMOLED screens
@@ -83,7 +83,7 @@ Pesky is a **completely offline**, privacy-focused password manager built with m
 
 ---
 
-## 🛠️ Technical Details
+## Technical Details
 
 ### Built With
 - **Language**: Kotlin 100%
@@ -97,13 +97,13 @@ Pesky is a **completely offline**, privacy-focused password manager built with m
 ### Encryption Stack
 ```
 Master Password
-      ↓
+      |
    Argon2id (memory-hard KDF)
-      ↓
+      |
    256-bit Key
-      ↓
+      |
    AES-256-GCM Encryption
-      ↓
+      |
    Encrypted .pesky Database
 ```
 
@@ -117,13 +117,13 @@ Master Password
 
 ---
 
-## 📱 Screenshots
+## Screenshots
 
 *Coming soon*
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Requirements
 - Android 8.0 (API 26) or higher
@@ -151,7 +151,7 @@ Download the latest release from the [Releases](https://github.com/sillypari/Pes
 
 ---
 
-## 🔒 Security Best Practices
+## Security Best Practices
 
 1. **Use a Strong Master Password** - At least 12 characters with mixed case, numbers, and symbols
 2. **Enable Biometric Unlock** - For convenience without compromising security
@@ -161,7 +161,7 @@ Download the latest release from the [Releases](https://github.com/sillypari/Pes
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
@@ -173,13 +173,13 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - [Bouncy Castle](https://www.bouncycastle.org/) - Cryptography library
 - [Jetpack Compose](https://developer.android.com/jetpack/compose) - Modern UI toolkit
@@ -187,7 +187,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-## 📞 Support
+## Support
 
 If you encounter any issues or have suggestions:
 - Open an [Issue](https://github.com/sillypari/Pesky/issues)
@@ -196,7 +196,7 @@ If you encounter any issues or have suggestions:
 ---
 
 <p align="center">
-  <strong>Made with ❤️ for privacy</strong>
+  <strong>Made with care for privacy</strong>
 </p>
 
 <p align="center">
