@@ -119,7 +119,7 @@ Master Password
 
 ## Screenshots
 
-*Coming soon*
+Now You can enable or disable screenshots (settings > security)
 
 ---
 
