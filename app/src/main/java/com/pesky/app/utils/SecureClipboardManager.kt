@@ -6,16 +6,21 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.pesky.app.data.preferences.peskyDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
  * Manages secure clipboard operations with auto-clear functionality.
+ * Uses WorkManager to ensure clipboard is cleared even if app is closed.
  */
 @Singleton
 class SecureClipboardManager @Inject constructor(
@@ -27,6 +32,7 @@ class SecureClipboardManager @Inject constructor(
     
     private val handler = Handler(Looper.getMainLooper())
     private var clearRunnable: Runnable? = null
+    private val workManager = WorkManager.getInstance(context)
     
     companion object {
         const val DEFAULT_TIMEOUT_SECONDS = 30
@@ -50,6 +56,7 @@ class SecureClipboardManager @Inject constructor(
     
     /**
      * Copies text to clipboard with automatic clearing after timeout.
+     * Uses WorkManager for reliable background clearing even if app is closed.
      * 
      * @param text The text to copy
      * @param label A label for the clipboard content (shown in some Android versions)
@@ -62,8 +69,9 @@ class SecureClipboardManager @Inject constructor(
         timeoutSeconds: Int? = null,
         isSensitive: Boolean = true
     ) {
-        // Cancel any pending clear operation
+        // Cancel any pending clear operations
         clearRunnable?.let { handler.removeCallbacks(it) }
+        workManager.cancelUniqueWork(ClipboardClearWorker.WORK_NAME)
         
         // Copy to clipboard
         val clip = ClipData.newPlainText(label, text)
@@ -80,10 +88,22 @@ class SecureClipboardManager @Inject constructor(
         // Get timeout from settings if not specified
         val actualTimeout = timeoutSeconds ?: getTimeoutFromSettings()
         
-        // Schedule clear
+        // Schedule clear using both Handler (for in-app) and WorkManager (for background)
         if (actualTimeout > 0) {
+            // In-app clear (immediate if app is open)
             clearRunnable = Runnable { clearClipboard() }
             handler.postDelayed(clearRunnable!!, actualTimeout * 1000L)
+            
+            // Background clear using WorkManager (works even if app is killed)
+            val clearWorkRequest = OneTimeWorkRequestBuilder<ClipboardClearWorker>()
+                .setInitialDelay(actualTimeout.toLong(), TimeUnit.SECONDS)
+                .build()
+            
+            workManager.enqueueUniqueWork(
+                ClipboardClearWorker.WORK_NAME,
+                ExistingWorkPolicy.REPLACE,
+                clearWorkRequest
+            )
         }
     }
     
@@ -93,6 +113,7 @@ class SecureClipboardManager @Inject constructor(
     fun clearClipboard() {
         clearRunnable?.let { handler.removeCallbacks(it) }
         clearRunnable = null
+        workManager.cancelUniqueWork(ClipboardClearWorker.WORK_NAME)
         
         // Clear clipboard by setting empty content
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
