@@ -87,6 +87,14 @@ object PeskyColors {
     val SuccessSubtle = Color(0xFF30D158).copy(alpha = 0.15f)
     val Info = Color(0xFF0A84FF)
     
+    // Accent shortcuts for easy access
+    val AccentRed = Error
+    val AccentGreen = Success
+    val AccentOrange = Warning
+    
+    // Text on accent colors
+    val TextOnAccent = Color.White
+    
     // ═══════════════════════════════════════════════════════════
     // UI ELEMENTS
     // ═══════════════════════════════════════════════════════════

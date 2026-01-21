@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pesky.app.data.models.*
+import com.pesky.app.data.preferences.AppPreferences
 import com.pesky.app.data.repository.VaultRepository
 import com.pesky.app.data.repository.VaultState
 import com.pesky.app.ui.components.GroupItem
@@ -19,7 +20,8 @@ import javax.inject.Inject
 class VaultViewModel @Inject constructor(
     private val repository: VaultRepository,
     private val passwordStrengthAnalyzer: PasswordStrengthAnalyzer,
-    private val clipboardManager: SecureClipboardManager
+    private val clipboardManager: SecureClipboardManager,
+    private val appPreferences: AppPreferences
 ) : ViewModel() {
     
     // UI State
@@ -87,6 +89,8 @@ class VaultViewModel @Inject constructor(
             
             result.fold(
                 onSuccess = {
+                    // Save to preferences that database was created
+                    appPreferences.onDatabaseCreated(name)
                     _uiState.update { it.copy(isLoading = false) }
                     _events.emit(VaultEvent.DatabaseCreated)
                 },
@@ -115,21 +119,6 @@ class VaultViewModel @Inject constructor(
     fun updateSearchQuery(query: String) {
         _uiState.update { it.copy(searchQuery = query) }
         updateEntriesList()
-    }
-    
-    /**
-     * Selects a sidebar item.
-     */
-    fun selectSidebarItem(item: SidebarItem) {
-        _uiState.update { it.copy(selectedSidebarItem = item) }
-        updateEntriesList()
-    }
-    
-    /**
-     * Toggles the sidebar drawer.
-     */
-    fun toggleDrawer() {
-        _uiState.update { it.copy(isDrawerOpen = !it.isDrawerOpen) }
     }
     
     /**
@@ -203,46 +192,59 @@ class VaultViewModel @Inject constructor(
     }
     
     /**
-     * Gets sidebar item counts.
+     * Creates a new group.
      */
-    fun getSidebarCounts(): Map<SidebarItem, Int> {
-        val db = repository.database.value ?: return emptyMap()
-        
-        return mapOf(
-            SidebarItem.AllItems to db.entries.size,
-            SidebarItem.Favorites to repository.getFavorites().size,
-            SidebarItem.RecentlyUsed to repository.getRecentlyUsed().size,
-            SidebarItem.WeakPasswords to repository.getWeakPasswordEntries().size,
-            SidebarItem.DuplicatePasswords to repository.getDuplicatePasswordEntries().size,
-            SidebarItem.ExpiringSoon to repository.getExpiringSoonEntries().size,
-            SidebarItem.SecureNotes to repository.getSecureNotes().size,
-            SidebarItem.Trash to db.deletedObjects.size
-        )
+    fun createGroup(name: String) {
+        viewModelScope.launch {
+            val group = Group(
+                uuid = java.util.UUID.randomUUID().toString(),
+                name = name
+            )
+            val result = repository.addGroup(group)
+            result.fold(
+                onSuccess = {
+                    updateEntriesList()
+                    _events.emit(VaultEvent.GroupCreated(name))
+                },
+                onFailure = { error ->
+                    _events.emit(VaultEvent.Error(error.message ?: "Failed to create group"))
+                }
+            )
+        }
+    }
+    
+    /**
+     * Sets the selected group for filtering.
+     */
+    fun selectGroup(groupUuid: String?) {
+        _uiState.update { it.copy(selectedGroupUuid = groupUuid) }
+        updateEntriesList()
     }
     
     private fun updateEntriesList() {
-        val query = _uiState.value.searchQuery
-        val sidebarItem = _uiState.value.selectedSidebarItem
+        val query = _uiState.value.searchQuery.trim().lowercase()
+        val selectedGroupUuid = _uiState.value.selectedGroupUuid
         
-        val entries = when {
-            query.isNotEmpty() -> repository.searchEntries(query)
-            else -> when (sidebarItem) {
-                SidebarItem.AllItems -> repository.getAllEntries()
-                SidebarItem.Favorites -> repository.getFavorites()
-                SidebarItem.RecentlyUsed -> repository.getRecentlyUsed()
-                SidebarItem.WeakPasswords -> repository.getWeakPasswordEntries()
-                SidebarItem.DuplicatePasswords -> repository.getDuplicatePasswordEntries()
-                SidebarItem.ExpiringSoon -> repository.getExpiringSoonEntries()
-                SidebarItem.SecureNotes -> repository.getSecureNotes()
-                SidebarItem.Trash -> emptyList() // TODO: Implement trash
-                is SidebarItem.Category -> repository.getEntriesForGroup(sidebarItem.uuid)
-            }
+        // Smart search: check for special keywords first
+        var entries = when {
+            query.isEmpty() -> repository.getAllEntries()
+            query in listOf("weak", "weak password", "weak passwords") -> repository.getWeakPasswordEntries()
+            query in listOf("duplicate", "duplicates", "duplicate password", "duplicate passwords", "reused") -> repository.getDuplicatePasswordEntries()
+            query in listOf("expiring", "expiring soon", "expires", "old") -> repository.getExpiringSoonEntries()
+            query in listOf("note", "notes", "secure note", "secure notes") -> repository.getSecureNotes()
+            query in listOf("favorite", "favorites", "starred", "star") -> repository.getFavorites()
+            query in listOf("recent", "recently used", "recent passwords") -> repository.getRecentlyUsed()
+            else -> repository.searchEntries(query)
+        }
+        
+        // Filter by selected group if one is selected (for Groups tab)
+        if (selectedGroupUuid != null) {
+            entries = entries.filter { it.groupUuid == selectedGroupUuid }
         }
         
         _uiState.update { 
             it.copy(
                 entries = entries,
-                sidebarCounts = getSidebarCounts(),
                 groups = getGroups()
             )
         }
@@ -258,9 +260,7 @@ data class VaultUiState(
     val remainingAttempts: Int = 5,
     val searchQuery: String = "",
     val entries: List<PasswordEntry> = emptyList(),
-    val selectedSidebarItem: SidebarItem = SidebarItem.AllItems,
-    val isDrawerOpen: Boolean = false,
-    val sidebarCounts: Map<SidebarItem, Int> = emptyMap(),
+    val selectedGroupUuid: String? = null,
     val groups: List<GroupItem> = emptyList()
 )
 
@@ -274,5 +274,6 @@ sealed class VaultEvent {
     object PasswordCopied : VaultEvent()
     object UsernameCopied : VaultEvent()
     object EntryDeleted : VaultEvent()
+    data class GroupCreated(val name: String) : VaultEvent()
     data class Error(val message: String) : VaultEvent()
 }

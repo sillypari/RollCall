@@ -1,5 +1,9 @@
 package com.pesky.app.ui.screens
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -10,7 +14,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.pesky.app.ui.components.CopyButton
@@ -29,6 +35,7 @@ fun PasswordGeneratorDialog(
     onDismiss: () -> Unit,
     onPasswordSelected: (String) -> Unit
 ) {
+    val context = LocalContext.current
     val generator = remember { PasswordGenerator() }
     val analyzer = remember { PasswordStrengthAnalyzer() }
     
@@ -85,9 +92,11 @@ fun PasswordGeneratorDialog(
                     }
                 }
                 
-                // Generated password display
+                // Generated password display - fixed height to prevent wobble
                 Card(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 72.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = PeskyColors.BackgroundPrimary
                     ),
@@ -105,7 +114,9 @@ fun PasswordGeneratorDialog(
                                 fontFamily = FontFamily.Monospace
                             ),
                             color = PeskyColors.TextPrimary,
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.weight(1f),
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis
                         )
                         
                         IconButton(
@@ -121,7 +132,12 @@ fun PasswordGeneratorDialog(
                         }
                         
                         CopyButton(
-                            onClick = { /* TODO: Copy and show feedback */ }
+                            onClick = {
+                                val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                                val clip = ClipData.newPlainText("Password", generatedPassword)
+                                clipboard.setPrimaryClip(clip)
+                                Toast.makeText(context, "Password copied!", Toast.LENGTH_SHORT).show()
+                            }
                         )
                     }
                 }

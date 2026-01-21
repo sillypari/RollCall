@@ -56,6 +56,17 @@ class XMLParser @Inject constructor() {
             rootElement?.let { rootEl ->
                 parseGroups(rootEl, null, groups, entries)
                 
+                // Parse entries directly in Root (entries without a group)
+                val directEntryElements = rootEl.getElementsByTagName("Entry")
+                for (i in 0 until directEntryElements.length) {
+                    val entryNode = directEntryElements.item(i)
+                    // Only parse entries that are direct children of Root (not inside a Group)
+                    if (entryNode.nodeType == Node.ELEMENT_NODE && entryNode.parentNode == rootEl) {
+                        val entry = parseEntry(entryNode as Element, null)
+                        entries.add(entry)
+                    }
+                }
+                
                 // Parse deleted objects
                 rootEl.getChildElement("DeletedObjects")?.let { deletedEl ->
                     parseDeletedObjects(deletedEl, deletedObjects)

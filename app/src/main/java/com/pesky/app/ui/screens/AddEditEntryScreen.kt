@@ -1,5 +1,9 @@
 package com.pesky.app.ui.screens
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -11,6 +15,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -31,13 +36,14 @@ import kotlinx.coroutines.flow.collectLatest
 fun AddEditEntryScreen(
     entryUuid: String?, // null for new entry
     onNavigateBack: () -> Unit,
-    onOpenGenerator: () -> Unit,
+    onOpenGenerator: () -> Unit = {}, // Keep for compatibility, but we handle internally now
     viewModel: EntryViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     
     var showCustomFieldDialog by remember { mutableStateOf(false) }
+    var showPasswordGenerator by remember { mutableStateOf(false) }
     
     val isEditing = entryUuid != null
     
@@ -59,6 +65,17 @@ fun AddEditEntryScreen(
                 else -> {}
             }
         }
+    }
+    
+    // Password generator dialog
+    if (showPasswordGenerator) {
+        PasswordGeneratorDialog(
+            onDismiss = { showPasswordGenerator = false },
+            onPasswordSelected = { password ->
+                viewModel.updatePassword(password)
+                showPasswordGenerator = false
+            }
+        )
     }
     
     // Custom field dialog
@@ -118,6 +135,7 @@ fun AddEditEntryScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
+                .imePadding()
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -169,7 +187,7 @@ fun AddEditEntryScreen(
                                 "Toggle visibility"
                             )
                         }
-                        IconButton(onClick = onOpenGenerator) {
+                        IconButton(onClick = { showPasswordGenerator = true }) {
                             Icon(
                                 Icons.Filled.AutoAwesome,
                                 "Generate password",
@@ -223,101 +241,195 @@ fun AddEditEntryScreen(
                 colors = textFieldColors()
             )
             
-            // Custom fields
-            if (uiState.customFields.isNotEmpty()) {
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = PeskyColors.CardBackground)
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(
-                            text = "Custom Fields",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = PeskyColors.TextSecondary
-                        )
-                        
-                        Spacer(modifier = Modifier.height(8.dp))
-                        
-                        uiState.customFields.forEachIndexed { index, field ->
-                            CustomFieldRow(
-                                label = field.key,
-                                value = field.value,
-                                isProtected = field.isProtected,
-                                onRemove = { viewModel.removeCustomField(index) }
-                            )
-                            if (index < uiState.customFields.lastIndex) {
-                                Divider(color = PeskyColors.Divider)
-                            }
-                        }
-                    }
-                }
-            }
+            // Advanced Options (collapsed by default)
+            var advancedExpanded by remember { mutableStateOf(false) }
             
-            // Add custom field button
-            OutlinedButton(
-                onClick = { showCustomFieldDialog = true },
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.outlinedButtonColors(
-                    contentColor = PeskyColors.AccentBlue
-                )
-            ) {
-                Icon(Icons.Filled.Add, null, modifier = Modifier.size(20.dp))
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Add Custom Field")
-            }
-            
-            // Tags
-            OutlinedTextField(
-                value = uiState.tags.joinToString(", "),
-                onValueChange = { 
-                    viewModel.updateTags(it.split(",").map { tag -> tag.trim() }.filter { tag -> tag.isNotEmpty() })
-                },
-                label = { Text("Tags") },
-                placeholder = { Text("Separate with commas") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                leadingIcon = {
-                    Icon(Icons.Filled.Tag, null, tint = PeskyColors.IconSecondary)
-                },
-                colors = textFieldColors()
-            )
-            
-            // Favorite toggle
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(containerColor = PeskyColors.CardBackground)
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = if (uiState.isFavorite) Icons.Filled.Star else Icons.Filled.StarOutline,
-                        contentDescription = null,
-                        tint = if (uiState.isFavorite) PeskyColors.Warning else PeskyColors.IconSecondary
-                    )
-                    
-                    Spacer(modifier = Modifier.width(12.dp))
-                    
-                    Text(
-                        text = "Mark as favorite",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = PeskyColors.TextPrimary,
-                        modifier = Modifier.weight(1f)
-                    )
-                    
-                    Switch(
-                        checked = uiState.isFavorite,
-                        onCheckedChange = { viewModel.toggleFavorite() },
-                        colors = SwitchDefaults.colors(
-                            checkedTrackColor = PeskyColors.AccentBlue
+                Column {
+                    // Header - clickable to expand/collapse
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { advancedExpanded = !advancedExpanded }
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Settings,
+                            contentDescription = null,
+                            tint = PeskyColors.IconSecondary
                         )
-                    )
+                        
+                        Spacer(modifier = Modifier.width(12.dp))
+                        
+                        Text(
+                            text = "Advanced Options",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = PeskyColors.TextPrimary,
+                            modifier = Modifier.weight(1f)
+                        )
+                        
+                        Icon(
+                            imageVector = Icons.Filled.ExpandMore,
+                            contentDescription = if (advancedExpanded) "Collapse" else "Expand",
+                            tint = PeskyColors.IconSecondary,
+                            modifier = Modifier.rotate(if (advancedExpanded) 180f else 0f)
+                        )
+                    }
+                    
+                    // Expandable content
+                    AnimatedVisibility(
+                        visible = advancedExpanded,
+                        enter = expandVertically(),
+                        exit = shrinkVertically()
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Divider(color = PeskyColors.Divider)
+                            
+                            // Favorite toggle
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = if (uiState.isFavorite) Icons.Filled.Star else Icons.Filled.StarOutline,
+                                    contentDescription = null,
+                                    tint = if (uiState.isFavorite) PeskyColors.Warning else PeskyColors.IconSecondary
+                                )
+                                
+                                Spacer(modifier = Modifier.width(12.dp))
+                                
+                                Text(
+                                    text = "Mark as favorite",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = PeskyColors.TextPrimary,
+                                    modifier = Modifier.weight(1f)
+                                )
+                                
+                                Switch(
+                                    checked = uiState.isFavorite,
+                                    onCheckedChange = { viewModel.toggleFavorite() },
+                                    colors = SwitchDefaults.colors(
+                                        checkedTrackColor = PeskyColors.AccentBlue
+                                    )
+                                )
+                            }
+                            
+                            Divider(color = PeskyColors.Divider)
+                            
+                            // Group selector
+                            val availableGroups = remember { viewModel.getAvailableGroups() }
+                            var groupExpanded by remember { mutableStateOf(false) }
+                            val selectedGroupName = availableGroups.find { it.first == uiState.selectedGroupUuid }?.second ?: "No Category"
+                            
+                            ExposedDropdownMenuBox(
+                                expanded = groupExpanded,
+                                onExpandedChange = { groupExpanded = it }
+                            ) {
+                                OutlinedTextField(
+                                    value = selectedGroupName,
+                                    onValueChange = { },
+                                    readOnly = true,
+                                    label = { Text("Group") },
+                                    leadingIcon = {
+                                        Icon(Icons.Filled.Folder, null, tint = PeskyColors.IconSecondary)
+                                    },
+                                    trailingIcon = {
+                                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = groupExpanded)
+                                    },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .menuAnchor(),
+                                    colors = textFieldColors()
+                                )
+                                
+                                ExposedDropdownMenu(
+                                    expanded = groupExpanded,
+                                    onDismissRequest = { groupExpanded = false }
+                                ) {
+                                    availableGroups.forEach { (uuid, name) ->
+                                        DropdownMenuItem(
+                                            text = { Text(name) },
+                                            onClick = {
+                                                viewModel.updateSelectedGroup(uuid)
+                                                groupExpanded = false
+                                            },
+                                            leadingIcon = {
+                                                if (uuid == null) {
+                                                    Icon(Icons.Filled.FolderOff, null, modifier = Modifier.size(20.dp))
+                                                } else {
+                                                    Icon(Icons.Filled.Folder, null, modifier = Modifier.size(20.dp))
+                                                }
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+                            
+                            Divider(color = PeskyColors.Divider)
+                            
+                            // Tags
+                            OutlinedTextField(
+                                value = uiState.tags.joinToString(", "),
+                                onValueChange = { 
+                                    viewModel.updateTags(it.split(",").map { tag -> tag.trim() }.filter { tag -> tag.isNotEmpty() })
+                                },
+                                label = { Text("Tags") },
+                                placeholder = { Text("Separate with commas") },
+                                modifier = Modifier.fillMaxWidth(),
+                                singleLine = true,
+                                leadingIcon = {
+                                    Icon(Icons.Filled.Tag, null, tint = PeskyColors.IconSecondary)
+                                },
+                                colors = textFieldColors()
+                            )
+                            
+                            // Custom fields section
+                            if (uiState.customFields.isNotEmpty()) {
+                                Text(
+                                    text = "Custom Fields",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = PeskyColors.TextSecondary
+                                )
+                                
+                                uiState.customFields.forEachIndexed { index, field ->
+                                    CustomFieldRow(
+                                        label = field.key,
+                                        value = field.value,
+                                        isProtected = field.isProtected,
+                                        onRemove = { viewModel.removeCustomField(index) }
+                                    )
+                                    if (index < uiState.customFields.lastIndex) {
+                                        Divider(color = PeskyColors.Divider)
+                                    }
+                                }
+                            }
+                            
+                            // Add custom field button
+                            OutlinedButton(
+                                onClick = { showCustomFieldDialog = true },
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = ButtonDefaults.outlinedButtonColors(
+                                    contentColor = PeskyColors.AccentBlue
+                                )
+                            ) {
+                                Icon(Icons.Filled.Add, null, modifier = Modifier.size(20.dp))
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text("Add Custom Field")
+                            }
+                            
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
+                    }
                 }
             }
-            
+
             Spacer(modifier = Modifier.height(32.dp))
         }
     }

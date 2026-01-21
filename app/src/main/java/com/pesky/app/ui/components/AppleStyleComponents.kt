@@ -165,7 +165,8 @@ fun EmptyState(
         Text(
             text = title,
             style = MaterialTheme.typography.headlineMedium,
-            color = PeskyColors.TextSecondary
+            color = PeskyColors.TextSecondary,
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center
         )
         
         Spacer(modifier = Modifier.height(8.dp))
@@ -173,7 +174,9 @@ fun EmptyState(
         Text(
             text = subtitle,
             style = MaterialTheme.typography.bodyMedium,
-            color = PeskyColors.TextTertiary
+            color = PeskyColors.TextTertiary,
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+            modifier = Modifier.padding(horizontal = 32.dp)
         )
         
         if (action != null) {

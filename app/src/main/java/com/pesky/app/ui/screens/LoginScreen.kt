@@ -1,5 +1,6 @@
 package com.pesky.app.ui.screens
 
+import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -8,9 +9,11 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -54,11 +57,23 @@ fun LoginScreen(
     var rememberLocation by remember { mutableStateOf(true) }
     var showError by remember { mutableStateOf(false) }
     
-    // File picker
+    // File picker with persistable permission
+    val context = androidx.compose.ui.platform.LocalContext.current
     val filePicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument()
     ) { uri ->
-        uri?.let { selectedUri = it }
+        uri?.let { 
+            // Take persistable permission for the URI
+            try {
+                context.contentResolver.takePersistableUriPermission(
+                    it,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                )
+            } catch (e: Exception) {
+                // Permission might not be grantable, continue anyway
+            }
+            selectedUri = it 
+        }
     }
     
     // Shake animation for error
@@ -95,15 +110,37 @@ fun LoginScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(PeskyColors.BackgroundPrimary)
+            .imePadding() // Add padding when keyboard shows
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState()) // Make scrollable
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            // Logo
+            // Logo with animation
+            val infiniteTransition = rememberInfiniteTransition(label = "lock_animation")
+            val lockScale by infiniteTransition.animateFloat(
+                initialValue = 1f,
+                targetValue = 1.1f,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(1500, easing = FastOutSlowInEasing),
+                    repeatMode = RepeatMode.Reverse
+                ),
+                label = "lock_scale"
+            )
+            val lockRotation by infiniteTransition.animateFloat(
+                initialValue = -5f,
+                targetValue = 5f,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(2000, easing = LinearEasing),
+                    repeatMode = RepeatMode.Reverse
+                ),
+                label = "lock_rotation"
+            )
+            
             Box(
                 modifier = Modifier
                     .size(120.dp)
@@ -116,7 +153,13 @@ fun LoginScreen(
                     imageVector = Icons.Filled.Lock,
                     contentDescription = "Pesky Logo",
                     tint = PeskyColors.AccentBlue,
-                    modifier = Modifier.size(60.dp)
+                    modifier = Modifier
+                        .size(60.dp)
+                        .graphicsLayer {
+                            scaleX = lockScale
+                            scaleY = lockScale
+                            rotationZ = lockRotation
+                        }
                 )
             }
             

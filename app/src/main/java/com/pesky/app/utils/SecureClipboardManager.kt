@@ -5,7 +5,12 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import androidx.datastore.preferences.core.intPreferencesKey
+import com.pesky.app.data.preferences.peskyDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -25,6 +30,22 @@ class SecureClipboardManager @Inject constructor(
     
     companion object {
         const val DEFAULT_TIMEOUT_SECONDS = 30
+        private val CLIPBOARD_CLEAR_TIMEOUT = intPreferencesKey("clipboard_clear_timeout")
+    }
+    
+    /**
+     * Gets the clipboard clear timeout from settings.
+     */
+    private fun getTimeoutFromSettings(): Int {
+        return try {
+            runBlocking {
+                context.peskyDataStore.data.map { prefs ->
+                    prefs[CLIPBOARD_CLEAR_TIMEOUT] ?: DEFAULT_TIMEOUT_SECONDS
+                }.first()
+            }
+        } catch (e: Exception) {
+            DEFAULT_TIMEOUT_SECONDS
+        }
     }
     
     /**
@@ -32,13 +53,13 @@ class SecureClipboardManager @Inject constructor(
      * 
      * @param text The text to copy
      * @param label A label for the clipboard content (shown in some Android versions)
-     * @param timeoutSeconds Seconds before auto-clear (default 30)
+     * @param timeoutSeconds Seconds before auto-clear (null = use settings, default 30)
      * @param isSensitive Whether this is sensitive data (affects clear behavior)
      */
     fun copyWithTimeout(
         text: String,
         label: String = "Copied text",
-        timeoutSeconds: Int = DEFAULT_TIMEOUT_SECONDS,
+        timeoutSeconds: Int? = null,
         isSensitive: Boolean = true
     ) {
         // Cancel any pending clear operation
@@ -56,10 +77,13 @@ class SecureClipboardManager @Inject constructor(
         
         clipboard?.setPrimaryClip(clip)
         
+        // Get timeout from settings if not specified
+        val actualTimeout = timeoutSeconds ?: getTimeoutFromSettings()
+        
         // Schedule clear
-        if (timeoutSeconds > 0) {
+        if (actualTimeout > 0) {
             clearRunnable = Runnable { clearClipboard() }
-            handler.postDelayed(clearRunnable!!, timeoutSeconds * 1000L)
+            handler.postDelayed(clearRunnable!!, actualTimeout * 1000L)
         }
     }
     

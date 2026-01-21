@@ -1,5 +1,6 @@
 package com.pesky.app.ui.screens
 
+import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -63,10 +64,22 @@ fun CreateDatabaseScreen(
                       passwordsMatch
     
     // File picker for save location
+    val context = androidx.compose.ui.platform.LocalContext.current
     val folderPicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument("application/octet-stream")
     ) { uri ->
-        uri?.let { selectedUri = it }
+        uri?.let { 
+            // Take persistable permission for the URI
+            try {
+                context.contentResolver.takePersistableUriPermission(
+                    it,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                )
+            } catch (e: Exception) {
+                // Permission might already be granted or not needed
+            }
+            selectedUri = it 
+        }
     }
     
     // Handle events
@@ -98,7 +111,8 @@ fun CreateDatabaseScreen(
                 )
             )
         },
-        containerColor = PeskyColors.BackgroundPrimary
+        containerColor = PeskyColors.BackgroundPrimary,
+        modifier = Modifier.imePadding() // Add keyboard padding
     ) { paddingValues ->
         Column(
             modifier = Modifier

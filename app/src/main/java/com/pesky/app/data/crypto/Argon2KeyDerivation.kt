@@ -14,8 +14,10 @@ import javax.inject.Singleton
 class Argon2KeyDerivation @Inject constructor() {
     
     companion object {
-        // Argon2id parameters for strong security
-        private const val ITERATIONS = 100_000
+        // Argon2id parameters - balanced for mobile devices
+        // Using OWASP-recommended values for mobile: iterations=3, memory=64MB, parallelism=4
+        // This provides strong security while completing in ~1-2 seconds on most devices
+        private const val ITERATIONS = 3
         private const val MEMORY_KB = 65536 // 64 MB
         private const val PARALLELISM = 4
         private const val KEY_LENGTH = 32 // 256 bits

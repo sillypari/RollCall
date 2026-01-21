@@ -1,6 +1,9 @@
 package com.pesky.app.ui.screens
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -52,8 +55,20 @@ fun SettingsScreen(
                 is SettingsEvent.BackupCreated -> {
                     snackbarHostState.showSnackbar("Backup created successfully")
                 }
+                is SettingsEvent.BackupRestored -> {
+                    snackbarHostState.showSnackbar("Backup restored! Please restart the app to unlock with the backup's password.")
+                }
                 is SettingsEvent.BiometricNotAvailable -> {
                     snackbarHostState.showSnackbar("Biometric authentication not available")
+                }
+                is SettingsEvent.PinChanged -> {
+                    snackbarHostState.showSnackbar("Quick unlock PIN updated")
+                }
+                is SettingsEvent.PinRemoved -> {
+                    snackbarHostState.showSnackbar("Quick unlock PIN removed")
+                }
+                is SettingsEvent.DataCleared -> {
+                    snackbarHostState.showSnackbar("All data cleared")
                 }
                 is SettingsEvent.Error -> {
                     snackbarHostState.showSnackbar(event.message)
@@ -159,10 +174,24 @@ private fun GeneralSettingsTab(
         }
         
         SettingsSection("Clipboard") {
-            SettingsRow(
+            var showClipboardDialog by remember { mutableStateOf(false) }
+            
+            if (showClipboardDialog) {
+                TimeoutSelectorDialog(
+                    title = "Clipboard Clear Timeout",
+                    currentValue = uiState.clipboardClearTimeout,
+                    options = listOf(15, 30, 60, 120),
+                    optionLabels = listOf("15 seconds", "30 seconds", "1 minute", "2 minutes"),
+                    onSelect = { viewModel.updateClipboardClearTimeout(it) },
+                    onDismiss = { showClipboardDialog = false }
+                )
+            }
+            
+            SettingsClickableRow(
                 icon = Icons.Filled.Timer,
                 title = "Clipboard clear timeout",
-                subtitle = "${uiState.clipboardClearTimeout} seconds"
+                subtitle = "${uiState.clipboardClearTimeout} seconds",
+                onClick = { showClipboardDialog = true }
             )
         }
         
@@ -191,6 +220,9 @@ private fun SecuritySettingsTab(
     uiState: com.pesky.app.viewmodels.SettingsUiState
 ) {
     var showPasswordDialog by remember { mutableStateOf(false) }
+    var showPinSetupDialog by remember { mutableStateOf(false) }
+    var showRemovePinDialog by remember { mutableStateOf(false) }
+    val isPinEnabled = remember { mutableStateOf(viewModel.isQuickUnlockEnabled()) }
     
     if (showPasswordDialog) {
         ChangePasswordDialog(
@@ -202,6 +234,42 @@ private fun SecuritySettingsTab(
         )
     }
     
+    if (showPinSetupDialog) {
+        PinSetupDialog(
+            onDismiss = { showPinSetupDialog = false },
+            onConfirm = { pin ->
+                viewModel.setupQuickUnlockPin(pin)
+                isPinEnabled.value = true
+                showPinSetupDialog = false
+            }
+        )
+    }
+    
+    if (showRemovePinDialog) {
+        AlertDialog(
+            onDismissRequest = { showRemovePinDialog = false },
+            title = { Text("Remove Quick Unlock?") },
+            text = { Text("You will need to enter your master password every time you open the app.") },
+            confirmButton = {
+                TextButton(onClick = {
+                    viewModel.removeQuickUnlock()
+                    isPinEnabled.value = false
+                    showRemovePinDialog = false
+                }) {
+                    Text("Remove", color = PeskyColors.AccentRed)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showRemovePinDialog = false }) {
+                    Text("Cancel")
+                }
+            },
+            containerColor = PeskyColors.CardBackground,
+            titleContentColor = PeskyColors.TextPrimary,
+            textContentColor = PeskyColors.TextSecondary
+        )
+    }
+    
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -209,30 +277,30 @@ private fun SecuritySettingsTab(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        SettingsSection("Authentication") {
+        SettingsSection("Quick Unlock") {
             SettingsRow(
-                icon = Icons.Filled.Fingerprint,
-                title = "Biometric unlock",
-                subtitle = if (uiState.biometricAvailable) 
-                    "Use fingerprint or face to unlock" else "Not available on this device",
+                icon = Icons.Filled.Pin,
+                title = "PIN Unlock",
+                subtitle = if (isPinEnabled.value) "Enabled - Tap to change or remove" else "Set up a PIN for quick access",
                 trailing = {
                     Switch(
-                        checked = uiState.biometricEnabled,
-                        onCheckedChange = { viewModel.toggleBiometric(it) },
-                        enabled = uiState.biometricAvailable,
+                        checked = isPinEnabled.value,
+                        onCheckedChange = { enabled ->
+                            if (enabled) {
+                                showPinSetupDialog = true
+                            } else {
+                                showRemovePinDialog = true
+                            }
+                        },
                         colors = SwitchDefaults.colors(
                             checkedTrackColor = PeskyColors.AccentBlue
                         )
                     )
                 }
             )
-            
-            SettingsRow(
-                icon = Icons.Filled.Lock,
-                title = "Auto-lock timeout",
-                subtitle = "${uiState.autoLockTimeout / 60} minutes of inactivity"
-            )
         }
+        
+        // Auto-lock is not implemented for this version - removed to avoid confusion
         
         SettingsSection("Master Password") {
             SettingsClickableRow(
@@ -243,15 +311,18 @@ private fun SecuritySettingsTab(
             )
         }
         
-        SettingsSection("Protection") {
+        SettingsSection("Privacy") {
             SettingsRow(
-                icon = Icons.Filled.Security,
-                title = "Require password for sensitive actions",
-                subtitle = "Confirm password before viewing/copying",
+                icon = Icons.Filled.ScreenshotMonitor,
+                title = "Block screenshots",
+                subtitle = if (uiState.screenshotProtectionEnabled) 
+                    "Screenshots are blocked (requires app restart)" 
+                else 
+                    "Screenshots are allowed (requires app restart)",
                 trailing = {
                     Switch(
-                        checked = uiState.requirePasswordSensitive,
-                        onCheckedChange = { viewModel.toggleRequirePasswordSensitive(it) },
+                        checked = uiState.screenshotProtectionEnabled,
+                        onCheckedChange = { viewModel.toggleScreenshotProtection(it) },
                         colors = SwitchDefaults.colors(
                             checkedTrackColor = PeskyColors.AccentBlue
                         )
@@ -259,6 +330,8 @@ private fun SecuritySettingsTab(
                 }
             )
         }
+        
+        // Require password for sensitive actions - not implemented in this version
     }
 }
 
@@ -267,6 +340,65 @@ private fun BackupSettingsTab(
     viewModel: SettingsViewModel,
     uiState: com.pesky.app.viewmodels.SettingsUiState
 ) {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    var showRestoreConfirmDialog by remember { mutableStateOf(false) }
+    var pendingRestoreUri by remember { mutableStateOf<android.net.Uri?>(null) }
+    
+    // File picker for creating backup (export)
+    val createBackupLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("application/octet-stream")
+    ) { uri ->
+        uri?.let { 
+            viewModel.exportDatabase(it)
+        }
+    }
+    
+    // File picker for restoring backup (import)
+    val restoreBackupLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        uri?.let { 
+            pendingRestoreUri = it
+            showRestoreConfirmDialog = true
+        }
+    }
+    
+    // Restore confirmation dialog
+    if (showRestoreConfirmDialog && pendingRestoreUri != null) {
+        AlertDialog(
+            onDismissRequest = { 
+                showRestoreConfirmDialog = false
+                pendingRestoreUri = null
+            },
+            title = { Text("Restore Backup?") },
+            text = { 
+                Text("This will replace your current database with the backup. You'll need to enter the backup's master password. Continue?") 
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    pendingRestoreUri?.let { uri ->
+                        viewModel.importDatabase(uri)
+                    }
+                    showRestoreConfirmDialog = false
+                    pendingRestoreUri = null
+                }) {
+                    Text("Restore", color = PeskyColors.AccentBlue)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { 
+                    showRestoreConfirmDialog = false
+                    pendingRestoreUri = null
+                }) {
+                    Text("Cancel")
+                }
+            },
+            containerColor = PeskyColors.CardBackground,
+            titleContentColor = PeskyColors.TextPrimary,
+            textContentColor = PeskyColors.TextSecondary
+        )
+    }
+    
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -274,27 +406,59 @@ private fun BackupSettingsTab(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        SettingsSection("Backup") {
+        // Info card
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = PeskyColors.CardBackground)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Info,
+                    contentDescription = null,
+                    tint = PeskyColors.AccentBlue,
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Text(
+                    text = "Backups are encrypted with your master password. Keep your master password safe!",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = PeskyColors.TextSecondary
+                )
+            }
+        }
+        
+        SettingsSection("Manual Backup") {
             SettingsClickableRow(
                 icon = Icons.Filled.Upload,
                 title = "Create backup",
-                subtitle = "Export database to file",
-                onClick = { /* TODO: File picker for backup location */ }
+                subtitle = "Export database to a .pesky file",
+                onClick = { 
+                    val timestamp = java.text.SimpleDateFormat("yyyyMMdd_HHmmss", java.util.Locale.US)
+                        .format(java.util.Date())
+                    createBackupLauncher.launch("pesky_backup_$timestamp.pesky")
+                }
             )
             
             SettingsClickableRow(
                 icon = Icons.Filled.Download,
                 title = "Restore backup",
-                subtitle = "Import database from file",
-                onClick = { /* TODO: File picker */ }
+                subtitle = "Import database from a .pesky file",
+                onClick = { 
+                    restoreBackupLauncher.launch(arrayOf("*/*"))
+                }
             )
         }
         
         SettingsSection("Auto Backup") {
             SettingsRow(
-                icon = Icons.Filled.Schedule,
-                title = "Automatic backups",
-                subtitle = "Create backups periodically",
+                icon = Icons.Filled.Sync,
+                title = "Backup on changes",
+                subtitle = "Create backup when entries are added/edited/deleted",
                 trailing = {
                     Switch(
                         checked = uiState.autoBackupEnabled,
@@ -305,14 +469,6 @@ private fun BackupSettingsTab(
                     )
                 }
             )
-            
-            if (uiState.autoBackupEnabled) {
-                SettingsRow(
-                    icon = Icons.Filled.Timer,
-                    title = "Backup interval",
-                    subtitle = uiState.autoBackupInterval
-                )
-            }
         }
     }
 }
@@ -361,7 +517,7 @@ private fun AboutTab() {
                 Spacer(modifier = Modifier.height(8.dp))
                 
                 Text(
-                    text = "Secure Offline Password Manager",
+                    text = "Parikshit Singh Bais",
                     style = MaterialTheme.typography.bodySmall,
                     color = PeskyColors.TextTertiary
                 )
@@ -618,6 +774,153 @@ private fun ChangePasswordDialog(
                 Text("Change")
             }
         },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        },
+        containerColor = PeskyColors.CardBackground,
+        titleContentColor = PeskyColors.TextPrimary,
+        textContentColor = PeskyColors.TextSecondary
+    )
+}
+
+/**
+ * Dialog for setting up a quick unlock PIN.
+ */
+@Composable
+private fun PinSetupDialog(
+    onDismiss: () -> Unit,
+    onConfirm: (pin: String) -> Unit
+) {
+    var pin by remember { mutableStateOf("") }
+    var confirmPin by remember { mutableStateOf("") }
+    var isConfirming by remember { mutableStateOf(false) }
+    var error by remember { mutableStateOf<String?>(null) }
+    
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(if (isConfirming) "Confirm PIN" else "Set Quick Unlock PIN") },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Text(
+                    text = if (isConfirming) 
+                        "Enter your PIN again to confirm" 
+                    else 
+                        "Enter a 4-6 digit PIN for quick access",
+                    color = PeskyColors.TextSecondary
+                )
+                
+                OutlinedTextField(
+                    value = if (isConfirming) confirmPin else pin,
+                    onValueChange = { value ->
+                        if (value.all { it.isDigit() } && value.length <= 6) {
+                            if (isConfirming) {
+                                confirmPin = value
+                                error = null
+                            } else {
+                                pin = value
+                            }
+                        }
+                    },
+                    label = { Text(if (isConfirming) "Confirm PIN" else "PIN") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    visualTransformation = PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
+                    isError = error != null,
+                    supportingText = error?.let { { Text(it, color = PeskyColors.AccentRed) } }
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    if (!isConfirming) {
+                        if (pin.length >= 4) {
+                            isConfirming = true
+                        } else {
+                            error = "PIN must be at least 4 digits"
+                        }
+                    } else {
+                        if (confirmPin == pin) {
+                            onConfirm(pin)
+                        } else {
+                            error = "PINs don't match"
+                            confirmPin = ""
+                        }
+                    }
+                },
+                enabled = if (isConfirming) confirmPin.length >= 4 else pin.length >= 4
+            ) {
+                Text(if (isConfirming) "Confirm" else "Next")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = {
+                if (isConfirming) {
+                    isConfirming = false
+                    confirmPin = ""
+                    error = null
+                } else {
+                    onDismiss()
+                }
+            }) {
+                Text(if (isConfirming) "Back" else "Cancel")
+            }
+        },
+        containerColor = PeskyColors.CardBackground,
+        titleContentColor = PeskyColors.TextPrimary,
+        textContentColor = PeskyColors.TextSecondary
+    )
+}
+
+@Composable
+private fun TimeoutSelectorDialog(
+    title: String,
+    currentValue: Int,
+    options: List<Int>,
+    optionLabels: List<String>,
+    onSelect: (Int) -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(title) },
+        text = {
+            Column {
+                options.forEachIndexed { index, value ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { 
+                                onSelect(value)
+                                onDismiss()
+                            }
+                            .padding(vertical = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = currentValue == value,
+                            onClick = { 
+                                onSelect(value)
+                                onDismiss()
+                            },
+                            colors = RadioButtonDefaults.colors(
+                                selectedColor = PeskyColors.AccentBlue
+                            )
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text(
+                            text = optionLabels[index],
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = PeskyColors.TextPrimary
+                        )
+                    }
+                }
+            }
+        },
+        confirmButton = {},
         dismissButton = {
             TextButton(onClick = onDismiss) {
                 Text("Cancel")

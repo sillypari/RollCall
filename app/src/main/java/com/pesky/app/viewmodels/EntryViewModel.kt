@@ -47,6 +47,11 @@ class EntryViewModel @Inject constructor(
     fun loadEntry(uuid: String) {
         val entry = repository.database.value?.entries?.find { it.uuid == uuid }
         if (entry != null) {
+            // Record that this entry was accessed
+            viewModelScope.launch {
+                repository.recordEntryAccess(uuid)
+            }
+            
             _uiState.update { 
                 it.copy(
                     entry = entry,

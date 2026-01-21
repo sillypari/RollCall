@@ -255,14 +255,15 @@ fun EntryDetailScreen(
             // Timestamps
             DetailSection(title = "Information") {
                 uiState.entry?.let { entry ->
-                    val formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
+                    val formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy 'at' hh:mm a")
+                    val zoneId = java.time.ZoneId.systemDefault()
                     
-                    InfoRow("Created", entry.times.creationTime.toString())
-                    InfoRow("Modified", entry.times.lastModificationTime.toString())
-                    InfoRow("Last accessed", entry.times.lastAccessTime.toString())
+                    InfoRow("Created", entry.times.creationTime.atZone(zoneId).format(formatter))
+                    InfoRow("Modified", entry.times.lastModificationTime.atZone(zoneId).format(formatter))
+                    InfoRow("Last accessed", entry.times.lastAccessTime.atZone(zoneId).format(formatter))
                     
                     if (entry.times.expires && entry.times.expiryTime != null) {
-                        InfoRow("Expires", entry.times.expiryTime.toString())
+                        InfoRow("Expires", entry.times.expiryTime.atZone(zoneId).format(formatter))
                     }
                 }
             }

@@ -2,11 +2,11 @@ package com.pesky.app.viewmodels
 
 import android.content.Context
 import android.net.Uri
-import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.pesky.app.data.preferences.AppPreferences
+import com.pesky.app.data.preferences.peskyDataStore
 import com.pesky.app.data.repository.VaultRepository
 import com.pesky.app.utils.BiometricAvailability
 import com.pesky.app.utils.BiometricHelper
@@ -14,15 +14,15 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
-
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "pesky_settings")
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val repository: VaultRepository,
-    private val biometricHelper: BiometricHelper
+    private val biometricHelper: BiometricHelper,
+    private val appPreferences: AppPreferences
 ) : ViewModel() {
     
     companion object {
@@ -32,6 +32,7 @@ class SettingsViewModel @Inject constructor(
         private val FAILED_ATTEMPTS_LIMIT = intPreferencesKey("failed_attempts_limit")
         private val BIOMETRIC_ENABLED = booleanPreferencesKey("biometric_enabled")
         private val REQUIRE_PASSWORD_SENSITIVE = booleanPreferencesKey("require_password_sensitive")
+        val SCREENSHOT_PROTECTION_ENABLED = booleanPreferencesKey("screenshot_protection_enabled")
         private val AUTO_BACKUP_ENABLED = booleanPreferencesKey("auto_backup_enabled")
         private val AUTO_BACKUP_INTERVAL = stringPreferencesKey("auto_backup_interval")
         private val BACKUP_LOCATION = stringPreferencesKey("backup_location")
@@ -56,7 +57,7 @@ class SettingsViewModel @Inject constructor(
     
     private fun loadSettings() {
         viewModelScope.launch {
-            context.dataStore.data.collect { prefs ->
+            context.peskyDataStore.data.collect { prefs ->
                 _uiState.update {
                     it.copy(
                         autoLockTimeout = prefs[AUTO_LOCK_TIMEOUT] ?: 120,
@@ -64,6 +65,7 @@ class SettingsViewModel @Inject constructor(
                         failedAttemptsLimit = prefs[FAILED_ATTEMPTS_LIMIT] ?: 5,
                         biometricEnabled = prefs[BIOMETRIC_ENABLED] ?: false,
                         requirePasswordSensitive = prefs[REQUIRE_PASSWORD_SENSITIVE] ?: true,
+                        screenshotProtectionEnabled = prefs[SCREENSHOT_PROTECTION_ENABLED] ?: true,
                         autoBackupEnabled = prefs[AUTO_BACKUP_ENABLED] ?: false,
                         autoBackupInterval = prefs[AUTO_BACKUP_INTERVAL] ?: "daily",
                         backupLocation = prefs[BACKUP_LOCATION],
@@ -92,7 +94,7 @@ class SettingsViewModel @Inject constructor(
      */
     fun updateAutoLockTimeout(seconds: Int) {
         viewModelScope.launch {
-            context.dataStore.edit { prefs ->
+            context.peskyDataStore.edit { prefs ->
                 prefs[AUTO_LOCK_TIMEOUT] = seconds
             }
         }
@@ -103,7 +105,7 @@ class SettingsViewModel @Inject constructor(
      */
     fun updateClipboardClearTimeout(seconds: Int) {
         viewModelScope.launch {
-            context.dataStore.edit { prefs ->
+            context.peskyDataStore.edit { prefs ->
                 prefs[CLIPBOARD_CLEAR_TIMEOUT] = seconds
             }
         }
@@ -114,7 +116,7 @@ class SettingsViewModel @Inject constructor(
      */
     fun updateFailedAttemptsLimit(limit: Int) {
         viewModelScope.launch {
-            context.dataStore.edit { prefs ->
+            context.peskyDataStore.edit { prefs ->
                 prefs[FAILED_ATTEMPTS_LIMIT] = limit
             }
         }
@@ -132,7 +134,7 @@ class SettingsViewModel @Inject constructor(
         }
         
         viewModelScope.launch {
-            context.dataStore.edit { prefs ->
+            context.peskyDataStore.edit { prefs ->
                 prefs[BIOMETRIC_ENABLED] = enabled
             }
         }
@@ -143,8 +145,19 @@ class SettingsViewModel @Inject constructor(
      */
     fun toggleRequirePasswordSensitive(enabled: Boolean) {
         viewModelScope.launch {
-            context.dataStore.edit { prefs ->
+            context.peskyDataStore.edit { prefs ->
                 prefs[REQUIRE_PASSWORD_SENSITIVE] = enabled
+            }
+        }
+    }
+    
+    /**
+     * Toggles screenshot protection.
+     */
+    fun toggleScreenshotProtection(enabled: Boolean) {
+        viewModelScope.launch {
+            context.peskyDataStore.edit { prefs ->
+                prefs[SCREENSHOT_PROTECTION_ENABLED] = enabled
             }
         }
     }
@@ -154,7 +167,7 @@ class SettingsViewModel @Inject constructor(
      */
     fun toggleAutoBackup(enabled: Boolean) {
         viewModelScope.launch {
-            context.dataStore.edit { prefs ->
+            context.peskyDataStore.edit { prefs ->
                 prefs[AUTO_BACKUP_ENABLED] = enabled
             }
             // TODO: Schedule/cancel backup work
@@ -166,7 +179,7 @@ class SettingsViewModel @Inject constructor(
      */
     fun updateAutoBackupInterval(interval: String) {
         viewModelScope.launch {
-            context.dataStore.edit { prefs ->
+            context.peskyDataStore.edit { prefs ->
                 prefs[AUTO_BACKUP_INTERVAL] = interval
             }
             // TODO: Reschedule backup work
@@ -178,7 +191,7 @@ class SettingsViewModel @Inject constructor(
      */
     fun updateBackupLocation(uri: Uri) {
         viewModelScope.launch {
-            context.dataStore.edit { prefs ->
+            context.peskyDataStore.edit { prefs ->
                 prefs[BACKUP_LOCATION] = uri.toString()
             }
         }
@@ -189,7 +202,7 @@ class SettingsViewModel @Inject constructor(
      */
     fun toggleShowFavicons(enabled: Boolean) {
         viewModelScope.launch {
-            context.dataStore.edit { prefs ->
+            context.peskyDataStore.edit { prefs ->
                 prefs[SHOW_FAVICONS] = enabled
             }
         }
@@ -200,7 +213,7 @@ class SettingsViewModel @Inject constructor(
      */
     fun toggleCompactView(enabled: Boolean) {
         viewModelScope.launch {
-            context.dataStore.edit { prefs ->
+            context.peskyDataStore.edit { prefs ->
                 prefs[COMPACT_VIEW] = enabled
             }
         }
@@ -211,7 +224,7 @@ class SettingsViewModel @Inject constructor(
      */
     fun toggleRememberDatabase(enabled: Boolean) {
         viewModelScope.launch {
-            context.dataStore.edit { prefs ->
+            context.peskyDataStore.edit { prefs ->
                 prefs[REMEMBER_DATABASE] = enabled
                 if (!enabled) {
                     prefs.remove(LAST_DATABASE_URI)
@@ -227,7 +240,7 @@ class SettingsViewModel @Inject constructor(
         if (!_uiState.value.rememberDatabase) return
         
         viewModelScope.launch {
-            context.dataStore.edit { prefs ->
+            context.peskyDataStore.edit { prefs ->
                 prefs[LAST_DATABASE_URI] = uri.toString()
             }
         }
@@ -290,6 +303,104 @@ class SettingsViewModel @Inject constructor(
             modifiedAt = db?.metadata?.lastModificationTime?.toString() ?: "Unknown"
         )
     }
+    
+    /**
+     * Check if quick unlock PIN is enabled.
+     */
+    fun isQuickUnlockEnabled(): Boolean = appPreferences.quickUnlockEnabled
+    
+    /**
+     * Set up or change the quick unlock PIN.
+     */
+    fun setupQuickUnlockPin(pin: String) {
+        appPreferences.setupQuickUnlock(pin, "pin")
+        viewModelScope.launch {
+            _events.emit(SettingsEvent.PinChanged)
+        }
+    }
+    
+    /**
+     * Remove quick unlock PIN.
+     */
+    fun removeQuickUnlock() {
+        appPreferences.removeQuickUnlock()
+        viewModelScope.launch {
+            _events.emit(SettingsEvent.PinRemoved)
+        }
+    }
+    
+    /**
+     * Verify current PIN for changing.
+     */
+    fun verifyCurrentPin(pin: String): Boolean {
+        return appPreferences.verifyQuickUnlock(pin)
+    }
+    
+    /**
+     * Clear all app data and reset (logout).
+     */
+    fun clearAllData() {
+        viewModelScope.launch {
+            // Clear preferences
+            appPreferences.clearAll()
+            
+            // Clear internal database files
+            val dbDir = File(context.filesDir, "databases")
+            if (dbDir.exists()) {
+                dbDir.deleteRecursively()
+            }
+            
+            // Lock vault
+            repository.lockVault()
+            
+            _events.emit(SettingsEvent.DataCleared)
+        }
+    }
+    
+    /**
+     * Export database to external location.
+     */
+    fun exportDatabase(uri: Uri) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
+            
+            val result = repository.exportDatabase(uri)
+            
+            result.fold(
+                onSuccess = {
+                    _uiState.update { it.copy(isLoading = false) }
+                    _events.emit(SettingsEvent.BackupCreated)
+                },
+                onFailure = { error ->
+                    _uiState.update { it.copy(isLoading = false) }
+                    _events.emit(SettingsEvent.Error(error.message ?: "Failed to export"))
+                }
+            )
+        }
+    }
+    
+    /**
+     * Import database from external backup file.
+     * This replaces the current database and requires the app to restart.
+     */
+    fun importDatabase(uri: Uri) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
+            
+            val result = repository.importDatabase(uri)
+            
+            result.fold(
+                onSuccess = {
+                    _uiState.update { it.copy(isLoading = false) }
+                    _events.emit(SettingsEvent.BackupRestored)
+                },
+                onFailure = { error ->
+                    _uiState.update { it.copy(isLoading = false) }
+                    _events.emit(SettingsEvent.Error(error.message ?: "Failed to import backup"))
+                }
+            )
+        }
+    }
 }
 
 /**
@@ -306,6 +417,7 @@ data class SettingsUiState(
     val biometricAvailable: Boolean = false,
     val biometricType: String = "Biometric",
     val requirePasswordSensitive: Boolean = true,
+    val screenshotProtectionEnabled: Boolean = true,
     
     // Backup settings
     val autoBackupEnabled: Boolean = false,
@@ -337,7 +449,11 @@ data class DatabaseInfo(
  */
 sealed class SettingsEvent {
     object BackupCreated : SettingsEvent()
+    object BackupRestored : SettingsEvent()
     object PasswordChanged : SettingsEvent()
     object BiometricNotAvailable : SettingsEvent()
+    object PinChanged : SettingsEvent()
+    object PinRemoved : SettingsEvent()
+    object DataCleared : SettingsEvent()
     data class Error(val message: String) : SettingsEvent()
 }

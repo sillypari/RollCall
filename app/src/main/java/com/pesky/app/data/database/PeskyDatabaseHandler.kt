@@ -8,6 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import java.io.BufferedOutputStream
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
@@ -63,19 +64,24 @@ class PeskyDatabaseHandler @Inject constructor(
                 // Generate cryptographic parameters
                 val cryptoParams = cryptoManager.generateDatabaseParams()
                 
+                android.util.Log.d("PeskyDBHandler", "Creating database - salt: ${cryptoParams.salt.take(8).joinToString("") { "%02x".format(it) }}...")
+                android.util.Log.d("PeskyDBHandler", "Password length: ${masterPassword.size}")
+                
                 // Derive encryption key from master password
                 val encryptionKey = cryptoManager.deriveEncryptionKey(masterPassword, cryptoParams.salt)
+                
+                android.util.Log.d("PeskyDBHandler", "Derived key prefix: ${encryptionKey.take(4).joinToString("") { "%02x".format(it) }}...")
                 
                 // Create empty database
                 val database = VaultDatabase(
                     metadata = com.pesky.app.data.models.DatabaseMetadata(databaseName = databaseName)
                 )
                 
-                // Create header
+                // Create header - use copyOf() to prevent cryptoParams.clear() from corrupting the header
                 val header = DatabaseHeader(
-                    masterSeed = cryptoParams.masterSeed,
-                    iv = cryptoParams.iv,
-                    salt = cryptoParams.salt
+                    masterSeed = cryptoParams.masterSeed.copyOf(),
+                    iv = cryptoParams.iv.copyOf(),
+                    salt = cryptoParams.salt.copyOf()
                 )
                 
                 // Generate XML
@@ -94,8 +100,8 @@ class PeskyDatabaseHandler @Inject constructor(
                     cryptoParams.iv
                 )
                 
-                // Write file
-                outputStream.use { stream ->
+                // Write file using BufferedOutputStream for reliable writes
+                BufferedOutputStream(outputStream).use { stream ->
                     // Write header
                     stream.write(header.toBytes())
                     
@@ -113,6 +119,9 @@ class PeskyDatabaseHandler @Inject constructor(
                     payloadLengthBuffer.putInt(encryptedPayload.size)
                     stream.write(payloadLengthBuffer.array())
                     stream.write(encryptedPayload)
+                    
+                    // Ensure all data is flushed to disk
+                    stream.flush()
                 }
                 
                 // Cache for future operations
@@ -178,13 +187,20 @@ class PeskyDatabaseHandler @Inject constructor(
                 offset += 4
                 val encryptedPayload = fileBytes.sliceArray(offset until offset + payloadLength)
                 
+                // Log some debug info (remove in production)
+                android.util.Log.d("PeskyDBHandler", "Opening database - salt: ${header.salt.take(8).joinToString("") { "%02x".format(it) }}...")
+                android.util.Log.d("PeskyDBHandler", "Password length: ${masterPassword.size}")
+                
                 // Derive encryption key
                 val encryptionKey = cryptoManager.deriveEncryptionKey(masterPassword, header.salt)
+                
+                android.util.Log.d("PeskyDBHandler", "Derived key prefix: ${encryptionKey.take(4).joinToString("") { "%02x".format(it) }}...")
                 
                 // Decrypt HMAC key
                 val hmacKey = try {
                     cryptoManager.decryptPayload(encryptedHmacKey, encryptionKey, header.iv)
                 } catch (e: Exception) {
+                    android.util.Log.e("PeskyDBHandler", "HMAC key decryption failed: ${e.message}")
                     cryptoManager.clearSensitiveData(encryptionKey)
                     return@withContext Result.failure(WrongPasswordException("Incorrect master password"))
                 }
@@ -240,6 +256,9 @@ class PeskyDatabaseHandler @Inject constructor(
             try {
                 val db = database ?: cachedDatabase
                     ?: return@withContext Result.failure(DatabaseException("No database loaded"))
+                
+                android.util.Log.d("PeskyDBHandler", "Saving database with ${db.entries.size} entries")
+                
                 val encryptionKey = cachedEncryptionKey
                     ?: return@withContext Result.failure(DatabaseException("No encryption key available"))
                 val header = cachedHeader
@@ -259,8 +278,8 @@ class PeskyDatabaseHandler @Inject constructor(
                 // Encrypt HMAC key
                 val encryptedHmacKey = cryptoManager.encryptPayload(hmacKey, encryptionKey, header.iv)
                 
-                // Write file atomically (to temp file first, then rename)
-                outputStream.use { stream ->
+                // Write file using BufferedOutputStream for reliable writes
+                BufferedOutputStream(outputStream).use { stream ->
                     stream.write(header.toBytes())
                     
                     val hmacKeyLengthBuffer = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN)
@@ -274,6 +293,9 @@ class PeskyDatabaseHandler @Inject constructor(
                     payloadLengthBuffer.putInt(encryptedPayload.size)
                     stream.write(payloadLengthBuffer.array())
                     stream.write(encryptedPayload)
+                    
+                    // Ensure all data is flushed to disk
+                    stream.flush()
                 }
                 
                 // Update cache

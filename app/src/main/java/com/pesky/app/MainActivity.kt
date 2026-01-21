@@ -11,6 +11,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import com.pesky.app.data.preferences.peskyDataStore
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -20,11 +22,14 @@ import com.pesky.app.ui.theme.PeskyColors
 import com.pesky.app.ui.theme.PeskyTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 /**
  * Main activity for Pesky Password Manager.
- * Uses FLAG_SECURE to prevent screenshots for security.
+ * Uses FLAG_SECURE to prevent screenshots for security (configurable in settings).
  */
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -40,11 +45,23 @@ class MainActivity : ComponentActivity() {
         // Enable edge-to-edge display
         enableEdgeToEdge()
         
-        // Prevent screenshots for security
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_SECURE,
-            WindowManager.LayoutParams.FLAG_SECURE
-        )
+        // Check screenshot protection setting (default: enabled/blocked)
+        val screenshotProtectionKey = booleanPreferencesKey("screenshot_protection_enabled")
+        val isScreenshotProtectionEnabled = runBlocking {
+            peskyDataStore.data.map { prefs -> 
+                prefs[screenshotProtectionKey] ?: true  // Default: true (blocked)
+            }.first()
+        }
+        
+        // Apply FLAG_SECURE based on setting
+        if (isScreenshotProtectionEnabled) {
+            window.setFlags(
+                WindowManager.LayoutParams.FLAG_SECURE,
+                WindowManager.LayoutParams.FLAG_SECURE
+            )
+        } else {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+        }
         
         // Remove splash screen after a short delay
         lifecycleScope.launch {
