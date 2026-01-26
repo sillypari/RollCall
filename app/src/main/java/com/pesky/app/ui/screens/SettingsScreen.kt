@@ -3,6 +3,7 @@ package com.pesky.app.ui.screens
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
@@ -21,8 +22,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.pesky.app.R
 import com.pesky.app.ui.theme.PeskyColors
 import com.pesky.app.viewmodels.SettingsEvent
 import com.pesky.app.viewmodels.SettingsViewModel
@@ -165,6 +168,26 @@ private fun GeneralSettingsTab(
                         checked = true,
                         onCheckedChange = { },
                         enabled = false,
+                        colors = SwitchDefaults.colors(
+                            checkedTrackColor = PeskyColors.AccentBlue
+                        )
+                    )
+                }
+            )
+        }
+        
+        SettingsSection("Feedback") {
+            SettingsRow(
+                icon = Icons.Filled.Vibration,
+                title = "Haptic Feedback",
+                subtitle = if (uiState.hapticFeedbackEnabled) 
+                    "iPhone-style vibrations enabled" 
+                else 
+                    "Haptic feedback disabled",
+                trailing = {
+                    Switch(
+                        checked = uiState.hapticFeedbackEnabled,
+                        onCheckedChange = { viewModel.toggleHapticFeedback(it) },
                         colors = SwitchDefaults.colors(
                             checkedTrackColor = PeskyColors.AccentBlue
                         )
@@ -493,11 +516,10 @@ private fun AboutTab() {
                     .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Icon(
-                    imageVector = Icons.Filled.Lock,
-                    contentDescription = null,
-                    modifier = Modifier.size(64.dp),
-                    tint = PeskyColors.AccentBlue
+                Image(
+                    painter = painterResource(id = R.drawable.ic_pesky_logo),
+                    contentDescription = "Pesky Logo",
+                    modifier = Modifier.size(64.dp)
                 )
                 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -509,7 +531,7 @@ private fun AboutTab() {
                 )
                 
                 Text(
-                    text = "Version 1.0.0",
+                    text = "Version 1.2.0",
                     style = MaterialTheme.typography.bodyMedium,
                     color = PeskyColors.TextSecondary
                 )

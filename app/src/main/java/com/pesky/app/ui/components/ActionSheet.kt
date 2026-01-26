@@ -16,9 +16,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -35,7 +33,7 @@ fun ActionSheet(
     actions: List<ActionSheetItem>,
     showCancel: Boolean = true
 ) {
-    val haptic = LocalHapticFeedback.current
+    val haptics = LocalPeskyHaptics.current
     
     AnimatedVisibility(
         visible = visible,
@@ -100,10 +98,11 @@ fun ActionSheet(
                                 ActionSheetButton(
                                     item = action,
                                     onClick = {
-                                        haptic.performHapticFeedback(
-                                            if (action.isDestructive) HapticFeedbackType.LongPress 
-                                            else HapticFeedbackType.TextHandleMove
-                                        )
+                                        if (action.isDestructive) {
+                                            haptics.heavyClick()
+                                        } else {
+                                            haptics.click()
+                                        }
                                         action.onClick()
                                         onDismiss()
                                     }

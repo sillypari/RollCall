@@ -72,7 +72,8 @@ class SettingsViewModel @Inject constructor(
                         showFavicons = prefs[SHOW_FAVICONS] ?: true,
                         compactView = prefs[COMPACT_VIEW] ?: false,
                         rememberDatabase = prefs[REMEMBER_DATABASE] ?: true,
-                        lastDatabaseUri = prefs[LAST_DATABASE_URI]
+                        lastDatabaseUri = prefs[LAST_DATABASE_URI],
+                        hapticFeedbackEnabled = appPreferences.hapticFeedbackEnabled
                     )
                 }
             }
@@ -161,6 +162,19 @@ class SettingsViewModel @Inject constructor(
             }
         }
     }
+    
+    /**
+     * Toggles haptic feedback.
+     */
+    fun toggleHapticFeedback(enabled: Boolean) {
+        appPreferences.hapticFeedbackEnabled = enabled
+        _uiState.update { it.copy(hapticFeedbackEnabled = enabled) }
+    }
+    
+    /**
+     * Check if haptic feedback is enabled.
+     */
+    fun isHapticFeedbackEnabled(): Boolean = appPreferences.hapticFeedbackEnabled
     
     /**
      * Toggles auto backup.
@@ -427,6 +441,9 @@ data class SettingsUiState(
     // Appearance settings
     val showFavicons: Boolean = true,
     val compactView: Boolean = false,
+    
+    // Haptic feedback
+    val hapticFeedbackEnabled: Boolean = true,
     
     // Database settings
     val rememberDatabase: Boolean = true,

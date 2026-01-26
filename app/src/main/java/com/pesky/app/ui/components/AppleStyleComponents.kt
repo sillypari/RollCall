@@ -21,6 +21,8 @@ fun PeskyBottomNavigation(
     onTabSelected: (BottomNavTab) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val haptics = LocalPeskyHaptics.current
+    
     NavigationBar(
         modifier = modifier,
         containerColor = PeskyColors.BackgroundPrimary,
@@ -32,7 +34,12 @@ fun PeskyBottomNavigation(
             
             NavigationBarItem(
                 selected = selected,
-                onClick = { onTabSelected(tab) },
+                onClick = { 
+                    if (tab != selectedTab) {
+                        haptics.tick()
+                    }
+                    onTabSelected(tab) 
+                },
                 icon = {
                     Icon(
                         imageVector = if (selected) tab.selectedIcon else tab.icon,

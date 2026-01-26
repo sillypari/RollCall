@@ -33,6 +33,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.pesky.app.R
+import com.pesky.app.ui.components.LocalPeskyHaptics
 import com.pesky.app.ui.theme.PeskyColors
 import com.pesky.app.ui.animations.PeskyAnimations
 import com.pesky.app.viewmodels.VaultEvent
@@ -50,6 +51,7 @@ fun LoginScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val focusManager = LocalFocusManager.current
+    val haptics = LocalPeskyHaptics.current
     
     var selectedUri by remember { mutableStateOf<Uri?>(null) }
     var masterPassword by remember { mutableStateOf("") }
@@ -93,8 +95,14 @@ fun LoginScreen(
     LaunchedEffect(Unit) {
         viewModel.events.collectLatest { event ->
             when (event) {
-                is VaultEvent.DatabaseOpened -> onDatabaseOpened()
-                is VaultEvent.Error -> showError = true
+                is VaultEvent.DatabaseOpened -> {
+                    haptics.success()
+                    onDatabaseOpened()
+                }
+                is VaultEvent.Error -> {
+                    haptics.error()
+                    showError = true
+                }
                 else -> {}
             }
         }
@@ -144,17 +152,14 @@ fun LoginScreen(
             Box(
                 modifier = Modifier
                     .size(120.dp)
-                    .graphicsLayer { alpha = logoAlpha }
-                    .clip(RoundedCornerShape(28.dp))
-                    .background(PeskyColors.AccentBlue.copy(alpha = 0.15f)),
+                    .graphicsLayer { alpha = logoAlpha },
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = Icons.Filled.Lock,
+                Image(
+                    painter = painterResource(id = R.drawable.ic_pesky_logo),
                     contentDescription = "Pesky Logo",
-                    tint = PeskyColors.AccentBlue,
                     modifier = Modifier
-                        .size(60.dp)
+                        .size(120.dp)
                         .graphicsLayer {
                             scaleX = lockScale
                             scaleY = lockScale

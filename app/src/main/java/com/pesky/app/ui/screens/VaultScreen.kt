@@ -22,7 +22,6 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
-import android.view.HapticFeedbackConstants
 import com.pesky.app.data.models.PasswordEntry
 import com.pesky.app.ui.components.*
 import com.pesky.app.ui.theme.PeskyColors
@@ -47,6 +46,7 @@ fun VaultScreen(
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
     val view = LocalView.current
+    val haptics = LocalPeskyHaptics.current
     val listState = rememberLazyListState()
     
     // Selected tab for bottom navigation
@@ -85,7 +85,7 @@ fun VaultScreen(
                 is VaultEvent.PasswordCopied -> {
                     toastMessage = "Password copied to clipboard"
                     showToast = true
-                    view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                    haptics.success()
                     delay(2000)
                     showToast = false
                 }

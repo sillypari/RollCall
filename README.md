@@ -78,6 +78,7 @@ Pesky is a **completely offline**, privacy-focused password manager built with m
 - **Material 3 Design** - Modern, clean interface following Google's design guidelines
 - **Animated Icons** - Smooth, delightful animations throughout the app
 - **Dark Theme** - Easy on the eyes, optimized for AMOLED screens
+- **iPhone-Style Haptic Feedback** - Subtle, satisfying vibrations for button presses, toggles, and interactions (can be disabled in settings)
 - **Quick Actions** - Long-press for fast copy username/password
 - **Haptic Feedback** - Tactile responses for important actions
 

@@ -12,12 +12,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.datastore.preferences.core.booleanPreferencesKey
+import com.pesky.app.data.preferences.AppPreferences
 import com.pesky.app.data.preferences.peskyDataStore
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.pesky.app.navigation.PeskyNavHost
+import com.pesky.app.ui.components.PeskyHapticsProvider
 import com.pesky.app.ui.theme.PeskyColors
 import com.pesky.app.ui.theme.PeskyTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,6 +28,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import javax.inject.Inject
 
 /**
  * Main activity for Pesky Password Manager.
@@ -33,6 +36,9 @@ import kotlinx.coroutines.runBlocking
  */
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    
+    @Inject
+    lateinit var appPreferences: AppPreferences
     
     private var keepSplashScreen = true
     
@@ -72,14 +78,24 @@ class MainActivity : ComponentActivity() {
         }
         
         setContent {
+            // Track haptic feedback preference state
+            var hapticEnabled by remember { mutableStateOf(appPreferences.hapticFeedbackEnabled) }
+            
+            // Update haptic state when returning to app
+            LaunchedEffect(Unit) {
+                hapticEnabled = appPreferences.hapticFeedbackEnabled
+            }
+            
             PeskyTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = PeskyColors.BackgroundPrimary
-                ) {
-                    val navController = rememberNavController()
-                    
-                    PeskyNavHost(navController = navController)
+                PeskyHapticsProvider(isEnabled = hapticEnabled) {
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = PeskyColors.BackgroundPrimary
+                    ) {
+                        val navController = rememberNavController()
+                        
+                        PeskyNavHost(navController = navController)
+                    }
                 }
             }
         }

@@ -21,9 +21,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.pesky.app.ui.theme.PeskyColors
@@ -42,7 +40,7 @@ fun AnimatedFavoriteButton(
     modifier: Modifier = Modifier,
     size: Dp = 40.dp
 ) {
-    val haptic = LocalHapticFeedback.current
+    val haptics = LocalPeskyHaptics.current
     
     // Animation states
     var showParticles by remember { mutableStateOf(false) }
@@ -86,7 +84,7 @@ fun AnimatedFavoriteButton(
         // Star button
         IconButton(
             onClick = {
-                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                haptics.click()
                 onClick()
             }
         ) {
@@ -158,7 +156,7 @@ fun AnimatedCopyButton(
     modifier: Modifier = Modifier,
     size: Dp = 40.dp
 ) {
-    val haptic = LocalHapticFeedback.current
+    val haptics = LocalPeskyHaptics.current
     var isCopied by remember { mutableStateOf(false) }
     
     val iconRotation by animateFloatAsState(
@@ -182,7 +180,7 @@ fun AnimatedCopyButton(
     
     IconButton(
         onClick = {
-            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+            haptics.success()
             isCopied = true
             onCopy()
         },
@@ -218,7 +216,7 @@ fun PeskyFAB(
     modifier: Modifier = Modifier,
     icon: @Composable () -> Unit = { Icon(Icons.Filled.Add, "Add") }
 ) {
-    val haptic = LocalHapticFeedback.current
+    val haptics = LocalPeskyHaptics.current
     var isPressed by remember { mutableStateOf(false) }
     
     val scale by animateFloatAsState(
@@ -237,7 +235,7 @@ fun PeskyFAB(
             .pointerInput(Unit) {
                 detectTapGestures(
                     onPress = {
-                        haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                        haptics.click()
                         isPressed = true
                         tryAwaitRelease()
                         isPressed = false
@@ -295,7 +293,7 @@ fun PillButton(
     selected: Boolean = false,
     icon: @Composable (() -> Unit)? = null
 ) {
-    val haptic = LocalHapticFeedback.current
+    val haptics = LocalPeskyHaptics.current
     
     val backgroundColor by animateColorAsState(
         targetValue = if (selected) PeskyColors.AccentBlue else PeskyColors.PillButtonBackground,
@@ -311,7 +309,7 @@ fun PillButton(
     
     Surface(
         onClick = {
-            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+            haptics.click()
             onClick()
         },
         modifier = modifier,

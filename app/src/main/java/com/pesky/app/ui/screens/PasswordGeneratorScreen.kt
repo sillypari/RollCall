@@ -20,6 +20,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.pesky.app.ui.components.CopyButton
+import com.pesky.app.ui.components.LocalPeskyHaptics
 import com.pesky.app.ui.components.PasswordStrengthMeter
 import com.pesky.app.ui.theme.PeskyColors
 import com.pesky.app.utils.PasswordGenerator
@@ -36,6 +37,7 @@ fun PasswordGeneratorDialog(
     onPasswordSelected: (String) -> Unit
 ) {
     val context = LocalContext.current
+    val haptics = LocalPeskyHaptics.current
     val generator = remember { PasswordGenerator() }
     val analyzer = remember { PasswordStrengthAnalyzer() }
     
@@ -121,6 +123,7 @@ fun PasswordGeneratorDialog(
                         
                         IconButton(
                             onClick = { 
+                                haptics.click()
                                 generatedPassword = generator.generate(options) 
                             }
                         ) {
@@ -248,7 +251,10 @@ fun PasswordGeneratorDialog(
                     }
                     
                     Button(
-                        onClick = { onPasswordSelected(generatedPassword) },
+                        onClick = { 
+                            haptics.success()
+                            onPasswordSelected(generatedPassword) 
+                        },
                         modifier = Modifier.weight(1f),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = PeskyColors.AccentBlue
@@ -268,13 +274,18 @@ private fun OptionRow(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit
 ) {
+    val haptics = LocalPeskyHaptics.current
+    
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Checkbox(
             checked = checked,
-            onCheckedChange = onCheckedChange,
+            onCheckedChange = { 
+                haptics.tick()
+                onCheckedChange(it) 
+            },
             colors = CheckboxDefaults.colors(
                 checkedColor = PeskyColors.AccentBlue
             )

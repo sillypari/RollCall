@@ -11,8 +11,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import com.pesky.app.ui.theme.PeskyColors
 import com.pesky.app.ui.animations.PeskyAnimations
@@ -29,7 +27,7 @@ fun CopyButton(
     tint: Color = PeskyColors.AccentBlue
 ) {
     var showSuccess by remember { mutableStateOf(false) }
-    val haptic = LocalHapticFeedback.current
+    val haptics = LocalPeskyHaptics.current
     
     LaunchedEffect(showSuccess) {
         if (showSuccess) {
@@ -40,7 +38,7 @@ fun CopyButton(
     
     IconButton(
         onClick = {
-            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+            haptics.success()
             onClick()
             showSuccess = true
         },
@@ -85,7 +83,7 @@ fun CopyButtonWithLabel(
     modifier: Modifier = Modifier
 ) {
     var showSuccess by remember { mutableStateOf(false) }
-    val haptic = LocalHapticFeedback.current
+    val haptics = LocalPeskyHaptics.current
     
     LaunchedEffect(showSuccess) {
         if (showSuccess) {
@@ -96,7 +94,7 @@ fun CopyButtonWithLabel(
     
     TextButton(
         onClick = {
-            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+            haptics.success()
             onClick()
             showSuccess = true
         },

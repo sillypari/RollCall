@@ -16,13 +16,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.pesky.app.ui.components.LocalPeskyHaptics
 import com.pesky.app.ui.theme.PeskyColors
 import com.pesky.app.viewmodels.PinSetupViewModel
 import kotlinx.coroutines.delay
@@ -37,7 +36,7 @@ fun PinSetupScreen(
     viewModel: PinSetupViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val haptic = LocalHapticFeedback.current
+    val haptics = LocalPeskyHaptics.current
     
     var pin by remember { mutableStateOf("") }
     var confirmPin by remember { mutableStateOf("") }
@@ -73,16 +72,18 @@ fun PinSetupScreen(
     
     // Handle PIN input
     val onDigitClick: (String) -> Unit = { digit ->
-        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+        haptics.keyboard()
         if (isConfirming) {
             if (confirmPin.length < 6) {
                 confirmPin += digit
                 if (confirmPin.length == 6 || (confirmPin.length >= 4 && confirmPin.length == pin.length)) {
                     // Auto-verify when confirmed PIN matches first PIN length
                     if (confirmPin == pin) {
+                        haptics.success()
                         viewModel.setupPin(pin)
                         onPinSet()
                     } else if (confirmPin.length == pin.length) {
+                        haptics.error()
                         errorMessage = "PINs don't match. Try again."
                         showError = true
                         confirmPin = ""
@@ -97,7 +98,7 @@ fun PinSetupScreen(
     }
     
     val onBackspace: () -> Unit = {
-        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+        haptics.tick()
         if (isConfirming) {
             if (confirmPin.isNotEmpty()) {
                 confirmPin = confirmPin.dropLast(1)

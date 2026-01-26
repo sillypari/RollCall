@@ -45,6 +45,7 @@ class AppPreferences @Inject constructor(
         private const val KEY_QUICK_UNLOCK_PIN_LENGTH = "quick_unlock_pin_length"
         private const val KEY_AUTO_LOCK_TIMEOUT = "auto_lock_timeout"
         private const val KEY_BIOMETRIC_ENABLED = "biometric_enabled"
+        private const val KEY_HAPTIC_FEEDBACK_ENABLED = "haptic_feedback_enabled"
     }
     
     /**
@@ -102,6 +103,13 @@ class AppPreferences @Inject constructor(
     var biometricEnabled: Boolean
         get() = prefs.getBoolean(KEY_BIOMETRIC_ENABLED, false)
         set(value) = prefs.edit().putBoolean(KEY_BIOMETRIC_ENABLED, value).apply()
+    
+    /**
+     * Whether haptic feedback is enabled. Enabled by default for iPhone-like experience.
+     */
+    var hapticFeedbackEnabled: Boolean
+        get() = prefs.getBoolean(KEY_HAPTIC_FEEDBACK_ENABLED, true)
+        set(value) = prefs.edit().putBoolean(KEY_HAPTIC_FEEDBACK_ENABLED, value).apply()
     
     /**
      * Set up a new quick unlock PIN/password.

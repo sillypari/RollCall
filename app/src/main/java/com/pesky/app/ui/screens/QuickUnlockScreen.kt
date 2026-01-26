@@ -17,8 +17,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -27,6 +25,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.pesky.app.ui.components.LocalPeskyHaptics
 import com.pesky.app.ui.theme.PeskyColors
 import com.pesky.app.viewmodels.QuickUnlockEvent
 import com.pesky.app.viewmodels.QuickUnlockViewModel
@@ -44,7 +43,7 @@ fun QuickUnlockScreen(
     viewModel: QuickUnlockViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val haptic = LocalHapticFeedback.current
+    val haptics = LocalPeskyHaptics.current
     
     var pin by remember { mutableStateOf("") }
     var masterPassword by remember { mutableStateOf("") }
@@ -101,11 +100,13 @@ fun QuickUnlockScreen(
             when (event) {
                 is QuickUnlockEvent.PinVerified -> {
                     // PIN verified, now show master password
+                    haptics.success()
                     showSuccessAnimation = true
                     delay(600)
                     showSuccessAnimation = false
                 }
                 is QuickUnlockEvent.DatabaseUnlocked -> {
+                    haptics.success()
                     showSuccessAnimation = true
                     delay(400)
                     onUnlocked()
@@ -113,17 +114,18 @@ fun QuickUnlockScreen(
                 is QuickUnlockEvent.WrongPin -> {
                     errorMessage = "Wrong PIN"
                     showError = true
-                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                    haptics.error()
                     pin = ""
                 }
                 is QuickUnlockEvent.WrongPassword -> {
                     errorMessage = "Wrong master password"
                     showError = true
-                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                    haptics.error()
                 }
                 is QuickUnlockEvent.Error -> {
                     errorMessage = event.message
                     showError = true
+                    haptics.error()
                 }
             }
         }
@@ -131,7 +133,7 @@ fun QuickUnlockScreen(
     
     // Handle PIN input
     val onDigitClick: (String) -> Unit = { digit ->
-        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+        haptics.keyboard()
         if (pin.length < uiState.pinLength) {
             val newPin = pin + digit
             pin = newPin
@@ -143,7 +145,7 @@ fun QuickUnlockScreen(
     }
     
     val onBackspace: () -> Unit = {
-        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+        haptics.tick()
         if (pin.isNotEmpty()) {
             pin = pin.dropLast(1)
         }

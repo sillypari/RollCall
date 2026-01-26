@@ -20,9 +20,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -48,7 +46,7 @@ fun PasswordEntryCard(
     onLongPress: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
-    val haptic = LocalHapticFeedback.current
+    val haptics = LocalPeskyHaptics.current
     var isPressed by remember { mutableStateOf(false) }
     var isHovered by remember { mutableStateOf(false) }
     
@@ -102,14 +100,14 @@ fun PasswordEntryCard(
             .pointerInput(Unit) {
                 detectTapGestures(
                     onPress = {
-                        haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                        haptics.tick()
                         isPressed = true
                         tryAwaitRelease()
                         isPressed = false
                     },
                     onTap = { onClick() },
                     onLongPress = {
-                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        haptics.heavyClick()
                         onLongPress?.invoke()
                     }
                 )
