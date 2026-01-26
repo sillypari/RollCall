@@ -18,7 +18,8 @@ data class QuickUnlockUiState(
     val isLoading: Boolean = false,
     val isPinVerified: Boolean = false,
     val quickUnlockEnabled: Boolean = false,
-    val databaseName: String = ""
+    val databaseName: String = "",
+    val pinLength: Int = 4
 )
 
 sealed class QuickUnlockEvent {
@@ -46,7 +47,8 @@ class QuickUnlockViewModel @Inject constructor(
             quickUnlockEnabled = appPreferences.quickUnlockEnabled,
             databaseName = appPreferences.databaseName,
             // If no quick unlock, go straight to master password
-            isPinVerified = !appPreferences.quickUnlockEnabled
+            isPinVerified = !appPreferences.quickUnlockEnabled,
+            pinLength = appPreferences.quickUnlockPinLength
         )
     }
     

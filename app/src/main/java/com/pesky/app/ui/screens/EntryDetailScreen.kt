@@ -270,12 +270,78 @@ fun EntryDetailScreen(
             
             // Password history
             if (uiState.entry?.history?.isNotEmpty() == true) {
+                var showHistory by remember { mutableStateOf(false) }
+                var revealedHistoryIndex by remember { mutableStateOf<Int?>(null) }
+                val historyFormatter = DateTimeFormatter.ofPattern("MMM dd, yyyy 'at' hh:mm a")
+                val historyZoneId = java.time.ZoneId.systemDefault()
+                
                 DetailSection(title = "Password History (${uiState.entry?.history?.size})") {
-                    Text(
-                        text = "Tap to view previous passwords",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = PeskyColors.TextSecondary
-                    )
+                    if (!showHistory) {
+                        TextButton(
+                            onClick = { showHistory = true },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Icon(
+                                Icons.Filled.Visibility,
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Tap to view previous passwords")
+                        }
+                    } else {
+                        uiState.entry?.history?.forEachIndexed { index, historyEntry ->
+                            val isRevealed = revealedHistoryIndex == index
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = if (isRevealed) historyEntry.password else "••••••••",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = PeskyColors.TextPrimary
+                                    )
+                                    Text(
+                                        text = historyEntry.modificationTime.atZone(historyZoneId).format(historyFormatter),
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = PeskyColors.TextSecondary
+                                    )
+                                }
+                                IconButton(
+                                    onClick = { 
+                                        revealedHistoryIndex = if (isRevealed) null else index 
+                                    }
+                                ) {
+                                    Icon(
+                                        if (isRevealed) Icons.Filled.VisibilityOff else Icons.Filled.Visibility,
+                                        contentDescription = if (isRevealed) "Hide" else "Show",
+                                        tint = PeskyColors.TextSecondary
+                                    )
+                                }
+                            }
+                            if (index < (uiState.entry?.history?.size ?: 0) - 1) {
+                                HorizontalDivider(
+                                    color = PeskyColors.TextSecondary.copy(alpha = 0.2f),
+                                    modifier = Modifier.padding(vertical = 4.dp)
+                                )
+                            }
+                        }
+                        
+                        Spacer(modifier = Modifier.height(8.dp))
+                        TextButton(
+                            onClick = { 
+                                showHistory = false
+                                revealedHistoryIndex = null
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("Hide history")
+                        }
+                    }
                 }
             }
             

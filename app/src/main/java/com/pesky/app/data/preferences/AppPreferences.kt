@@ -42,6 +42,7 @@ class AppPreferences @Inject constructor(
         private const val KEY_QUICK_UNLOCK_ENABLED = "quick_unlock_enabled"
         private const val KEY_QUICK_UNLOCK_HASH = "quick_unlock_hash"
         private const val KEY_QUICK_UNLOCK_TYPE = "quick_unlock_type" // "pin" or "password"
+        private const val KEY_QUICK_UNLOCK_PIN_LENGTH = "quick_unlock_pin_length"
         private const val KEY_AUTO_LOCK_TIMEOUT = "auto_lock_timeout"
         private const val KEY_BIOMETRIC_ENABLED = "biometric_enabled"
     }
@@ -82,6 +83,13 @@ class AppPreferences @Inject constructor(
         set(value) = prefs.edit().putString(KEY_QUICK_UNLOCK_HASH, value).apply()
     
     /**
+     * Length of the quick unlock PIN (4-6 digits).
+     */
+    var quickUnlockPinLength: Int
+        get() = prefs.getInt(KEY_QUICK_UNLOCK_PIN_LENGTH, 4)
+        set(value) = prefs.edit().putInt(KEY_QUICK_UNLOCK_PIN_LENGTH, value).apply()
+    
+    /**
      * Auto-lock timeout in minutes. 0 = immediate, -1 = never.
      */
     var autoLockTimeout: Int
@@ -101,6 +109,7 @@ class AppPreferences @Inject constructor(
     fun setupQuickUnlock(pin: String, type: String = "pin") {
         quickUnlockHash = hashPin(pin)
         quickUnlockType = type
+        quickUnlockPinLength = pin.length
         quickUnlockEnabled = true
     }
     

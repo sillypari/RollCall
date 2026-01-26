@@ -132,12 +132,11 @@ fun QuickUnlockScreen(
     // Handle PIN input
     val onDigitClick: (String) -> Unit = { digit ->
         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-        if (pin.length < 6) {
+        if (pin.length < uiState.pinLength) {
             val newPin = pin + digit
             pin = newPin
-            // Auto-verify when PIN is complete (4-6 digits)
-            if (newPin.length >= 4) {
-                // Try to verify
+            // Auto-verify only when PIN length matches the stored PIN length
+            if (newPin.length == uiState.pinLength) {
                 viewModel.verifyPin(newPin)
             }
         }
@@ -311,7 +310,7 @@ fun QuickUnlockScreen(
                         modifier = Modifier.offset(x = shakeOffset.dp),
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        repeat(6) { index ->
+                        repeat(uiState.pinLength) { index ->
                             Box(
                                 modifier = Modifier
                                     .size(16.dp)
