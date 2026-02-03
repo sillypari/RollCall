@@ -133,54 +133,11 @@ class AttendanceActivity : AppCompatActivity() {
     private fun animateNameFlash(isPresent: Boolean) {
         val color = if (isPresent) getColor(R.color.success_green) else getColor(R.color.error_red)
         
-        // Flash effect: Quick alpha blink on the name
-        binding.studentName.animate().cancel()
-        binding.studentName.alpha = 0.3f
+        // Smooth color transition on name
         binding.studentName.setTextColor(color)
-        binding.studentName.animate()
-            .alpha(1f)
-            .setDuration(150)
-            .start()
         
-        // Card border color with thicker stroke pulse
+        // Smooth card border color transition
         binding.studentCard.strokeColor = color
-        val originalStrokeWidth = resources.getDimensionPixelSize(R.dimen.card_stroke_width)
-        binding.studentCard.strokeWidth = (originalStrokeWidth * 4) // Make border much thicker
-        binding.studentCard.postDelayed({
-            binding.studentCard.strokeWidth = (originalStrokeWidth * 2)
-            binding.studentCard.postDelayed({
-                binding.studentCard.strokeWidth = originalStrokeWidth
-            }, 100)
-        }, 100)
-        
-        // Stronger scale animation on card
-        binding.studentCard.animate().cancel()
-        binding.studentCard.animate()
-            .scaleX(1.05f)
-            .scaleY(1.05f)
-            .setDuration(80)
-            .withEndAction {
-                binding.studentCard.animate()
-                    .scaleX(1f)
-                    .scaleY(1f)
-                    .setDuration(120)
-                    .start()
-            }
-            .start()
-        
-        // Name text scale pop with slight overshoot
-        binding.studentName.animate()
-            .scaleX(1.15f)
-            .scaleY(1.15f)
-            .setDuration(100)
-            .withEndAction {
-                binding.studentName.animate()
-                    .scaleX(1f)
-                    .scaleY(1f)
-                    .setDuration(120)
-                    .start()
-            }
-            .start()
         
         // Trigger progress bar glow animation
         animateProgressGlow(isPresent)
@@ -196,29 +153,17 @@ class AttendanceActivity : AppCompatActivity() {
         val trackWidth = binding.progressTrack.width.toFloat()
         if (trackWidth <= 0) return
         
-        // Animate glow sweeping across the bar
+        // Smooth glow sweeping across the bar
         binding.progressGlow.apply {
-            alpha = 0.7f
+            alpha = 0.5f
             translationX = -width.toFloat()
             animate()
                 .translationX(trackWidth)
                 .alpha(0f)
-                .setDuration(500)
+                .setDuration(700)
                 .setInterpolator(AccelerateDecelerateInterpolator())
                 .start()
         }
-        
-        // Also pulse the progress bar slightly
-        binding.progressTrack.animate()
-            .scaleY(1.3f)
-            .setDuration(100)
-            .withEndAction {
-                binding.progressTrack.animate()
-                    .scaleY(1f)
-                    .setDuration(150)
-                    .start()
-            }
-            .start()
     }
     
     private fun updateProgressBar(presentCount: Int, absentCount: Int, totalCount: Int) {
@@ -264,9 +209,9 @@ class AttendanceActivity : AppCompatActivity() {
         // Cancel any running animation
         currentFillAnimator?.cancel()
         
-        // Animate fill from 0 to 0.9 alpha (glass effect)
+        // Smooth, relaxed fill animation (glass effect)
         currentFillAnimator = ObjectAnimator.ofFloat(fillView, "alpha", 0f, 0.85f).apply {
-            duration = 150
+            duration = 350
             interpolator = AccelerateDecelerateInterpolator()
             start()
         }
@@ -375,9 +320,6 @@ class AttendanceActivity : AppCompatActivity() {
                         binding.studentName.text = studentAttendance.student.name
                         binding.studentNumber.text = "${state.currentIndex + 1} / ${state.students.size}"
                         binding.rollNumber.text = studentAttendance.student.rollNo.ifEmpty { "#${state.currentIndex + 1}" }
-                        
-                        // Animate student card
-                        AnimationUtils.scaleIn(binding.studentCard)
                         
                         // Update name color and card border based on status
                         when (studentAttendance.status) {
