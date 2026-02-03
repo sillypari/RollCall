@@ -97,7 +97,10 @@ class AttendanceActivity : AppCompatActivity() {
             hapticUtils.lightTap()
             animateButtonFill(binding.presentFill, binding.presentText, true)
             animateNameFlash(true) // Flash name green
-            viewModel.markPresent()
+            // Delay moving to next student so user sees the feedback
+            binding.studentCard.postDelayed({
+                viewModel.markPresent()
+            }, 200)
         }
         
         // Absent button - strong haptic with glass fill animation
@@ -105,7 +108,10 @@ class AttendanceActivity : AppCompatActivity() {
             hapticUtils.heavyImpact()
             animateButtonFill(binding.absentFill, binding.absentText, false)
             animateNameFlash(false) // Flash name red
-            viewModel.markAbsent()
+            // Delay moving to next student so user sees the feedback
+            binding.studentCard.postDelayed({
+                viewModel.markAbsent()
+            }, 200)
         }
         
         binding.previousButton.setOnClickListener {
@@ -127,36 +133,46 @@ class AttendanceActivity : AppCompatActivity() {
     private fun animateNameFlash(isPresent: Boolean) {
         val color = if (isPresent) getColor(R.color.success_green) else getColor(R.color.error_red)
         
-        // Immediately set the status color
+        // Flash effect: Quick alpha blink on the name
+        binding.studentName.animate().cancel()
+        binding.studentName.alpha = 0.3f
         binding.studentName.setTextColor(color)
+        binding.studentName.animate()
+            .alpha(1f)
+            .setDuration(150)
+            .start()
+        
+        // Card border color with thicker stroke pulse
         binding.studentCard.strokeColor = color
-        
-        // Animate stroke width for a "pulse" effect on the card border
         val originalStrokeWidth = resources.getDimensionPixelSize(R.dimen.card_stroke_width)
-        binding.studentCard.strokeWidth = (originalStrokeWidth * 3) // Make border thicker
+        binding.studentCard.strokeWidth = (originalStrokeWidth * 4) // Make border much thicker
         binding.studentCard.postDelayed({
-            binding.studentCard.strokeWidth = originalStrokeWidth // Return to normal
-        }, 150)
+            binding.studentCard.strokeWidth = (originalStrokeWidth * 2)
+            binding.studentCard.postDelayed({
+                binding.studentCard.strokeWidth = originalStrokeWidth
+            }, 100)
+        }, 100)
         
-        // Scale up animation for emphasis
+        // Stronger scale animation on card
+        binding.studentCard.animate().cancel()
         binding.studentCard.animate()
-            .scaleX(1.03f)
-            .scaleY(1.03f)
-            .setDuration(100)
+            .scaleX(1.05f)
+            .scaleY(1.05f)
+            .setDuration(80)
             .withEndAction {
                 binding.studentCard.animate()
                     .scaleX(1f)
                     .scaleY(1f)
-                    .setDuration(100)
+                    .setDuration(120)
                     .start()
             }
             .start()
         
-        // Animate the name text with a quick scale pop
+        // Name text scale pop with slight overshoot
         binding.studentName.animate()
-            .scaleX(1.08f)
-            .scaleY(1.08f)
-            .setDuration(80)
+            .scaleX(1.15f)
+            .scaleY(1.15f)
+            .setDuration(100)
             .withEndAction {
                 binding.studentName.animate()
                     .scaleX(1f)
