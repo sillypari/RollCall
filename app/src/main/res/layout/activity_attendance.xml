@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_primary"
+    android:fitsSystemWindows="true">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/background_primary"
+        app:elevation="0dp">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:title="Take Attendance"
+            app:titleTextColor="@color/text_primary"
+            app:navigationIcon="@drawable/ic_back"
+            app:navigationIconTint="@color/text_primary"
+            app:menu="@menu/attendance_menu" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminateTint="@color/primary"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/contentLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <!-- Student Card - Fixed height to prevent layout shift -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/studentCard"
+                android:layout_width="match_parent"
+                android:layout_height="160dp"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="8dp"
+                app:cardBackgroundColor="@color/card_background"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/glass_border"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:paddingHorizontal="24dp"
+                    android:paddingVertical="20dp">
+
+                    <!-- Counter at top -->
+                    <TextView
+                        android:id="@+id/studentNumber"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/text_tertiary"
+                        android:textSize="12sp"
+                        android:textAppearance="@style/TextAppearance.Material3.LabelSmall" />
+
+                    <!-- Roll/Enrollment Number - Smaller, above name -->
+                    <TextView
+                        android:id="@+id/rollNumber"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="14sp"
+                        android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+                        android:letterSpacing="0.1"
+                        android:maxLines="1"
+                        android:ellipsize="end" />
+
+                    <!-- Student Name - Bigger, prominent -->
+                    <TextView
+                        android:id="@+id/studentName"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:layout_marginTop="4dp"
+                        android:gravity="center"
+                        android:textColor="@color/text_primary"
+                        android:textSize="22sp"
+                        android:textAppearance="@style/TextAppearance.Material3.HeadlineLarge"
+                        android:textStyle="bold"
+                        android:maxLines="2"
+                        android:ellipsize="end" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Live Stats Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:paddingHorizontal="24dp"
+                android:paddingTop="20dp">
+
+                <!-- Present Stat -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/stat_chip_background_green"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="8dp">
+
+                    <View
+                        android:id="@+id/presentDot"
+                        android:layout_width="8dp"
+                        android:layout_height="8dp"
+                        android:background="@drawable/circle_green" />
+
+                    <TextView
+                        android:id="@+id/livePresent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="0 Present"
+                        android:textColor="@color/success_green"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <!-- Divider -->
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="20dp"
+                    android:layout_marginHorizontal="16dp"
+                    android:background="@color/glass_border" />
+
+                <!-- Absent Stat -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/stat_chip_background_red"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="8dp">
+
+                    <View
+                        android:id="@+id/absentDot"
+                        android:layout_width="8dp"
+                        android:layout_height="8dp"
+                        android:background="@drawable/circle_red" />
+
+                    <TextView
+                        android:id="@+id/liveAbsent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="0 Absent"
+                        android:textColor="@color/error_red"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <!-- Divider -->
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="20dp"
+                    android:layout_marginHorizontal="16dp"
+                    android:background="@color/glass_border" />
+
+                <!-- Remaining -->
+                <TextView
+                    android:id="@+id/liveRemaining"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0 Left"
+                    android:textColor="@color/text_tertiary"
+                    android:textSize="13sp" />
+
+            </LinearLayout>
+
+            <!-- Animated Progress Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="24dp"
+                android:paddingTop="24dp">
+
+                <!-- Progress Text -->
+                <TextView
+                    android:id="@+id/progressText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="13sp"
+                    android:textAppearance="@style/TextAppearance.Material3.LabelMedium" />
+
+                <!-- Animated Progress Bar -->
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp">
+
+                    <!-- Track background -->
+                    <View
+                        android:id="@+id/progressTrack"
+                        android:layout_width="match_parent"
+                        android:layout_height="12dp"
+                        android:background="@drawable/progress_track_background" />
+
+                    <!-- Present progress (green) -->
+                    <View
+                        android:id="@+id/progressPresent"
+                        android:layout_width="0dp"
+                        android:layout_height="12dp"
+                        android:background="@drawable/progress_present_fill" />
+
+                    <!-- Absent progress (red) - starts after present -->
+                    <View
+                        android:id="@+id/progressAbsent"
+                        android:layout_width="0dp"
+                        android:layout_height="12dp"
+                        android:background="@drawable/progress_absent_fill" />
+
+                    <!-- Glow effect overlay for animation -->
+                    <View
+                        android:id="@+id/progressGlow"
+                        android:layout_width="40dp"
+                        android:layout_height="12dp"
+                        android:background="@drawable/progress_glow"
+                        android:alpha="0" />
+
+                </FrameLayout>
+
+            </LinearLayout>
+
+            <!-- Spacer to push everything below to bottom -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <!-- Large Square A/P Buttons with Outline Style -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingHorizontal="24dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="24dp"
+                android:gravity="center">
+
+                <!-- Absent Button - Outline initially, fills on selection -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/absentButton"
+                    android:layout_width="0dp"
+                    android:layout_height="130dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="12dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:cardBackgroundColor="@android:color/transparent"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="@color/error_red"
+                    app:strokeWidth="2dp"
+                    app:rippleColor="#40FF453A">
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <!-- Fill overlay for animation -->
+                        <View
+                            android:id="@+id/absentFill"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@color/error_red"
+                            android:alpha="0" />
+
+                        <TextView
+                            android:id="@+id/absentText"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="A"
+                            android:textColor="@color/error_red"
+                            android:textSize="40sp"
+                            android:textStyle="bold" />
+
+                    </FrameLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Present Button - Outline initially, fills on selection -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/presentButton"
+                    android:layout_width="0dp"
+                    android:layout_height="130dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="12dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:cardBackgroundColor="@android:color/transparent"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="@color/success_green"
+                    app:strokeWidth="2dp"
+                    app:rippleColor="#4030D158">
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <!-- Fill overlay for animation -->
+                        <View
+                            android:id="@+id/presentFill"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@color/success_green"
+                            android:alpha="0" />
+
+                        <TextView
+                            android:id="@+id/presentText"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="P"
+                            android:textColor="@color/success_green"
+                            android:textSize="40sp"
+                            android:textStyle="bold" />
+
+                    </FrameLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+
+            <!-- Bottom Section - Navigation and Save -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="24dp"
+                android:paddingBottom="24dp">
+
+                <!-- Navigation Row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:paddingBottom="16dp">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/previousButton"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/previous"
+                        android:textColor="@color/text_secondary"
+                        app:icon="@drawable/ic_back"
+                        app:iconTint="@color/text_secondary" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/nextButton"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/next"
+                        android:textColor="@color/text_secondary"
+                        app:icon="@drawable/ic_chevron_right"
+                        app:iconGravity="end"
+                        app:iconTint="@color/text_secondary" />
+
+                </LinearLayout>
+
+                <!-- Finish Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/finishButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="Save Attendance"
+                    android:textColor="@color/on_primary"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:backgroundTint="@color/primary"
+                    app:cornerRadius="16dp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

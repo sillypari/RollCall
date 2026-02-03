@@ -1,11 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.Pesky" parent="android:Theme.Material.NoActionBar">
-        <item name="android:windowBackground">@color/background_primary</item>
-        <item name="android:statusBarColor">@color/background_primary</item>
+    <!-- ===== ROLL CALL DARK THEME ===== -->
+    <style name="Theme.RollCall" parent="Theme.Material3.Dark.NoActionBar">
+        <!-- Primary brand color (Apple Blue) -->
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryContainer">@color/primary_dark</item>
+        <item name="colorOnPrimary">@color/on_primary</item>
+        <item name="colorOnPrimaryContainer">@color/on_primary</item>
+        
+        <!-- Secondary brand color (Success Green) -->
+        <item name="colorSecondary">@color/secondary</item>
+        <item name="colorSecondaryContainer">@color/secondary_variant</item>
+        <item name="colorOnSecondary">@color/on_secondary</item>
+        <item name="colorOnSecondaryContainer">@color/on_secondary</item>
+        
+        <!-- Tertiary (Info Blue) -->
+        <item name="colorTertiary">@color/info_blue</item>
+        <item name="colorOnTertiary">@color/on_primary</item>
+        
+        <!-- Background & Surface (Layered Dark) -->
+        <item name="android:colorBackground">@color/background_primary</item>
+        <item name="colorSurface">@color/background_secondary</item>
+        <item name="colorSurfaceVariant">@color/background_tertiary</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorOnSurfaceVariant">@color/text_secondary</item>
+        
+        <!-- Error color -->
+        <item name="colorError">@color/error_red</item>
+        <item name="colorOnError">@color/on_primary</item>
+        
+        <!-- Outline -->
+        <item name="colorOutline">@color/glass_border</item>
+        <item name="colorOutlineVariant">@color/divider</item>
+        
+        <!-- Status bar (Edge-to-edge dark) -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@color/background_primary</item>
         <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        
+        <!-- Ripple -->
+        <item name="android:colorControlHighlight">@color/ripple</item>
+        
+        <!-- Bottom Navigation styling -->
+        <item name="bottomNavigationStyle">@style/Widget.RollCall.BottomNavigation</item>
+        
+        <!-- FAB styling -->
+        <item name="floatingActionButtonStyle">@style/Widget.RollCall.FAB</item>
+        
+        <!-- Card styling -->
+        <item name="materialCardViewStyle">@style/Widget.RollCall.Card</item>
     </style>
     
-    <color name="background_primary">#1C1C1E</color>
+    <!-- Bottom Navigation Style -->
+    <style name="Widget.RollCall.BottomNavigation" parent="Widget.Material3.BottomNavigationView">
+        <item name="android:background">@color/background_secondary</item>
+        <item name="itemIconTint">@color/bottom_nav_colors</item>
+        <item name="itemTextColor">@color/bottom_nav_colors</item>
+        <item name="itemActiveIndicatorStyle">@style/Widget.RollCall.BottomNavIndicator</item>
+    </style>
+    
+    <style name="Widget.RollCall.BottomNavIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/primary_subtle</item>
+    </style>
+    
+    <!-- FAB Style -->
+    <style name="Widget.RollCall.FAB" parent="Widget.Material3.ExtendedFloatingActionButton.Primary">
+        <item name="backgroundTint">@color/primary</item>
+        <item name="iconTint">@color/on_primary</item>
+    </style>
+    
+    <!-- Card Style -->
+    <style name="Widget.RollCall.Card" parent="Widget.Material3.CardView.Filled">
+        <item name="cardBackgroundColor">@color/card_background</item>
+        <item name="cardCornerRadius">16dp</item>
+        <item name="cardElevation">0dp</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="strokeColor">@color/glass_border</item>
+    </style>
+    
+    <!-- Glass Card Style -->
+    <style name="Widget.RollCall.Card.Glass">
+        <item name="cardBackgroundColor">@color/glass_background</item>
+        <item name="strokeColor">@color/glass_border</item>
+    </style>
 </resources>

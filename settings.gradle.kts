@@ -14,5 +14,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Pesky"
+rootProject.name = "RollCall"
 include(":app")

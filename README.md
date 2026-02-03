@@ -1,86 +1,69 @@
 <p align="center">
-  <img src="PeskyLogo.png" alt="Pesky Logo" width="120" height="120">
+  <img src="RollCallLogo.png" alt="Roll Call Logo" width="120" height="120">
 </p>
 
-<h1 align="center">Pesky</h1>
+<h1 align="center">Roll Call</h1>
 
 <p align="center">
-  <strong>A Modern, Offline-First Password Manager for Android</strong>
+  <strong>A Simple, Beautiful Attendance App for Android</strong>
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Platform-Android-green.svg" alt="Platform">
-  <img src="https://img.shields.io/badge/Min%20SDK-26%20(Android%208.0)-blue.svg" alt="Min SDK">
+  <img src="https://img.shields.io/badge/Min%20SDK-24%20(Android%207.0)-blue.svg" alt="Min SDK">
   <img src="https://img.shields.io/badge/Language-Kotlin-purple.svg" alt="Language">
-  <img src="https://img.shields.io/badge/UI-Jetpack%20Compose-orange.svg" alt="UI Framework">
+  <img src="https://img.shields.io/badge/UI-XML%20%2B%20Material%203-orange.svg" alt="UI Framework">
   <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License">
 </p>
 
 ---
 
-## About Pesky
+## About Roll Call
 
-Pesky is a **completely offline**, privacy-focused password manager built with modern Android technologies. Your passwords never leave your device – no cloud sync, no servers, no tracking. Just you and your encrypted vault.
+Roll Call is a **simple and elegant** attendance management app built for teachers, professors, and group leaders. Track attendance with just a few taps – no complicated setup, no cloud sync required. Just you and your students.
 
-### Why Pesky?
+### Why Roll Call?
 
-- **100% Offline** - Your data stays on your device. Period.
-- **Military-Grade Encryption** - AES-256 encryption with Argon2 key derivation
-- **Beautiful UI** - Clean, modern Material 3 design with smooth animations
-- **Fast & Lightweight** - No bloat, no unnecessary permissions
+- **100% Offline** - Your data stays on your device. No internet required.
+- **Lightning Fast** - Take attendance in seconds with intuitive swipe or tap gestures
+- **Beautiful UI** - Clean, modern Material 3 dark theme with smooth animations
+- **Comprehensive Reports** - View attendance history with detailed statistics
 - **Free & Open Source** - No ads, no subscriptions, no data collection
 
 ---
 
 ## Features
 
-### Password Management
-- **Secure Vault** - Store unlimited passwords with strong encryption
-- **Smart Search** - Instantly find entries by typing keywords like `weak`, `duplicate`, `expiring`, `favorites`, `recent`
-- **Groups/Categories** - Organize passwords into custom groups (Social, Banking, Work, etc.)
-- **Favorites** - Quick access to frequently used passwords
-- **Notes** - Add secure notes to any entry
-- **Password History** - Track previous passwords for each entry
+### Class Management
+- **Multiple Classes** - Create and manage unlimited classes
+- **Student Lists** - Add students manually or import from text
+- **Roll Numbers** - Support for custom roll/enrollment numbers
+- **Alphabetical Sorting** - Sort students by name or original order
 
-### Security
-- **AES-256 Encryption** - Industry-standard encryption for your vault
-- **Argon2 Key Derivation** - Memory-hard function resistant to brute-force attacks
-- **Master Password** - Single strong password protects everything
-- **PIN Unlock** - Quick 6-digit PIN for faster access (after initial master password verification)
-- **Biometric Authentication** - Fingerprint unlock support
-- **Auto-Lock** - Automatically lock vault when switching apps
-- **Screenshot Protection** - Prevent screenshots in sensitive screens
-- **Clipboard Auto-Clear** - Automatically clears copied passwords (configurable: 10-90 seconds)
+### Attendance Taking
+- **Large Present/Absent Buttons** - Easy to tap, impossible to miss
+- **Visual Feedback** - Color-coded cards show marked status instantly
+- **Live Stats** - See Present/Absent/Remaining counts in real-time
+- **Animated Progress Bar** - Visual progress with satisfying animations
+- **Navigation Controls** - Easily go back to previous students
+- **Haptic Feedback** - Subtle vibrations for tactile confirmation
 
-### Password Generator
-- **Customizable Length** - Generate passwords from 4 to 64 characters
-- **Character Options** - Include/exclude:
-  - Uppercase letters (A-Z)
-  - Lowercase letters (a-z)
-  - Numbers (0-9)
-  - Special characters (!@#$%^&*)
-- **Easy-to-Read Mode** - Exclude ambiguous characters (0, O, l, 1, etc.)
-- **Password Strength Meter** - Real-time strength analysis
+### Attendance Reports
+- **Session History** - View all past attendance sessions
+- **Date Grouping** - Sessions grouped by date for easy navigation
+- **Expandable Details** - Tap to see full student-by-student breakdown
+- **Present/Absent Counts** - Quick summary for each session
+- **Time Tracking** - See exactly when attendance was taken
 
-### Password Health Analysis
-- **Strength Analysis** - Visual strength indicator for each password
-- **Weak Password Detection** - Identify passwords that need improvement
-- **Duplicate Detection** - Find reused passwords across entries
-- **Expiry Tracking** - Set and monitor password expiration dates
-- **Security Dashboard** - Overview of your vault's security health
+### Statistics & Analytics
+- **Overall Attendance Rate** - Track class performance over time
+- **Individual Reports** - See attendance history per student
+- **Visual Indicators** - Color-coded status (green = present, red = absent)
 
-### Backup & Restore
-- **Encrypted Backups** - Export your vault as an encrypted `.pesky` file
-- **Easy Restore** - Import backups with your master password
-- **No Cloud Required** - Store backups wherever you want (USB, SD card, etc.)
-
-### User Experience
-- **Material 3 Design** - Modern, clean interface following Google's design guidelines
-- **Animated Icons** - Smooth, delightful animations throughout the app
+### Settings & Customization
+- **Numbering Mode** - Choose between Absolute (1, 2, 3...) or Relative (based on marked count) numbering
+- **Haptic Feedback** - Enable or disable vibration feedback
 - **Dark Theme** - Easy on the eyes, optimized for AMOLED screens
-- **iPhone-Style Haptic Feedback** - Subtle, satisfying vibrations for button presses, toggles, and interactions (can be disabled in settings)
-- **Quick Actions** - Long-press for fast copy username/password
-- **Haptic Feedback** - Tactile responses for important actions
 
 ---
 
@@ -88,77 +71,55 @@ Pesky is a **completely offline**, privacy-focused password manager built with m
 
 ### Built With
 - **Language**: Kotlin 100%
-- **UI Framework**: Jetpack Compose with Material 3
+- **UI Framework**: XML Layouts with Material Design 3 Components
 - **Architecture**: MVVM with Clean Architecture principles
 - **Dependency Injection**: Hilt
-- **Async Operations**: Kotlin Coroutines & Flow
-- **Data Storage**: Encrypted file storage with DataStore for preferences
-- **Background Tasks**: WorkManager for reliable clipboard clearing
-
-### Encryption Stack
-```
-Master Password
-      |
-   Argon2id (memory-hard KDF)
-      |
-   256-bit Key
-      |
-   AES-256-GCM Encryption
-      |
-   Encrypted .pesky Database
-```
+- **Database**: Room for local data persistence
+- **Async Operations**: Kotlin Coroutines & StateFlow
+- **Data Storage**: DataStore for preferences
 
 ### Permissions
 | Permission | Usage |
 |------------|-------|
-| `USE_BIOMETRIC` | Fingerprint/Face unlock |
 | `VIBRATE` | Haptic feedback |
 
-**No internet permission** - Pesky cannot and will never access the network.
-
----
-
-## Screenshots
-
-Now You can enable or disable screenshots (settings > security)
+**No internet permission** - Roll Call works completely offline.
 
 ---
 
 ## Getting Started
 
 ### Requirements
-- Android 8.0 (API 26) or higher
-- ~10 MB storage space
+- Android 7.0 (API 24) or higher
+- ~15 MB storage space
 
 ### Installation
 
 #### Option 1: Build from Source
 ```bash
 # Clone the repository
-git clone https://github.com/sillypari/Pesky.git
+git clone https://github.com/ANewSoftwareDeveloper/RollCall.git
 
 # Open in Android Studio
 # Build and run on your device
 ```
 
 #### Option 2: Download APK
-Download the latest release from the [Releases](https://github.com/sillypari/Pesky/releases) page.
+Download the latest release from the [Releases](https://github.com/ANewSoftwareDeveloper/RollCall/releases) page.
 
-### First Time Setup
-1. Launch Pesky
-2. Create a strong master password (this is the only password you need to remember!)
-3. Optionally set up a 6-digit PIN for quick unlock
-4. Start adding your passwords
+### Quick Start
+1. Launch Roll Call
+2. Tap "+" to create a new class
+3. Add students (manually or paste from list)
+4. Tap "Take Attendance" to start marking
+5. Tap Present (✓) or Absent (✗) for each student
+6. Save when done - view reports anytime!
 
 ---
 
-## Security Best Practices
+## Screenshots
 
-1. **Use a Strong Master Password** - At least 12 characters with mixed case, numbers, and symbols
-2. **Enable Biometric Unlock** - For convenience without compromising security
-3. **Regular Backups** - Export your vault periodically and store securely
-4. **Use Generated Passwords** - Let Pesky create unique passwords for each account
-5. **Check Password Health** - Regularly review weak and duplicate passwords
+*Coming soon*
 
 ---
 
@@ -180,26 +141,18 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-## Acknowledgments
-
-- [Bouncy Castle](https://www.bouncycastle.org/) - Cryptography library
-- [Jetpack Compose](https://developer.android.com/jetpack/compose) - Modern UI toolkit
-- [Material Design 3](https://m3.material.io/) - Design system
-
----
-
 ## Support
 
 If you encounter any issues or have suggestions:
-- Open an [Issue](https://github.com/sillypari/Pesky/issues)
-- Start a [Discussion](https://github.com/sillypari/Pesky/discussions)
+- Open an [Issue](https://github.com/ANewSoftwareDeveloper/RollCall/issues)
+- Start a [Discussion](https://github.com/ANewSoftwareDeveloper/RollCall/discussions)
 
 ---
 
 <p align="center">
-  <strong>Made with care for privacy</strong>
+  <strong>Made with ❤️ for educators</strong>
 </p>
 
 <p align="center">
-  <em>Your passwords, your device, your control.</em>
+  <em>Simple. Fast. Reliable.</em>
 </p>

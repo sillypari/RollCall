@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ===== ROLL CALL DARK THEME ===== -->
+    
+    <!-- Layered Backgrounds (Darkest → Lightest) -->
+    <color name="background_primary">#1C1C1E</color>
+    <color name="background_secondary">#2C2C2E</color>
+    <color name="background_tertiary">#3A3A3C</color>
+    <color name="background_quaternary">#48484A</color>
+    
+    <!-- Glass Morphism -->
+    <color name="glass_background">#D92C2C2E</color>
+    <color name="glass_background_light">#BF3A3A3C</color>
+    <color name="glass_border">#14FFFFFF</color>
+    
+    <!-- Primary Accent (Apple Blue) -->
+    <color name="primary">#0A84FF</color>
+    <color name="primary_dark">#0066CC</color>
+    <color name="primary_light">#409CFF</color>
+    <color name="primary_subtle">#260A84FF</color>
+    <color name="on_primary">#FFFFFF</color>
+    
+    <!-- Secondary Colors -->
+    <color name="secondary">#30D158</color>
+    <color name="secondary_variant">#32D74B</color>
+    <color name="on_secondary">#FFFFFF</color>
+    
+    <!-- Status Colors (Apple Semantic) -->
+    <color name="success_green">#30D158</color>
+    <color name="success_green_light">#1A30D158</color>
+    <color name="error_red">#FF453A</color>
+    <color name="error_red_light">#1AFF453A</color>
+    <color name="warning_yellow">#FFD60A</color>
+    <color name="warning_yellow_light">#1AFFD60A</color>
+    <color name="info_blue">#0A84FF</color>
+    
+    <!-- Text Colors (Opacity-based hierarchy) -->
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#B3FFFFFF</color>
+    <color name="text_tertiary">#80FFFFFF</color>
+    <color name="text_quaternary">#4DFFFFFF</color>
+    <color name="text_disabled">#40FFFFFF</color>
+    
+    <!-- Icon Colors -->
+    <color name="icon_primary">#FFFFFF</color>
+    <color name="icon_secondary">#99FFFFFF</color>
+    <color name="icon_tertiary">#66FFFFFF</color>
+    <color name="icon_disabled">#40FFFFFF</color>
+    
+    <!-- Cards -->
+    <color name="card_background">#2C2C2E</color>
+    <color name="card_background_hovered">#3A3A3C</color>
+    <color name="card_background_pressed">#48484A</color>
+    <color name="card_border">#4D48484A</color>
+    
+    <!-- Navigation -->
+    <color name="nav_item_active">#0A84FF</color>
+    <color name="nav_item_inactive">#99FFFFFF</color>
+    
+    <!-- Dividers -->
+    <color name="divider">#14FFFFFF</color>
+    <color name="divider_light">#1FFFFFFF</color>
+    
+    <!-- Ripple -->
+    <color name="ripple">#33FFFFFF</color>
+    
+    <!-- Legacy compat -->
+    <color name="background_light">#1C1C1E</color>
+    <color name="background_dark">#1C1C1E</color>
+    <color name="surface_light">#2C2C2E</color>
+    <color name="surface_dark">#2C2C2E</color>
+    <color name="surface_variant">#3A3A3C</color>
+    <color name="primary_variant">#0066CC</color>
+    <color name="text_primary_dark">#FFFFFF</color>
+    <color name="text_secondary_dark">#B3FFFFFF</color>
+</resources>

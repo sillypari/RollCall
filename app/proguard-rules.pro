@@ -1,8 +1,4 @@
-# Pesky ProGuard Rules
-
-# Keep Bouncy Castle
--keep class org.bouncycastle.** { *; }
--dontwarn org.bouncycastle.**
+# Roll Call ProGuard Rules
 
 # Keep Kotlin Serialization
 -keepattributes *Annotation*, InnerClasses
@@ -16,7 +12,7 @@
 }
 
 # Keep data classes
--keep class com.pesky.app.data.models.** { *; }
+-keep class com.simpleattendance.data.models.** { *; }
 
 # Remove logging
 -assumenosideeffects class android.util.Log {
