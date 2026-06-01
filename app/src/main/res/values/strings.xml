@@ -33,7 +33,7 @@
     
     <!-- App Info -->
     <string name="developer_info">Parikshit Singh Bais</string>
-    <string name="app_version">Version: 2.0</string>
+    <string name="app_version">Version: 2.0.1</string>
     
     <!-- Navigation -->
     <string name="nav_attendance">Attendance</string>

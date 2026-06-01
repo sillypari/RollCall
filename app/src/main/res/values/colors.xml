@@ -34,6 +34,9 @@
     <color name="warning_yellow_light">#1AFFD60A</color>
     <color name="info_blue">#0A84FF</color>
     
+    <!-- Nvidia Green -->
+    <color name="nvidia_green">#76B900</color>
+    
     <!-- Text Colors (Opacity-based hierarchy) -->
     <color name="text_primary">#FFFFFF</color>
     <color name="text_secondary">#B3FFFFFF</color>

@@ -38,6 +38,11 @@ class AttendanceActivity : AppCompatActivity() {
         binding = ActivityAttendanceBinding.inflate(layoutInflater)
         setContentView(binding.root)
         
+        val classId = intent.getLongExtra("classId", -1L)
+        if (classId != -1L) {
+            binding.root.transitionName = "class_card_transition_$classId"
+        }
+        
         setupToolbar()
         setupButtons()
         observeState()
@@ -92,42 +97,166 @@ class AttendanceActivity : AppCompatActivity() {
     }
     
     private fun setupButtons() {
-        // Present button - light haptic with glass fill animation
+        // Present button - light haptic with spring scale and glass fill animation
         binding.presentButton.setOnClickListener {
             hapticUtils.lightTap()
+            AnimationUtils.applySpringScale(it)
             animateButtonFill(binding.presentFill, binding.presentText, true)
             animateNameFlash(true) // Flash name green
             // Delay moving to next student so user sees the feedback
             binding.studentCard.postDelayed({
                 viewModel.markPresent()
-            }, 200)
+            }, 250)
         }
         
-        // Absent button - strong haptic with glass fill animation
+        // Absent button - strong haptic with spring scale and glass fill animation
         binding.absentButton.setOnClickListener {
             hapticUtils.heavyImpact()
+            AnimationUtils.applySpringScale(it)
             animateButtonFill(binding.absentFill, binding.absentText, false)
             animateNameFlash(false) // Flash name red
             // Delay moving to next student so user sees the feedback
             binding.studentCard.postDelayed({
                 viewModel.markAbsent()
-            }, 200)
+            }, 250)
         }
         
         binding.previousButton.setOnClickListener {
             hapticUtils.lightTap()
+            AnimationUtils.applySpringScale(it)
             viewModel.goToPrevious()
         }
         
         binding.nextButton.setOnClickListener {
             hapticUtils.lightTap()
+            AnimationUtils.applySpringScale(it)
             viewModel.goToNext()
         }
         
         binding.finishButton.setOnClickListener {
             hapticUtils.heavyImpact()
+            AnimationUtils.applySpringScale(it)
             showSaveConfirmation()
         }
+
+        setupSwipeGesture()
+    }
+    
+    @android.annotation.SuppressLint("ClickableViewAccessibility")
+    private fun setupSwipeGesture() {
+        var startX = 0f
+        var startY = 0f
+        var initialX = 0f
+        var initialY = 0f
+        val swipeThreshold = 300f // Swipe threshold in pixels
+        
+        binding.studentCard.setOnTouchListener { view, event ->
+            when (event.action) {
+                android.view.MotionEvent.ACTION_DOWN -> {
+                    startX = event.rawX
+                    startY = event.rawY
+                    initialX = view.translationX
+                    initialY = view.translationY
+                    true
+                }
+                android.view.MotionEvent.ACTION_MOVE -> {
+                    val dx = event.rawX - startX
+                    val dy = event.rawY - startY
+                    
+                    view.translationX = initialX + dx
+                    view.translationY = initialY + dy
+                    view.rotation = dx * 0.05f // Dynamic rotation angle
+                    
+                    // Dynamic border tint based on drag direction
+                    if (dx > 50f) {
+                        binding.studentCard.strokeColor = ContextCompat.getColor(this, R.color.success_green)
+                        binding.studentName.setTextColor(ContextCompat.getColor(this, R.color.success_green))
+                    } else if (dx < -50f) {
+                        binding.studentCard.strokeColor = ContextCompat.getColor(this, R.color.error_red)
+                        binding.studentName.setTextColor(ContextCompat.getColor(this, R.color.error_red))
+                    } else {
+                        val state = viewModel.uiState.value
+                        state.currentStudent?.let { student ->
+                            updateCardVisualsForStatus(student.status)
+                        }
+                    }
+                    true
+                }
+                android.view.MotionEvent.ACTION_UP -> {
+                    val dx = event.rawX - startX
+                    if (dx > swipeThreshold) {
+                        animateSwipeAndMark(true)
+                    } else if (dx < -swipeThreshold) {
+                        animateSwipeAndMark(false)
+                    } else {
+                        // Rebound center with smooth interpolation
+                        view.animate()
+                            .translationX(0f)
+                            .translationY(0f)
+                            .rotation(0f)
+                            .setDuration(250)
+                            .setInterpolator(AccelerateDecelerateInterpolator())
+                            .withEndAction {
+                                val state = viewModel.uiState.value
+                                state.currentStudent?.let { student ->
+                                    updateCardVisualsForStatus(student.status)
+                                }
+                            }
+                            .start()
+                    }
+                    true
+                }
+                else -> false
+            }
+        }
+    }
+
+    private fun updateCardVisualsForStatus(status: String?) {
+        when (status) {
+            "P" -> {
+                binding.studentName.setTextColor(ContextCompat.getColor(this, R.color.success_green))
+                binding.studentCard.strokeColor = ContextCompat.getColor(this, R.color.success_green)
+            }
+            "A" -> {
+                binding.studentName.setTextColor(ContextCompat.getColor(this, R.color.error_red))
+                binding.studentCard.strokeColor = ContextCompat.getColor(this, R.color.error_red)
+            }
+            else -> {
+                binding.studentName.setTextColor(ContextCompat.getColor(this, R.color.text_primary))
+                binding.studentCard.strokeColor = ContextCompat.getColor(this, R.color.glass_border)
+            }
+        }
+    }
+
+    private fun animateSwipeAndMark(isPresent: Boolean) {
+        val screenWidth = resources.displayMetrics.widthPixels.toFloat()
+        val targetX = if (isPresent) screenWidth else -screenWidth
+        
+        binding.studentCard.animate()
+            .translationX(targetX)
+            .alpha(0f)
+            .setDuration(250)
+            .setInterpolator(AccelerateDecelerateInterpolator())
+            .withEndAction {
+                if (isPresent) {
+                    hapticUtils.lightTap()
+                    viewModel.markPresent()
+                } else {
+                    hapticUtils.heavyImpact()
+                    viewModel.markAbsent()
+                }
+                // Animate card back in from top
+                binding.studentCard.translationX = 0f
+                binding.studentCard.translationY = -200f
+                binding.studentCard.rotation = 0f
+                binding.studentCard.animate()
+                    .translationY(0f)
+                    .alpha(1f)
+                    .setDuration(300)
+                    .setInterpolator(AccelerateDecelerateInterpolator())
+                    .start()
+            }
+            .start()
     }
     
     private fun animateNameFlash(isPresent: Boolean) {
@@ -311,8 +440,8 @@ class AttendanceActivity : AppCompatActivity() {
                     
                     // Class info
                     state.classEntity?.let { classEntity ->
-                        binding.toolbar.title = classEntity.displayName
-                        binding.toolbar.subtitle = classEntity.subject
+                        binding.toolbarTitle.text = classEntity.displayName
+                        binding.toolbarSubtitle.text = classEntity.subject
                     }
                     
                     // Current student

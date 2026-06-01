@@ -6,6 +6,7 @@ import com.simpleattendance.data.local.entity.AttendanceSessionEntity
 import com.simpleattendance.data.local.entity.ClassEntity
 import com.simpleattendance.data.repository.AttendanceRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -23,74 +24,47 @@ data class HistoryUiState(
     val isEmpty: Boolean = false
 )
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class HistoryViewModel @Inject constructor(
     private val repository: AttendanceRepository
 ) : ViewModel() {
     
-    private val _uiState = MutableStateFlow(HistoryUiState())
-    val uiState: StateFlow<HistoryUiState> = _uiState.asStateFlow()
+    private val _selectedClassId = MutableStateFlow<Long?>(null)
     
-    private var allClasses: Map<Long, ClassEntity> = emptyMap()
-    
-    init {
-        loadData()
-    }
-    
-    private fun loadData() {
-        viewModelScope.launch {
-            // First load all classes
-            repository.getAllClasses().collect { classes ->
-                allClasses = classes.associateBy { it.id }
-                _uiState.update { it.copy(classes = classes) }
-            }
-        }
-        
-        viewModelScope.launch {
-            // Then load sessions
-            repository.getAllSessions().collect { sessions ->
-                val sessionsWithClass = sessions.map { session ->
-                    SessionWithClass(
-                        session = session,
-                        classEntity = allClasses[session.classId]
-                    )
-                }
-                _uiState.update {
-                    it.copy(
-                        sessions = sessionsWithClass,
-                        isLoading = false,
-                        isEmpty = sessionsWithClass.isEmpty()
-                    )
-                }
-            }
-        }
-    }
-    
-    fun filterByClass(classId: Long?) {
-        _uiState.update { it.copy(selectedClassId = classId) }
-        
-        viewModelScope.launch {
-            val flow = if (classId != null) {
+    val uiState: StateFlow<HistoryUiState> = combine(
+        repository.getAllClasses(),
+        _selectedClassId.flatMapLatest { classId ->
+            if (classId != null) {
                 repository.getSessionsByClass(classId)
             } else {
                 repository.getAllSessions()
             }
-            
-            flow.collect { sessions ->
-                val sessionsWithClass = sessions.map { session ->
-                    SessionWithClass(
-                        session = session,
-                        classEntity = allClasses[session.classId]
-                    )
-                }
-                _uiState.update {
-                    it.copy(
-                        sessions = sessionsWithClass,
-                        isEmpty = sessionsWithClass.isEmpty()
-                    )
-                }
-            }
+        },
+        _selectedClassId
+    ) { classes, sessions, selectedId ->
+        val classMap = classes.associateBy { it.id }
+        val sessionsWithClass = sessions.map { session ->
+            SessionWithClass(
+                session = session,
+                classEntity = classMap[session.classId]
+            )
         }
+        HistoryUiState(
+            sessions = sessionsWithClass,
+            classes = classes,
+            selectedClassId = selectedId,
+            isLoading = false,
+            isEmpty = sessionsWithClass.isEmpty()
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = HistoryUiState()
+    )
+    
+    fun filterByClass(classId: Long?) {
+        _selectedClassId.value = classId
     }
     
     fun deleteSession(session: AttendanceSessionEntity) {

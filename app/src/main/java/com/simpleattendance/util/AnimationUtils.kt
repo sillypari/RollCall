@@ -103,4 +103,55 @@ object AnimationUtils {
             }
             .start()
     }
+    
+    fun startPulsing(view: View) {
+        stopPulsing(view)
+        
+        val scaleX = android.animation.PropertyValuesHolder.ofFloat(View.SCALE_X, 1f, 1.08f)
+        val scaleY = android.animation.PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, 1.08f)
+        
+        val animator = android.animation.ObjectAnimator.ofPropertyValuesHolder(view, scaleX, scaleY).apply {
+            duration = 800
+            repeatCount = android.animation.ValueAnimator.INFINITE
+            repeatMode = android.animation.ValueAnimator.REVERSE
+            interpolator = android.view.animation.AccelerateDecelerateInterpolator()
+        }
+        view.tag = animator
+        animator.start()
+    }
+    
+    fun stopPulsing(view: View) {
+        (view.tag as? android.animation.Animator)?.cancel()
+        view.tag = null
+        view.animate().cancel()
+        view.scaleX = 1f
+        view.scaleY = 1f
+    }
+
+    fun applySpringScale(view: View) {
+        try {
+            val springX = androidx.dynamicanimation.animation.SpringAnimation(view, androidx.dynamicanimation.animation.DynamicAnimation.SCALE_X)
+            val springY = androidx.dynamicanimation.animation.SpringAnimation(view, androidx.dynamicanimation.animation.DynamicAnimation.SCALE_Y)
+            
+            springX.spring = androidx.dynamicanimation.animation.SpringForce(1f).apply {
+                dampingRatio = androidx.dynamicanimation.animation.SpringForce.DAMPING_RATIO_MEDIUM_BOUNCY
+                stiffness = androidx.dynamicanimation.animation.SpringForce.STIFFNESS_MEDIUM
+            }
+            springY.spring = androidx.dynamicanimation.animation.SpringForce(1f).apply {
+                dampingRatio = androidx.dynamicanimation.animation.SpringForce.DAMPING_RATIO_MEDIUM_BOUNCY
+                stiffness = androidx.dynamicanimation.animation.SpringForce.STIFFNESS_MEDIUM
+            }
+            
+            view.scaleX = 0.92f
+            view.scaleY = 0.92f
+            
+            springX.start()
+            springY.start()
+        } catch (e: Exception) {
+            // Fallback to standard scale animations if dependencies fail to bind at runtime
+            view.scaleX = 0.95f
+            view.scaleY = 0.95f
+            view.animate().scaleX(1f).scaleY(1f).setDuration(200).start()
+        }
+    }
 }

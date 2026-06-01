@@ -1,4 +1,4 @@
-package com.simpleattendance.ui.main
+package com.simpleattendance.ui.classlist
 
 import android.view.LayoutInflater
 import android.view.View
@@ -9,9 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.simpleattendance.data.local.entity.ClassEntity
 import com.simpleattendance.databinding.ItemClassBinding
 import com.simpleattendance.databinding.ItemClassGroupBinding
+import com.simpleattendance.databinding.ItemGroupSubjectBinding
 
 class ClassAdapter(
-    private val onClassClick: (ClassEntity) -> Unit,
+    private val onClassClick: (ClassEntity, android.view.View) -> Unit,
     private val onClassLongClick: (ClassEntity) -> Unit,
     private val onGroupClick: (ClassGroup) -> Unit
 ) : ListAdapter<ClassGroup, RecyclerView.ViewHolder>(GroupDiffCallback()) {
@@ -58,14 +59,17 @@ class ClassAdapter(
         fun bind(classEntity: ClassEntity) {
             binding.className.text = classEntity.displayName
             binding.subjectName.text = classEntity.subject
+            binding.root.transitionName = "class_card_transition_${classEntity.id}"
             
             binding.root.setOnClickListener {
-                onClassClick(classEntity)
+                com.simpleattendance.util.AnimationUtils.applySpringScale(it)
+                binding.root.postDelayed({
+                    onClassClick(classEntity, binding.root)
+                }, 150)
             }
             
-            binding.root.setOnLongClickListener {
+            binding.btnOptions.setOnClickListener {
                 onClassLongClick(classEntity)
-                true
             }
         }
     }
@@ -85,21 +89,24 @@ class ClassAdapter(
             binding.subjectsContainer.removeAllViews()
             if (group.isExpanded) {
                 group.classes.forEach { classEntity ->
-                    val subjectBinding = ItemClassBinding.inflate(
+                    val subjectBinding = ItemGroupSubjectBinding.inflate(
                         LayoutInflater.from(binding.root.context),
                         binding.subjectsContainer,
                         false
                     )
-                    subjectBinding.className.text = classEntity.subject
-                    subjectBinding.subjectName.visibility = View.GONE
+                    subjectBinding.subjectName.text = classEntity.subject
+                    subjectBinding.studentCount.visibility = View.GONE
+                    subjectBinding.root.transitionName = "class_card_transition_${classEntity.id}"
                     
                     subjectBinding.root.setOnClickListener {
-                        onClassClick(classEntity)
+                        com.simpleattendance.util.AnimationUtils.applySpringScale(it)
+                        subjectBinding.root.postDelayed({
+                            onClassClick(classEntity, subjectBinding.root)
+                        }, 150)
                     }
                     
-                    subjectBinding.root.setOnLongClickListener {
+                    subjectBinding.btnOptions.setOnClickListener {
                         onClassLongClick(classEntity)
-                        true
                     }
                     
                     binding.subjectsContainer.addView(subjectBinding.root)

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="com_google_android_gms_fonts_certs">
+        <item>@array/com_google_android_gms_fonts_certs_dev</item>
+        <item>@array/com_google_android_gms_fonts_certs_prod</item>
+    </array>
+    <string-array name="com_google_android_gms_fonts_certs_dev">
+        <item>
+            MIIEqDCCA5CgAwIBAgIJAN5DQ5m2yaFkMA0GCSqGSIb3DQEBBQUAMIGUMQswCQYDVQQGEwJVUzETMBEG
+            A1UECBMKQ2FsaWZvcm5pYTEWMBQGA1UEBxMNTW91bnRhaW4gVmlldzEQMA4GA1UEChMHR29vZ2xlMRAw
+            DgYDVQQLEwdBbmRyb2lkMRAwDgYDVQQDEwdBbmRyb2lkMSkwJwYJKoZIhvcNAQkBFhphbmRyb2lkQGFu
+            ZHJvaWQuY29tMB4XDTA4MDQxNTIyNDAxN1oXDTM1MDgyNTAyMjQxN1owgZQxCzAJBgNVBAYTAlVTMRMw
+            EQYDVQQIEwpDYWxpZm9ybmlhMRYwFAYDVQQHEw1Nb3VudGFpbiBWaWV3MRAwDgYDVQQKEwdHb29nbGUx
+            EDAOBgNVBAsTB0FuZHJvaWQxEDAOBgNVBAMTB0FuZHJvaWQxKTAnBgkqhkiG9w0BCQEWGmFuZHJvaWRA
+            YW5kcm9pZC5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDA3v21YJLOmTy3hWcnjhgM
+            oJ33nJDywj38vSpf52XkY87xbaL/1x6T93Uya54817C+X0F5K0S9sSgwGzO753W/qy0n+M3nIq2F+8Uj
+            /M18rI+15V2t3865zUkg87B1MpHJ0W1b45YV0f4n6mS9l1n5m49g30k73+j1Yw3D0vV249p5/157c9s7
+            1p280p44/828yA==
+        </item>
+    </string-array>
+    <string-array name="com_google_android_gms_fonts_certs_prod">
+        <item>
+            MIIEqDCCA5CgAwIBAgIJAOcE+4j5MBO9MA0GCSqGSIb3DQEBBQUAMIGUMQswCQYDVQQGEwJVUzETMBEG
+            A1UECBMKQ2FsaWZvcm5pYTEWMBQGA1UEBxMNTW91bnRhaW4gVmlldzEQMA4GA1UEChMHR29vZ2xlMRAw
+            DgYDVQQLEwdBbmRyb2lkMRAwDgYDVQQDEwdBbmRyb2lkMSkwJwYJKoZIhvcNAQkBFhphbmRyb2lkQGFu
+            ZHJvaWQuY29tMB4XDTA4MDg1MTA0MDA0NFoXDTM1MDUyNjA0MDA0NFowgZQxCzAJBgNVBAYTAlVTMRMw
+            EQYDVQQIEwpDYWxpZm9ybmlhMRYwFAYDVQQHEw1Nb3VudGFpbiBWaWV3MRAwDgYDVQQKEwdHb29nbGUx
+            EDAOBgNVBAsTB0FuZHJvaWQxEDAOBgNVBAMTB0FuZHJvaWQxKTAnBgkqhkiG9w0BCQEWGmFuZHJvaWRA
+            YW5kcm9pZC5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDEoD8m04p12cMT0n218T+v
+            c+1aI2M5uO+Gg/7M1v4MpHJ8+M4N/2m2yA==
+        </item>
+    </string-array>
+</resources>

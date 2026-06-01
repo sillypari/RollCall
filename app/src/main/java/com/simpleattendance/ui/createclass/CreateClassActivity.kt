@@ -130,6 +130,22 @@ class CreateClassActivity : AppCompatActivity() {
                     
                     // Update save button
                     binding.saveButton.isEnabled = state.isValid && !state.isSaving
+                    if (binding.saveButton.isEnabled) {
+                        binding.saveButton.setBackgroundColor(getColor(R.color.primary))
+                        binding.saveButton.setTextColor(getColor(R.color.on_primary))
+                        binding.saveButton.alpha = 1.0f
+                    } else {
+                        binding.saveButton.setBackgroundColor(getColor(R.color.background_tertiary))
+                        binding.saveButton.setTextColor(getColor(R.color.text_disabled))
+                        binding.saveButton.alpha = 0.5f
+                    }
+                    
+                    // Pulse Nvidia Green Select CSV button until students are loaded
+                    if (state.students.isEmpty()) {
+                        com.simpleattendance.util.AnimationUtils.startPulsing(binding.selectCsvButton)
+                    } else {
+                        com.simpleattendance.util.AnimationUtils.stopPulsing(binding.selectCsvButton)
+                    }
                     
                     // Handle save success
                     state.savedClassId?.let {

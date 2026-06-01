@@ -178,6 +178,94 @@
                         android:textColor="@color/text_tertiary"
                         android:textAppearance="@style/TextAppearance.Material3.BodySmall" />
 
+                    <!-- Visual Mock Spreadsheet Table -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="vertical"
+                        android:background="@color/background_primary"
+                        android:padding="8dp">
+
+                        <!-- Table Header -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:background="@color/background_tertiary"
+                            android:padding="6dp">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Roll No (Column 1)"
+                                android:textColor="@color/text_secondary"
+                                android:textStyle="bold"
+                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"/>
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Name (Column 2)"
+                                android:textColor="@color/text_secondary"
+                                android:textStyle="bold"
+                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"/>
+                        </LinearLayout>
+
+                        <View 
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/glass_border"/>
+
+                        <!-- Row 1 -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:padding="6dp">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="CS-101"
+                                android:textColor="@color/text_tertiary"
+                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"/>
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="John Doe"
+                                android:textColor="@color/text_tertiary"
+                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"/>
+                        </LinearLayout>
+
+                        <!-- Row 2 -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:padding="6dp">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="CS-102"
+                                android:textColor="@color/text_tertiary"
+                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"/>
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Jane Smith"
+                                android:textColor="@color/text_tertiary"
+                                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"/>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -192,6 +280,9 @@
                             android:layout_weight="1"
                             android:layout_marginEnd="8dp"
                             android:text="@string/select_csv_file"
+                            app:backgroundTint="@color/nvidia_green"
+                            android:textColor="@color/on_primary"
+                            app:iconTint="@color/on_primary"
                             app:icon="@drawable/ic_file" />
 
                         <com.google.android.material.button.MaterialButton

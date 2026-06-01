@@ -361,6 +361,69 @@
 
                 </com.google.android.material.card.MaterialCardView>
 
+                <!-- What's New Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.RollCall.Card"
+                    android:layout_marginTop="12dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="What's New in v2.0.1"
+                            android:textColor="@color/primary"
+                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                            android:textStyle="bold" />
+
+                        <!-- Major Changes -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:text="Major Updates"
+                            android:textColor="@color/text_primary"
+                            android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="• Overhauled History filter chips and resolved navigation tab horizontal scroll conflicts.\n• Dynamic UI hierarchy prioritizing Subject Names on all class cards.\n• Enhanced Create Class UX featuring Nvidia Green Select CSV guidance and interactive button pulsing.\n• Full-early Startup theme preferences synchronization."
+                            android:textColor="@color/text_secondary"
+                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                            android:lineSpacingMultiplier="1.2" />
+
+                        <!-- Minor Changes -->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="Minor Improvements"
+                            android:textColor="@color/text_primary"
+                            android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="• Fixed fitsSystemWindows layout shifts inside the Take Attendance screen.\n• Dynamic greyed-out visual feedback for disabled state buttons.\n• Standardized settings and template terminology defaults.\n• Miscellaneous bug fixes and performance optimizations."
+                            android:textColor="@color/text_secondary"
+                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                            android:lineSpacingMultiplier="1.2" />
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
             </LinearLayout>
 
         </FrameLayout>

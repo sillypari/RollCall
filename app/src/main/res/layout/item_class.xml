@@ -49,17 +49,17 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/className"
+                android:id="@+id/subjectName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:textColor="@color/text_primary"
                 android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                tools:text="Computer Science - 4th Sem - A" />
+                tools:text="Data Structures" />
 
             <TextView
-                android:id="@+id/subjectName"
+                android:id="@+id/className"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
@@ -67,7 +67,7 @@
                 android:maxLines="1"
                 android:textColor="@color/text_tertiary"
                 android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-                tools:text="Data Structures" />
+                tools:text="Computer Science - 4th Sem - A" />
 
             <TextView
                 android:id="@+id/studentCount"
@@ -80,13 +80,16 @@
 
         </LinearLayout>
 
-        <!-- Chevron -->
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+        <!-- Options Menu Button -->
+        <ImageButton
+            android:id="@+id/btnOptions"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_marginStart="8dp"
-            android:src="@drawable/ic_chevron_right"
-            app:tint="@color/icon_tertiary" />
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_more_vert"
+            android:contentDescription="Class Options"
+            app:tint="@color/icon_secondary" />
 
     </LinearLayout>
 

@@ -1,12 +1,10 @@
-package com.simpleattendance.ui.main
+package com.simpleattendance.ui.history
 
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -16,8 +14,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.simpleattendance.data.local.entity.AttendanceSessionEntity
 import com.simpleattendance.databinding.FragmentHistoryBinding
-import com.simpleattendance.ui.history.GroupedHistoryAdapter
-import com.simpleattendance.ui.history.HistoryViewModel
 import com.simpleattendance.ui.report.ReportActivity
 import com.simpleattendance.util.HapticUtils
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,9 +31,14 @@ class HistoryFragment : Fragment() {
     @Inject
     lateinit var hapticUtils: HapticUtils
     
-    // Track if spinner is being set programmatically
-    private var isSpinnerInitializing = false
-    private var spinnerInitialized = false
+    private val filterChipsAdapter by lazy {
+        FilterChipsAdapter(
+            onChipSelected = { classEntity, chipView ->
+                hapticUtils.lightTap()
+                viewModel.filterByClass(classEntity?.id)
+            }
+        )
+    }
     
     private val historyAdapter by lazy {
         GroupedHistoryAdapter(
@@ -73,6 +74,26 @@ class HistoryFragment : Fragment() {
             adapter = historyAdapter
             setHasFixedSize(false)
         }
+        
+        binding.classFilterChips.apply {
+            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            adapter = filterChipsAdapter
+            setHasFixedSize(true)
+            
+            // Prevent ViewPager2 from intercepting horizontal scrolls on the filter chips
+            addOnItemTouchListener(object : androidx.recyclerview.widget.RecyclerView.OnItemTouchListener {
+                override fun onInterceptTouchEvent(rv: androidx.recyclerview.widget.RecyclerView, e: android.view.MotionEvent): Boolean {
+                    when (e.action) {
+                        android.view.MotionEvent.ACTION_DOWN -> {
+                            rv.parent.requestDisallowInterceptTouchEvent(true)
+                        }
+                    }
+                    return false
+                }
+                override fun onTouchEvent(rv: androidx.recyclerview.widget.RecyclerView, e: android.view.MotionEvent) {}
+                override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {}
+            })
+        }
     }
     
     private fun observeState() {
@@ -82,29 +103,9 @@ class HistoryFragment : Fragment() {
                     binding.emptyState.visibility = if (state.isEmpty && !state.isLoading) View.VISIBLE else View.GONE
                     binding.recyclerView.visibility = if (!state.isEmpty && !state.isLoading) View.VISIBLE else View.GONE
                     
-                    // Setup filter spinner only once
-                    if (state.classes.isNotEmpty() && !spinnerInitialized) {
-                        spinnerInitialized = true
-                        isSpinnerInitializing = true
-                        
-                        val classNames = listOf("All Classes") + state.classes.map { it.fullDisplayName }
-                        val spinnerAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, classNames)
-                        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                        binding.classFilterSpinner.adapter = spinnerAdapter
-                        
-                        binding.classFilterSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                                if (isSpinnerInitializing) {
-                                    isSpinnerInitializing = false
-                                    return
-                                }
-                                hapticUtils.lightTap()
-                                val classId = if (position == 0) null else state.classes[position - 1].id
-                                viewModel.filterByClass(classId)
-                            }
-                            override fun onNothingSelected(parent: AdapterView<*>?) {}
-                        }
-                    }
+                    // Submit classes to horizontal filter chips
+                    filterChipsAdapter.submitClasses(state.classes)
+                    filterChipsAdapter.setSelectedClassId(state.selectedClassId)
                     
                     // Use grouped adapter
                     historyAdapter.setSessionsGroupedByDate(state.sessions)

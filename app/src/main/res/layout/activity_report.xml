@@ -70,18 +70,54 @@
 
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- Circular Gauge Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:cardBackgroundColor="@color/card_background"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/glass_border"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="20dp">
+
+                    <com.simpleattendance.ui.report.CircularGaugeView
+                        android:id="@+id/circularGauge"
+                        android:layout_width="150dp"
+                        android:layout_height="150dp"
+                        android:layout_gravity="center" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="Attendance Success Rate"
+                        android:textColor="@color/text_secondary"
+                        android:textAppearance="@style/TextAppearance.Material3.LabelMedium" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
             <!-- Stats Row -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="12dp"
                 android:orientation="horizontal"
                 android:baselineAligned="false">
 
                 <!-- Present Card -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginEnd="6dp"
                     app:cardBackgroundColor="@color/success_green_light"
@@ -117,9 +153,9 @@
                 <!-- Absent Card -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginHorizontal="6dp"
+                    android:layout_marginStart="6dp"
                     app:cardBackgroundColor="@color/error_red_light"
                     app:cardCornerRadius="16dp"
                     app:cardElevation="0dp">
@@ -144,42 +180,6 @@
                             android:layout_height="wrap_content"
                             android:text="Absent"
                             android:textColor="@color/error_red"
-                            android:textSize="12sp" />
-
-                    </LinearLayout>
-
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- Percentage Card -->
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:layout_marginStart="6dp"
-                    app:cardBackgroundColor="@color/primary_subtle"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="0dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:padding="16dp">
-
-                        <TextView
-                            android:id="@+id/percentageText"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/primary"
-                            android:textSize="28sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Rate"
-                            android:textColor="@color/primary"
                             android:textSize="12sp" />
 
                     </LinearLayout>

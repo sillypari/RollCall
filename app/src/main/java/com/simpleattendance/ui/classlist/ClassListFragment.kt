@@ -1,4 +1,4 @@
-package com.simpleattendance.ui.main
+package com.simpleattendance.ui.classlist
 
 import android.content.Intent
 import android.os.Bundle
@@ -16,6 +16,7 @@ import com.simpleattendance.data.local.entity.ClassEntity
 import com.simpleattendance.databinding.FragmentClassListBinding
 import com.simpleattendance.ui.attendance.AttendanceActivity
 import com.simpleattendance.ui.createclass.CreateClassActivity
+import com.simpleattendance.ui.classlist.ClassListViewModel
 import com.simpleattendance.util.HapticUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -27,16 +28,16 @@ class ClassListFragment : Fragment() {
     private var _binding: FragmentClassListBinding? = null
     private val binding get() = _binding!!
     
-    private val viewModel: MainViewModel by activityViewModels()
+    private val viewModel: ClassListViewModel by activityViewModels()
     
     @Inject
     lateinit var hapticUtils: HapticUtils
     
     private val classAdapter by lazy {
         ClassAdapter(
-            onClassClick = { classEntity ->
+            onClassClick = { classEntity, cardView ->
                 hapticUtils.lightTap()
-                startAttendance(classEntity)
+                startAttendance(classEntity, cardView)
             },
             onClassLongClick = { classEntity ->
                 hapticUtils.mediumImpact()
@@ -86,10 +87,15 @@ class ClassListFragment : Fragment() {
         }
     }
     
-    private fun startAttendance(classEntity: ClassEntity) {
+    private fun startAttendance(classEntity: ClassEntity, cardView: View) {
         val intent = Intent(requireContext(), AttendanceActivity::class.java)
         intent.putExtra("classId", classEntity.id)
-        startActivity(intent)
+        val options = androidx.core.app.ActivityOptionsCompat.makeSceneTransitionAnimation(
+            requireActivity(),
+            cardView,
+            "class_card_transition_${classEntity.id}"
+        )
+        startActivity(intent, options.toBundle())
     }
     
     private fun showClassOptions(classEntity: ClassEntity) {

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -49,18 +49,16 @@
             android:parentActivityName=".ui.main.MainActivity"
             android:theme="@style/Theme.RollCall" />
             
-        <activity
-            android:name=".ui.history.HistoryActivity"
-            android:label="History"
-            android:parentActivityName=".ui.main.MainActivity"
-            android:theme="@style/Theme.RollCall" />
-            
-        <activity
-            android:name=".ui.settings.SettingsActivity"
-            android:label="Settings"
-            android:parentActivityName=".ui.main.MainActivity"
-            android:theme="@style/Theme.RollCall" />
-        
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
     </application>
 
 </manifest>

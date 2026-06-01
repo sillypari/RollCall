@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.simpleattendance.R
 import com.simpleattendance.data.local.entity.AttendanceSessionEntity
@@ -222,6 +223,9 @@ class GroupedHistoryAdapter(
             binding.expandIcon.rotation = if (header.isExpanded) 180f else 0f
             
             binding.dateCard.setOnClickListener {
+                com.simpleattendance.util.AnimationUtils.applySpringScale(it)
+                it.performHapticFeedback(android.view.HapticFeedbackConstants.KEYBOARD_TAP)
+
                 val actualDateKey = if (header.isToday) {
                     dateFormat.format(Date(header.dateMillis))
                 } else {
@@ -257,13 +261,22 @@ class GroupedHistoryAdapter(
             binding.absentText.text = "A: ${session.absentCount}"
             binding.percentageText.text = String.format("%.0f%%", session.percentage)
             
+            val percentage = session.percentage
+            val colorRes = when {
+                percentage >= 80f -> R.color.success_green
+                percentage >= 60f -> R.color.warning_yellow
+                else -> R.color.error_red
+            }
+            val color = ContextCompat.getColor(binding.root.context, colorRes)
+            binding.performanceAccentBar.setBackgroundColor(color)
+            binding.percentageText.setTextColor(color)
+            
             binding.root.setOnClickListener {
                 onSessionClick(session)
             }
             
-            binding.root.setOnLongClickListener {
+            binding.btnOptions.setOnClickListener {
                 onSessionLongClick(session)
-                true
             }
         }
     }

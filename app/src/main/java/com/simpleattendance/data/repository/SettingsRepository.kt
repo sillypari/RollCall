@@ -12,7 +12,7 @@ data class UserSettings(
     val theme: String = "system",
     val hapticsEnabled: Boolean = true,
     val numberingMode: String = "relative", // "absolute" or "relative"
-    val reportTemplate: String = "detailed" // "detailed" or "compact"
+    val reportTemplate: String = "both" // "both", "absent_only", or "present_only"
 )
 
 @Singleton
@@ -33,7 +33,7 @@ class SettingsRepository @Inject constructor(
                 theme = preferences[Keys.THEME] ?: "system",
                 hapticsEnabled = preferences[Keys.HAPTICS_ENABLED] ?: true,
                 numberingMode = preferences[Keys.NUMBERING_MODE] ?: "relative",
-                reportTemplate = preferences[Keys.REPORT_TEMPLATE] ?: "detailed"
+                reportTemplate = preferences[Keys.REPORT_TEMPLATE] ?: "both"
             )
         }
     

@@ -54,7 +54,7 @@ goto fail
 
 :findJavaFromJavaHome
 set JAVA_HOME=%JAVA_HOME:"=%
-set JAVA_EXE=%JAVA_HOME%/bin/java.exe
+set JAVA_EXE=%JAVA_HOME%\bin\java.exe
 
 if exist "%JAVA_EXE%" goto execute
 
@@ -82,7 +82,7 @@ if %ERRORLEVEL% equ 0 goto mainEnd
 :fail
 rem Set variable GRADLE_EXIT_CONSOLE if you need the _script_ return code instead of
 rem having the command output be returned to the console
-if %GRADLE_EXIT_CONSOLE% neq 0 set EXIT_CONSOLE_CODE=%ERRORLEVEL%
+if "%GRADLE_EXIT_CONSOLE%" neq "" if %GRADLE_EXIT_CONSOLE% neq 0 set EXIT_CONSOLE_CODE=%ERRORLEVEL%
 exit /b 1
 
 :mainEnd

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rowView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:clickable="true"
+    android:focusable="true"
+    android:background="?attr/selectableItemBackground"
+    android:paddingVertical="12dp"
+    android:paddingStart="12dp"
+    android:paddingEnd="16dp">
+
+    <!-- Subtle line indenter branch icon -->
+    <ImageView
+        android:id="@+id/subjectIcon"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/ic_class"
+        app:tint="@color/primary"
+        android:alpha="0.75" />
+
+    <!-- Text content -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="16dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/subjectName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/text_primary"
+            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+            tools:text="Data Structures" />
+
+        <TextView
+            android:id="@+id/studentCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textColor="@color/text_quaternary"
+            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+            tools:text="32 students" />
+
+    </LinearLayout>
+
+    <!-- Options Menu Button -->
+    <ImageButton
+        android:id="@+id/btnOptions"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_more_vert"
+        android:contentDescription="Subject Options"
+        app:tint="@color/icon_secondary" />
+
+</LinearLayout>

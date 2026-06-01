@@ -1,4 +1,4 @@
-package com.simpleattendance.ui.main
+package com.simpleattendance.ui.classlist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -16,7 +16,7 @@ data class ClassGroup(
     val isExpanded: Boolean = false
 )
 
-data class MainUiState(
+data class ClassListUiState(
     val classes: List<ClassEntity> = emptyList(),
     val groupedClasses: List<ClassGroup> = emptyList(),
     val isLoading: Boolean = true,
@@ -24,12 +24,12 @@ data class MainUiState(
 )
 
 @HiltViewModel
-class MainViewModel @Inject constructor(
+class ClassListViewModel @Inject constructor(
     private val repository: AttendanceRepository
 ) : ViewModel() {
     
-    private val _uiState = MutableStateFlow(MainUiState())
-    val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(ClassListUiState())
+    val uiState: StateFlow<ClassListUiState> = _uiState.asStateFlow()
     
     private val expandedGroups = mutableSetOf<String>()
     
@@ -42,7 +42,7 @@ class MainViewModel @Inject constructor(
             repository.getAllClasses()
                 .collect { classes ->
                     val grouped = groupClasses(classes)
-                    _uiState.value = MainUiState(
+                    _uiState.value = ClassListUiState(
                         classes = classes,
                         groupedClasses = grouped,
                         isLoading = false,

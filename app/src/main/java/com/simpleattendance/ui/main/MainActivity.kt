@@ -7,35 +7,73 @@ import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.simpleattendance.R
 import com.simpleattendance.databinding.ActivityMainBinding
 import com.simpleattendance.ui.createclass.CreateClassActivity
 import com.simpleattendance.util.HapticUtils
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.coroutines.flow.first
+
+import com.simpleattendance.ui.classlist.ClassListViewModel
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     
     private lateinit var binding: ActivityMainBinding
-    private val viewModel: MainViewModel by viewModels()
+    private val viewModel: ClassListViewModel by viewModels()
     
     @Inject
     lateinit var hapticUtils: HapticUtils
+    
+    @Inject
+    lateinit var settingsRepository: com.simpleattendance.data.repository.SettingsRepository
     
     private var currentTitle = ""
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        // Apply saved theme preference on startup as early as possible
+        lifecycleScope.launch {
+            val theme = settingsRepository.settings.first().theme
+            val mode = when (theme) {
+                "light" -> androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
+                "dark" -> androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
+                else -> androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+            }
+            androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(mode)
+        }
+        
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         
         setupViewPager()
         setupBottomNavigation()
         setupFab()
+        observeViewModel()
         
         // Set initial title
         currentTitle = getString(R.string.app_name)
+    }
+    
+    private fun observeViewModel() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    // Pulse FAB when class list is empty and we are on first page
+                    if (state.isEmpty && !state.isLoading && binding.viewPager.currentItem == 0) {
+                        com.simpleattendance.util.AnimationUtils.startPulsing(binding.fab)
+                    } else {
+                        com.simpleattendance.util.AnimationUtils.stopPulsing(binding.fab)
+                    }
+                }
+            }
+        }
     }
     
     private fun setupViewPager() {
@@ -80,7 +118,10 @@ class MainActivity : AppCompatActivity() {
     private fun setupFab() {
         binding.fab.setOnClickListener {
             hapticUtils.mediumImpact()
-            startActivity(Intent(this, CreateClassActivity::class.java))
+            com.simpleattendance.util.AnimationUtils.applySpringScale(it)
+            binding.fab.postDelayed({
+                startActivity(Intent(this, CreateClassActivity::class.java))
+            }, 150)
         }
     }
     
@@ -116,8 +157,14 @@ class MainActivity : AppCompatActivity() {
         // Hide FAB on History and Settings tabs
         if (position == 0) {
             binding.fab.show()
+            // Re-check empty state to restart pulsing if needed
+            val state = viewModel.uiState.value
+            if (state.isEmpty && !state.isLoading) {
+                com.simpleattendance.util.AnimationUtils.startPulsing(binding.fab)
+            }
         } else {
             binding.fab.hide()
+            com.simpleattendance.util.AnimationUtils.stopPulsing(binding.fab)
         }
     }
     

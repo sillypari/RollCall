@@ -8,43 +8,18 @@
     android:background="@color/background_primary">
 
     <!-- Modern Filter Section -->
-    <com.google.android.material.card.MaterialCardView
+    <!-- Modern Filter Section (Horizontal Chips) -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/classFilterChips"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="8dp"
-        app:cardBackgroundColor="@color/card_background"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="0dp"
-        app:strokeColor="@color/glass_border"
-        app:strokeWidth="1dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:orientation="horizontal"
-            android:paddingHorizontal="16dp"
-            android:gravity="center_vertical">
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/ic_filter"
-                app:tint="@color/text_tertiary" />
-
-            <Spinner
-                android:id="@+id/classFilterSpinner"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_marginStart="12dp"
-                android:background="@android:color/transparent"
-                android:popupBackground="@color/card_background" />
-
-        </LinearLayout>
-
-    </com.google.android.material.card.MaterialCardView>
+        android:orientation="horizontal"
+        android:clipToPadding="false"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="8dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/item_filter_chip" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -70,21 +45,13 @@
             android:padding="32dp"
             android:visibility="gone">
 
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="96dp"
-                android:layout_height="96dp"
-                app:cardBackgroundColor="@color/background_tertiary"
-                app:cardCornerRadius="48dp"
-                app:cardElevation="0dp">
-
-                <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_gravity="center"
-                    android:src="@drawable/ic_history"
-                    app:tint="@color/icon_tertiary" />
-
-            </com.google.android.material.card.MaterialCardView>
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/emptyLottieView"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                app:lottie_rawRes="@raw/empty_history"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true" />
 
             <TextView
                 android:layout_width="wrap_content"

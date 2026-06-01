@@ -1,4 +1,4 @@
-package com.simpleattendance.ui.main
+package com.simpleattendance.ui.settings
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,7 +12,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.tabs.TabLayout
 import com.simpleattendance.R
 import com.simpleattendance.databinding.FragmentSettingsBinding
-import com.simpleattendance.ui.settings.SettingsViewModel
 import com.simpleattendance.util.HapticUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
