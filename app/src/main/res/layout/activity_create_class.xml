@@ -281,23 +281,22 @@
                             android:clipChildren="false"
                             android:clipToPadding="false">
 
-                            <com.simpleattendance.ui.createclass.AnimatedBorderView
-                                android:id="@+id/csvBorderAnimation"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:visibility="gone" />
-
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/selectCsvButton"
                                 style="@style/Widget.Material3.Button"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_margin="3dp"
                                 android:text="@string/select_csv_file"
                                 app:backgroundTint="@color/nvidia_green"
                                 android:textColor="@color/on_primary"
                                 app:iconTint="@color/on_primary"
                                 app:icon="@drawable/ic_file" />
+
+                            <com.simpleattendance.ui.createclass.AnimatedBorderView
+                                android:id="@+id/csvBorderAnimation"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:visibility="gone" />
 
                         </FrameLayout>
 
