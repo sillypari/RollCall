@@ -84,14 +84,7 @@ class SettingsFragment : Fragment() {
     }
     
     private fun setupSettings() {
-        // Dark Mode Switch
-        binding.darkModeSwitch.setOnCheckedChangeListener { _, isChecked ->
-            if (!isInitializing) {
-                hapticUtils.lightTap()
-                viewModel.setTheme(if (isChecked) "dark" else "light")
-            }
-        }
-        
+
         // Haptic Feedback Switch
         binding.hapticsSwitch.setOnCheckedChangeListener { _, isChecked ->
             if (!isInitializing) {
@@ -124,6 +117,19 @@ class SettingsFragment : Fragment() {
                 viewModel.setNumberingMode(mode)
             }
         }
+        
+        // Attendance Mode
+        binding.attendanceModeRadioGroup.setOnCheckedChangeListener { _, checkedId ->
+            if (!isInitializing) {
+                hapticUtils.lightTap()
+                val mode = when (checkedId) {
+                    R.id.modeButtons -> "buttons"
+                    R.id.modeSwipe -> "swipe"
+                    else -> "both"
+                }
+                viewModel.setAttendanceMode(mode)
+            }
+        }
     }
     
     private fun observeState() {
@@ -131,13 +137,7 @@ class SettingsFragment : Fragment() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.settings.collect { settings ->
                     isInitializing = true
-                    
-                    // Dark Mode
-                    val isDarkMode = settings.theme == "dark"
-                    if (binding.darkModeSwitch.isChecked != isDarkMode) {
-                        binding.darkModeSwitch.isChecked = isDarkMode
-                    }
-                    
+
                     // Haptics
                     if (binding.hapticsSwitch.isChecked != settings.hapticsEnabled) {
                         binding.hapticsSwitch.isChecked = settings.hapticsEnabled
@@ -160,6 +160,16 @@ class SettingsFragment : Fragment() {
                     }
                     if (binding.numberingRadioGroup.checkedRadioButtonId != numberingId) {
                         binding.numberingRadioGroup.check(numberingId)
+                    }
+                    
+                    // Attendance Mode
+                    val modeId = when (settings.attendanceMode) {
+                        "buttons" -> R.id.modeButtons
+                        "swipe" -> R.id.modeSwipe
+                        else -> R.id.modeBoth
+                    }
+                    if (binding.attendanceModeRadioGroup.checkedRadioButtonId != modeId) {
+                        binding.attendanceModeRadioGroup.check(modeId)
                     }
                     
                     isInitializing = false

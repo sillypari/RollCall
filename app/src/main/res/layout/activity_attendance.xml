@@ -71,76 +71,14 @@
             android:orientation="vertical"
             android:visibility="visible">
 
-            <!-- Student Card - Fixed height to prevent layout shift -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/studentCard"
-                android:layout_width="match_parent"
-                android:layout_height="160dp"
-                android:layout_marginHorizontal="24dp"
-                android:layout_marginTop="8dp"
-                app:cardBackgroundColor="@color/card_background"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="0dp"
-                app:strokeColor="@color/glass_border"
-                app:strokeWidth="1dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:paddingHorizontal="24dp"
-                    android:paddingVertical="20dp">
-
-                    <!-- Counter at top -->
-                    <TextView
-                        android:id="@+id/studentNumber"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/text_tertiary"
-                        android:textSize="12sp"
-                        android:textAppearance="@style/TextAppearance.Material3.LabelSmall" />
-
-                    <!-- Roll/Enrollment Number - Smaller, above name -->
-                    <TextView
-                        android:id="@+id/rollNumber"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="14sp"
-                        android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
-                        android:letterSpacing="0.1"
-                        android:maxLines="1"
-                        android:ellipsize="end" />
-
-                    <!-- Student Name - Bigger, prominent -->
-                    <TextView
-                        android:id="@+id/studentName"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:layout_marginTop="4dp"
-                        android:gravity="center"
-                        android:textColor="@color/text_primary"
-                        android:textSize="22sp"
-                        android:textAppearance="@style/TextAppearance.Material3.HeadlineLarge"
-                        android:textStyle="bold"
-                        android:maxLines="2"
-                        android:ellipsize="end" />
-
-                </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Live Stats Row -->
+            <!-- Live Stats Row (Now at top) -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center"
                 android:paddingHorizontal="24dp"
-                android:paddingTop="20dp">
+                android:paddingTop="12dp">
 
                 <!-- Present Stat -->
                 <LinearLayout
@@ -223,13 +161,13 @@
 
             </LinearLayout>
 
-            <!-- Animated Progress Section -->
+            <!-- Animated Progress Section (Now at top) -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingHorizontal="24dp"
-                android:paddingTop="24dp">
+                android:paddingTop="12dp">
 
                 <!-- Progress Text -->
                 <TextView
@@ -245,7 +183,7 @@
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp">
+                    android:layout_marginTop="10dp">
 
                     <!-- Track background -->
                     <View
@@ -280,7 +218,125 @@
 
             </LinearLayout>
 
-            <!-- Spacer to push everything below to bottom -->
+            <!-- Top Centering Spacer -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <!-- Student Card - Centered vertically -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/studentCard"
+                android:layout_width="match_parent"
+                android:layout_height="160dp"
+                android:layout_marginHorizontal="24dp"
+                app:cardBackgroundColor="@color/card_background"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/glass_border"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:paddingHorizontal="24dp"
+                    android:paddingVertical="20dp">
+
+                    <!-- Counter at top -->
+                    <TextView
+                        android:id="@+id/studentNumber"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/text_tertiary"
+                        android:textSize="12sp"
+                        android:textAppearance="@style/TextAppearance.Material3.LabelSmall" />
+
+                    <!-- Roll/Enrollment Number - Smaller, above name -->
+                    <TextView
+                        android:id="@+id/rollNumber"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="14sp"
+                        android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+                        android:letterSpacing="0.1"
+                        android:maxLines="1"
+                        android:ellipsize="end" />
+
+                    <!-- Student Name - Bigger, prominent -->
+                    <TextView
+                        android:id="@+id/studentName"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:layout_marginTop="4dp"
+                        android:gravity="center"
+                        android:textColor="@color/text_primary"
+                        android:textSize="22sp"
+                        android:textAppearance="@style/TextAppearance.Material3.HeadlineLarge"
+                        android:textStyle="bold"
+                        android:maxLines="2"
+                        android:ellipsize="end" />
+
+                    <!-- Swipe Hint (only visible in swipe-enabled modes) -->
+                    <LinearLayout
+                        android:id="@+id/swipeHintLayout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:layout_marginTop="8dp"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:layout_width="14dp"
+                            android:layout_height="14dp"
+                            android:src="@drawable/ic_back"
+                            app:tint="@color/error_red" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:layout_marginEnd="12dp"
+                            android:text="Swipe Left (A)"
+                            android:textColor="@color/error_red"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="•"
+                            android:textColor="@color/text_tertiary"
+                            android:textSize="11sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:layout_marginEnd="4dp"
+                            android:text="Swipe Right (P)"
+                            android:textColor="@color/success_green"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <ImageView
+                            android:layout_width="14dp"
+                            android:layout_height="14dp"
+                            android:src="@drawable/ic_chevron_right"
+                            app:tint="@color/success_green" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Bottom Centering Spacer -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -288,6 +344,7 @@
 
             <!-- Large Square A/P Buttons with Outline Style -->
             <LinearLayout
+                android:id="@+id/apButtonsContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"

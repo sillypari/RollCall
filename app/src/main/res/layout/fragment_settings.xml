@@ -72,53 +72,6 @@
                 android:orientation="vertical"
                 android:visibility="visible">
 
-                <!-- Appearance Card -->
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    style="@style/Widget.RollCall.Card"
-                    android:layout_marginBottom="12dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:padding="16dp">
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Dark Mode"
-                                android:textColor="@color/text_primary"
-                                android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:text="Use dark theme"
-                                android:textColor="@color/text_tertiary"
-                                android:textAppearance="@style/TextAppearance.Material3.BodySmall" />
-
-                        </LinearLayout>
-
-                        <com.google.android.material.materialswitch.MaterialSwitch
-                            android:id="@+id/darkModeSwitch"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:checked="true" />
-
-                    </LinearLayout>
-
-                </com.google.android.material.card.MaterialCardView>
-
                 <!-- Haptic Feedback Card -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
@@ -159,6 +112,70 @@
                             android:id="@+id/hapticsSwitch"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Attendance Mode Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.RollCall.Card"
+                    android:layout_marginTop="12dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Attendance Style"
+                            android:textColor="@color/text_primary"
+                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="Choose how you mark student attendance"
+                            android:textColor="@color/text_tertiary"
+                            android:textAppearance="@style/TextAppearance.Material3.BodySmall" />
+
+                        <RadioGroup
+                            android:id="@+id/attendanceModeRadioGroup"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp">
+
+                            <com.google.android.material.radiobutton.MaterialRadioButton
+                                android:id="@+id/modeButtons"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="A &amp; P Buttons Only"
+                                android:textColor="@color/text_secondary"
+                                android:paddingVertical="8dp" />
+
+                            <com.google.android.material.radiobutton.MaterialRadioButton
+                                android:id="@+id/modeSwipe"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Swipe Card Only (Tinder style)"
+                                android:textColor="@color/text_secondary"
+                                android:paddingVertical="8dp" />
+
+                            <com.google.android.material.radiobutton.MaterialRadioButton
+                                android:id="@+id/modeBoth"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Both (Swipe &amp; Buttons)"
+                                android:textColor="@color/text_secondary"
+                                android:paddingVertical="8dp" />
+
+                        </RadioGroup>
 
                     </LinearLayout>
 

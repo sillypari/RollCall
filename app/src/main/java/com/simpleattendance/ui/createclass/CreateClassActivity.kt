@@ -141,11 +141,13 @@ class CreateClassActivity : AppCompatActivity() {
                         binding.saveButton.alpha = 0.5f
                     }
                     
-                    // Pulse Nvidia Green Select CSV button until students are loaded
+                    // Snake outline border animation on select CSV button until students are loaded
                     if (state.students.isEmpty()) {
-                        com.simpleattendance.util.AnimationUtils.startPulsing(binding.selectCsvButton)
+                        binding.csvBorderAnimation.visibility = android.view.View.VISIBLE
+                        binding.csvBorderAnimation.startAnimation()
                     } else {
-                        com.simpleattendance.util.AnimationUtils.stopPulsing(binding.selectCsvButton)
+                        binding.csvBorderAnimation.stopAnimation()
+                        binding.csvBorderAnimation.visibility = android.view.View.GONE
                     }
                     
                     // Handle save success

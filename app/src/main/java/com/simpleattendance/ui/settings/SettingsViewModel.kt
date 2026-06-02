@@ -47,6 +47,12 @@ class SettingsViewModel @Inject constructor(
         }
     }
     
+    fun setAttendanceMode(mode: String) {
+        viewModelScope.launch {
+            settingsRepository.setAttendanceMode(mode)
+        }
+    }
+    
     private fun applyTheme(theme: String) {
         val mode = when (theme) {
             "light" -> AppCompatDelegate.MODE_NIGHT_NO

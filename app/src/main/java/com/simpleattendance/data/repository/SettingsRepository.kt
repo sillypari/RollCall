@@ -12,7 +12,8 @@ data class UserSettings(
     val theme: String = "system",
     val hapticsEnabled: Boolean = true,
     val numberingMode: String = "relative", // "absolute" or "relative"
-    val reportTemplate: String = "both" // "both", "absent_only", or "present_only"
+    val reportTemplate: String = "both", // "both", "absent_only", or "present_only"
+    val attendanceMode: String = "both" // "both", "swipe", or "buttons"
 )
 
 @Singleton
@@ -24,6 +25,7 @@ class SettingsRepository @Inject constructor(
         val HAPTICS_ENABLED = booleanPreferencesKey("haptics_enabled")
         val NUMBERING_MODE = stringPreferencesKey("numbering_mode")
         val REPORT_TEMPLATE = stringPreferencesKey("report_template")
+        val ATTENDANCE_MODE = stringPreferencesKey("attendance_mode")
     }
     
     val settings: Flow<UserSettings> = dataStore.data
@@ -33,7 +35,8 @@ class SettingsRepository @Inject constructor(
                 theme = preferences[Keys.THEME] ?: "system",
                 hapticsEnabled = preferences[Keys.HAPTICS_ENABLED] ?: true,
                 numberingMode = preferences[Keys.NUMBERING_MODE] ?: "relative",
-                reportTemplate = preferences[Keys.REPORT_TEMPLATE] ?: "both"
+                reportTemplate = preferences[Keys.REPORT_TEMPLATE] ?: "both",
+                attendanceMode = preferences[Keys.ATTENDANCE_MODE] ?: "both"
             )
         }
     
@@ -51,5 +54,9 @@ class SettingsRepository @Inject constructor(
     
     suspend fun setReportTemplate(template: String) {
         dataStore.edit { it[Keys.REPORT_TEMPLATE] = template }
+    }
+    
+    suspend fun setAttendanceMode(mode: String) {
+        dataStore.edit { it[Keys.ATTENDANCE_MODE] = mode }
     }
 }

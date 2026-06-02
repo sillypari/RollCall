@@ -270,20 +270,36 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
+                        android:gravity="center_vertical"
                         android:orientation="horizontal">
 
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/selectCsvButton"
-                            style="@style/Widget.Material3.Button.TonalButton"
+                        <FrameLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_marginEnd="8dp"
-                            android:text="@string/select_csv_file"
-                            app:backgroundTint="@color/nvidia_green"
-                            android:textColor="@color/on_primary"
-                            app:iconTint="@color/on_primary"
-                            app:icon="@drawable/ic_file" />
+                            android:clipChildren="false"
+                            android:clipToPadding="false">
+
+                            <com.simpleattendance.ui.createclass.AnimatedBorderView
+                                android:id="@+id/csvBorderAnimation"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:visibility="gone" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/selectCsvButton"
+                                style="@style/Widget.Material3.Button"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="3dp"
+                                android:text="@string/select_csv_file"
+                                app:backgroundTint="@color/nvidia_green"
+                                android:textColor="@color/on_primary"
+                                app:iconTint="@color/on_primary"
+                                app:icon="@drawable/ic_file" />
+
+                        </FrameLayout>
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/formatInfoButton"

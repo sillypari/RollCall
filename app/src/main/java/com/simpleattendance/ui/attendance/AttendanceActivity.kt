@@ -30,6 +30,9 @@ class AttendanceActivity : AppCompatActivity() {
     @Inject
     lateinit var hapticUtils: HapticUtils
     
+    @Inject
+    lateinit var settingsRepository: com.simpleattendance.data.repository.SettingsRepository
+    
     private var hasShownCompleteDialog = false
     private var currentFillAnimator: ObjectAnimator? = null
     
@@ -46,6 +49,7 @@ class AttendanceActivity : AppCompatActivity() {
         setupToolbar()
         setupButtons()
         observeState()
+        observeSettings()
     }
     
     private fun setupToolbar() {
@@ -138,8 +142,6 @@ class AttendanceActivity : AppCompatActivity() {
             AnimationUtils.applySpringScale(it)
             showSaveConfirmation()
         }
-
-        setupSwipeGesture()
     }
     
     @android.annotation.SuppressLint("ClickableViewAccessibility")
@@ -501,6 +503,36 @@ class AttendanceActivity : AppCompatActivity() {
                     // Handle save complete
                     state.savedSessionId?.let { sessionId ->
                         navigateToReport(sessionId)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun observeSettings() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                settingsRepository.settings.collect { settings ->
+                    // Configure card size and visibility of A/P buttons
+                    val params = binding.studentCard.layoutParams
+                    if (settings.attendanceMode == "swipe") {
+                        binding.apButtonsContainer.visibility = View.GONE
+                        // Large Tinder card
+                        params.height = (210 * resources.displayMetrics.density).toInt()
+                        binding.swipeHintLayout.visibility = View.VISIBLE
+                    } else {
+                        binding.apButtonsContainer.visibility = View.VISIBLE
+                        // Default card height
+                        params.height = (160 * resources.displayMetrics.density).toInt()
+                        binding.swipeHintLayout.visibility = View.GONE
+                    }
+                    binding.studentCard.layoutParams = params
+
+                    // Enable/disable swipe touch listener dynamically
+                    if (settings.attendanceMode == "buttons") {
+                        binding.studentCard.setOnTouchListener(null)
+                    } else {
+                        setupSwipeGesture()
                     }
                 }
             }
