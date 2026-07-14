@@ -14,11 +14,11 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.simpleattendance.R
 import com.simpleattendance.databinding.ActivityCreateClassBinding
-import com.simpleattendance.util.CsvParser
 import com.simpleattendance.util.HapticUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class CreateClassActivity : AppCompatActivity() {
@@ -169,19 +169,11 @@ class CreateClassActivity : AppCompatActivity() {
     }
     
     private fun handleCsvFile(uri: Uri) {
-        val result = CsvParser.parseStudentsCsv(contentResolver, uri)
-        result.fold(
-            onSuccess = { students ->
-                hapticUtils.successPattern()
-                val fileName = uri.lastPathSegment ?: "CSV File"
-                viewModel.setStudents(students, fileName)
-            },
-            onFailure = { error ->
-                hapticUtils.errorPattern()
-                viewModel.setCsvError(error.message ?: "Failed to parse CSV file")
-            }
-        )
+        // Parsing is done on Dispatchers.IO inside the ViewModel.
+        // Haptic and toast feedback is driven by UiState changes observed below.
+        viewModel.parseCsvFile(uri, contentResolver)
     }
+
     
     private fun showFormatInfo() {
         MaterialAlertDialogBuilder(this)

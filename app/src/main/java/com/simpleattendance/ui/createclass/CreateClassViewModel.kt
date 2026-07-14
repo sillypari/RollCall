@@ -1,15 +1,19 @@
 package com.simpleattendance.ui.createclass
 
+import android.content.ContentResolver
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.simpleattendance.data.local.entity.ClassEntity
 import com.simpleattendance.data.local.entity.StudentEntity
 import com.simpleattendance.data.repository.AttendanceRepository
+import com.simpleattendance.util.CsvParser
 import com.simpleattendance.util.StudentCsvRow
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 data class CreateClassUiState(
@@ -94,15 +98,36 @@ class CreateClassViewModel @Inject constructor(
         validateForm()
     }
     
-    fun setStudents(students: List<StudentCsvRow>, fileName: String?) {
+    private fun setStudents(students: List<StudentCsvRow>, fileName: String?) {
         _uiState.update { it.copy(students = students, csvFileName = fileName) }
         validateForm()
     }
-    
-    fun setCsvError(error: String) {
+
+    private fun setCsvError(error: String) {
         _uiState.update { it.copy(error = error) }
     }
-    
+
+    /**
+     * Parses a CSV file entirely on Dispatchers.IO and updates state with the result.
+     * The Activity should call this instead of calling CsvParser directly on the main thread.
+     */
+    fun parseCsvFile(uri: Uri, contentResolver: ContentResolver) {
+        viewModelScope.launch {
+            val result = withContext(Dispatchers.IO) {
+                CsvParser.parseStudentsCsv(contentResolver, uri)
+            }
+            result.fold(
+                onSuccess = { students ->
+                    val fileName = uri.lastPathSegment ?: "CSV File"
+                    setStudents(students, fileName)
+                },
+                onFailure = { error ->
+                    setCsvError(error.message ?: "Failed to parse CSV file")
+                }
+            )
+        }
+    }
+
     fun clearError() {
         _uiState.update { it.copy(error = null) }
     }
@@ -120,13 +145,14 @@ class CreateClassViewModel @Inject constructor(
     fun saveClass() {
         val state = _uiState.value
         if (!state.isValid) return
-        
+        if (state.isSaving) return          // Idempotency guard
+
         _uiState.update { it.copy(isSaving = true) }
-        
+
         viewModelScope.launch {
             try {
                 val classId = if (state.isEditing && state.editingClassId != null) {
-                    // Update existing class
+                    // Update existing class metadata
                     val updatedClass = ClassEntity(
                         id = state.editingClassId,
                         branch = state.branch.trim(),
@@ -135,7 +161,13 @@ class CreateClassViewModel @Inject constructor(
                         subject = state.subject.trim()
                     )
                     repository.updateClass(updatedClass)
-                    repository.deleteStudentsByClass(state.editingClassId)
+
+                    // Atomically replace roster in one transaction
+                    val studentEntities = state.students.map { csv ->
+                        StudentEntity(classId = state.editingClassId, rollNo = csv.rollNo, name = csv.name)
+                    }
+                    repository.updateRoster(state.editingClassId, studentEntities)
+
                     state.editingClassId
                 } else {
                     // Create new class
@@ -145,23 +177,26 @@ class CreateClassViewModel @Inject constructor(
                         section = state.section.trim(),
                         subject = state.subject.trim()
                     )
-                    repository.insertClass(newClass)
+                    val newClassId = repository.insertClass(newClass)
+
+                    val studentEntities = state.students.map { csv ->
+                        StudentEntity(classId = newClassId, rollNo = csv.rollNo, name = csv.name)
+                    }
+                    repository.insertStudents(studentEntities)
+
+                    newClassId
                 }
-                
-                // Insert students
-                val studentEntities = state.students.map { csv ->
-                    StudentEntity(
-                        classId = classId,
-                        rollNo = csv.rollNo,
-                        name = csv.name
-                    )
-                }
-                repository.insertStudents(studentEntities)
-                
+
                 _uiState.update { it.copy(isSaving = false, savedClassId = classId) }
             } catch (e: Exception) {
                 _uiState.update { it.copy(isSaving = false, error = e.message) }
             }
         }
     }
+
+    /** Call after the UI has consumed the savedClassId navigation event. */
+    fun onSavedHandled() {
+        _uiState.update { it.copy(savedClassId = null) }
+    }
 }
+

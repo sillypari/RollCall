@@ -24,7 +24,11 @@ data class AttendanceUiState(
     val currentIndex: Int = 0,
     val isLoading: Boolean = true,
     val isComplete: Boolean = false,
+    /** Non-null after a successful save. Consumed by the UI then set back to null. */
     val savedSessionId: Long? = null,
+    /** True while a save transaction is in progress. Prevents duplicate saves. */
+    val isSaving: Boolean = false,
+    val saveError: String? = null,
     val presentCount: Int = 0,
     val absentCount: Int = 0
 ) {
@@ -153,32 +157,52 @@ class AttendanceViewModel @Inject constructor(
     
     fun saveAttendance() {
         val state = _uiState.value
-        // Allow saving even if not all are marked
+        // Idempotency guards: prevent duplicate saves from rapid taps
         if (state.students.isEmpty()) return
-        
+        if (state.isSaving) return
+        if (state.savedSessionId != null) return
+
+        _uiState.update { it.copy(isSaving = true, saveError = null) }
+
         viewModelScope.launch {
-            // Create session
-            val session = AttendanceSessionEntity(
-                classId = classId,
-                presentCount = state.presentCount,
-                absentCount = state.absentCount,
-                totalCount = state.students.size
-            )
-            val sessionId = repository.insertSession(session)
-            
-            // Create records
-            val records = state.students.mapNotNull { sa ->
-                sa.status?.let { status ->
-                    AttendanceRecordEntity(
-                        sessionId = sessionId,
-                        studentId = sa.student.id,
-                        status = status
-                    )
+            try {
+                // Create session
+                val session = AttendanceSessionEntity(
+                    classId = classId,
+                    presentCount = state.presentCount,
+                    absentCount = state.absentCount,
+                    totalCount = state.students.size
+                )
+                val sessionId = repository.insertSession(session)
+
+                // Create records for only marked students
+                val records = state.students.mapNotNull { sa ->
+                    sa.status?.let { status ->
+                        AttendanceRecordEntity(
+                            sessionId = sessionId,
+                            studentId = sa.student.id,
+                            status = status
+                        )
+                    }
                 }
+                repository.insertRecords(records)
+
+                // Only update state after full transaction succeeds
+                _uiState.update { it.copy(isSaving = false, savedSessionId = sessionId) }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(isSaving = false, saveError = e.message) }
             }
-            repository.insertRecords(records)
-            
-            _uiState.value = state.copy(savedSessionId = sessionId)
         }
     }
+
+    /** Call this after the UI has consumed the savedSessionId navigation event. */
+    fun onSaveNavigationHandled() {
+        _uiState.update { it.copy(savedSessionId = null) }
+    }
+
+    /** Call this after the UI has shown the save error. */
+    fun onSaveErrorHandled() {
+        _uiState.update { it.copy(saveError = null) }
+    }
 }
+

@@ -36,8 +36,13 @@ class AttendanceRepository @Inject constructor(
     suspend fun getStudentsByClassSync(classId: Long): List<StudentEntity> = studentDao.getStudentsByClassSync(classId)
     
     suspend fun insertStudents(students: List<StudentEntity>) = studentDao.insertStudents(students)
-    
+
     suspend fun deleteStudentsByClass(classId: Long) = studentDao.deleteStudentsByClass(classId)
+
+    /** Atomically replaces the full roster for a class inside a single Room transaction. */
+    suspend fun updateRoster(classId: Long, students: List<StudentEntity>) =
+        studentDao.updateRoster(classId, students)
+
     
     // Session operations
     fun getAllSessions(): Flow<List<AttendanceSessionEntity>> = attendanceDao.getAllSessions()
