@@ -1,13 +1,15 @@
-﻿package com.simpleattendance.ui.components
+package com.simpleattendance.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -17,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.dp
 import com.simpleattendance.ui.theme.RollCallSpacing
 
 /**
@@ -94,5 +97,63 @@ fun InfoSettingRow(
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
+    }
+}
+
+/**
+ * Segmented setting row — shows a title, optional description,
+ * and a horizontal set of pill buttons for selection.
+ * Options: list of (label, value) pairs.
+ */
+@Composable
+fun SegmentedSettingRow(
+    title: String,
+    options: List<Pair<String, String>>,
+    selectedValue: String,
+    onValueSelected: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    description: String? = null,
+    enabled: Boolean = true
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = RollCallSpacing.lg, vertical = RollCallSpacing.md)
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.bodyLarge,
+            color = if (enabled)
+                MaterialTheme.colorScheme.onSurface
+            else
+                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+        )
+        if (description != null) {
+            Spacer(Modifier.height(2.dp))
+            Text(
+                text = description,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        Spacer(Modifier.height(RollCallSpacing.sm))
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(RollCallSpacing.sm)
+        ) {
+            options.forEach { (label, value) ->
+                val isSelected = value == selectedValue
+                androidx.compose.material3.FilterChip(
+                    selected = isSelected,
+                    onClick = { if (enabled) onValueSelected(value) },
+                    label = {
+                        Text(
+                            text = label,
+                            style = MaterialTheme.typography.labelMedium
+                        )
+                    },
+                    enabled = enabled
+                )
+            }
+        }
     }
 }

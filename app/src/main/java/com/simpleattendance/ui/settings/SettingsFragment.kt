@@ -4,182 +4,46 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import com.google.android.material.tabs.TabLayout
-import com.simpleattendance.R
-import com.simpleattendance.databinding.FragmentSettingsBinding
-import com.simpleattendance.util.HapticUtils
+import com.simpleattendance.ui.components.RollCallTopBar
+import com.simpleattendance.ui.screens.SettingsScreen
+import com.simpleattendance.ui.theme.RollCallTheme
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class SettingsFragment : Fragment() {
     
-    private var _binding: FragmentSettingsBinding? = null
-    private val binding get() = _binding!!
-    
     private val viewModel: SettingsViewModel by viewModels()
-    
-    @Inject
-    lateinit var hapticUtils: HapticUtils
-    
-    // Flag to prevent haptic loops during initial state loading
-    private var isInitializing = true
     
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentSettingsBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-    
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        setupTabs()
-        setupSettings()
-        observeState()
-        
-        // Show General tab by default
-        showGeneralSettings()
-    }
-    
-    private fun setupTabs() {
-        binding.settingsTabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-                hapticUtils.lightTap()
-                when (tab?.position) {
-                    0 -> showGeneralSettings()
-                    1 -> showReportsSettings()
-                    2 -> showAboutSettings()
-                }
-            }
-            override fun onTabUnselected(tab: TabLayout.Tab?) {}
-            override fun onTabReselected(tab: TabLayout.Tab?) {}
-        })
-    }
-    
-    private fun showGeneralSettings() {
-        binding.generalSettingsContainer.visibility = View.VISIBLE
-        binding.reportsSettingsContainer.visibility = View.GONE
-        binding.aboutSettingsContainer.visibility = View.GONE
-    }
-    
-    private fun showReportsSettings() {
-        binding.generalSettingsContainer.visibility = View.GONE
-        binding.reportsSettingsContainer.visibility = View.VISIBLE
-        binding.aboutSettingsContainer.visibility = View.GONE
-    }
-    
-    private fun showAboutSettings() {
-        binding.generalSettingsContainer.visibility = View.GONE
-        binding.reportsSettingsContainer.visibility = View.GONE
-        binding.aboutSettingsContainer.visibility = View.VISIBLE
-    }
-    
-    private fun setupSettings() {
-
-        // Haptic Feedback Switch
-        binding.hapticsSwitch.setOnCheckedChangeListener { _, isChecked ->
-            if (!isInitializing) {
-                if (isChecked) hapticUtils.lightTap()
-                viewModel.setHapticsEnabled(isChecked)
-            }
-        }
-        
-        // Report Template
-        binding.templateRadioGroup.setOnCheckedChangeListener { _, checkedId ->
-            if (!isInitializing) {
-                hapticUtils.lightTap()
-                val template = when (checkedId) {
-                    R.id.templateAbsentOnly -> "absent_only"
-                    R.id.templatePresentOnly -> "present_only"
-                    else -> "both"
-                }
-                viewModel.setReportTemplate(template)
-            }
-        }
-        
-        // Numbering Mode
-        binding.numberingRadioGroup.setOnCheckedChangeListener { _, checkedId ->
-            if (!isInitializing) {
-                hapticUtils.lightTap()
-                val mode = when (checkedId) {
-                    R.id.numberingRelative -> "relative"
-                    else -> "absolute"
-                }
-                viewModel.setNumberingMode(mode)
-            }
-        }
-        
-        // Attendance Mode
-        binding.attendanceModeRadioGroup.setOnCheckedChangeListener { _, checkedId ->
-            if (!isInitializing) {
-                hapticUtils.lightTap()
-                val mode = when (checkedId) {
-                    R.id.modeButtons -> "buttons"
-                    R.id.modeSwipe -> "swipe"
-                    else -> "both"
-                }
-                viewModel.setAttendanceMode(mode)
-            }
-        }
-    }
-    
-    private fun observeState() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.settings.collect { settings ->
-                    isInitializing = true
-
-                    // Haptics
-                    if (binding.hapticsSwitch.isChecked != settings.hapticsEnabled) {
-                        binding.hapticsSwitch.isChecked = settings.hapticsEnabled
+        return ComposeView(requireContext()).apply {
+            setContent {
+                RollCallTheme {
+                    Scaffold(
+                        topBar = {
+                            RollCallTopBar(
+                                title = "Settings",
+                                subtitle = "Configure app behaviors and preferences"
+                            )
+                        }
+                    ) { innerPadding ->
+                        SettingsScreen(
+                            viewModel = viewModel,
+                            modifier = Modifier.padding(innerPadding)
+                        )
                     }
-                    
-                    // Report Template
-                    val templateId = when (settings.reportTemplate) {
-                        "absent_only" -> R.id.templateAbsentOnly
-                        "present_only" -> R.id.templatePresentOnly
-                        else -> R.id.templateBoth
-                    }
-                    if (binding.templateRadioGroup.checkedRadioButtonId != templateId) {
-                        binding.templateRadioGroup.check(templateId)
-                    }
-                    
-                    // Numbering Mode
-                    val numberingId = when (settings.numberingMode) {
-                        "relative" -> R.id.numberingRelative
-                        else -> R.id.numberingAbsolute
-                    }
-                    if (binding.numberingRadioGroup.checkedRadioButtonId != numberingId) {
-                        binding.numberingRadioGroup.check(numberingId)
-                    }
-                    
-                    // Attendance Mode
-                    val modeId = when (settings.attendanceMode) {
-                        "buttons" -> R.id.modeButtons
-                        "swipe" -> R.id.modeSwipe
-                        else -> R.id.modeBoth
-                    }
-                    if (binding.attendanceModeRadioGroup.checkedRadioButtonId != modeId) {
-                        binding.attendanceModeRadioGroup.check(modeId)
-                    }
-                    
-                    isInitializing = false
                 }
             }
         }
-    }
-    
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }
+
