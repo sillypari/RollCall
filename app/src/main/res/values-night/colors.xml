@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- RollCall dark theme: deep ink with teal, sky and green accents -->
+    <color name="background_primary">#071318</color>
+    <color name="background_secondary">#0D1E25</color>
+    <color name="background_tertiary">#17303A</color>
+    <color name="background_quaternary">#203E48</color>
+
+    <color name="glass_background">#E817303A</color>
+    <color name="glass_background_light">#EB203E48</color>
+    <color name="glass_border">#14DDF8F3</color>
+
+    <color name="primary">#2CCB91</color>
+    <color name="primary_dark">#084B37</color>
+    <color name="primary_light">#77E2B7</color>
+    <color name="primary_subtle">#4D07533D</color>
+    <color name="on_primary">#003823</color>
+
+    <color name="secondary">#90B4FF</color>
+    <color name="secondary_variant">#173E72</color>
+    <color name="on_secondary">#082B59</color>
+
+    <color name="success_green">#53D38C</color>
+    <color name="success_green_light">#123E29</color>
+    <color name="error_red">#FF7B86</color>
+    <color name="error_red_light">#54212A</color>
+    <color name="warning_yellow">#F2C76B</color>
+    <color name="warning_yellow_light">#483600</color>
+    <color name="info_blue">#90B4FF</color>
+
+    <color name="ambient_teal">#1A20B8AA</color>
+    <color name="ambient_blue">#184D8DFF</color>
+    <color name="ambient_green">#143CCB7F</color>
+    <color name="ambient_pattern">#247EB4B1</color>
+    <color name="top_bar_end">#0B2229</color>
+    <color name="top_bar_peak">#17303A</color>
+    <color name="top_bar_clear">#0017303A</color>
+    <color name="dock_scrim_strong">#F2071318</color>
+    <color name="dock_scrim_clear">#00071318</color>
+
+    <color name="text_primary">#F1FAF8</color>
+    <color name="text_secondary">#A8BBB7</color>
+    <color name="text_tertiary">#758D8B</color>
+    <color name="text_quaternary">#5CE0F3EF</color>
+    <color name="text_disabled">#52E0F3EF</color>
+
+    <color name="icon_primary">#F1FAF8</color>
+    <color name="icon_secondary">#A8BBB7</color>
+    <color name="icon_tertiary">#758D8B</color>
+    <color name="icon_disabled">#52E0F3EF</color>
+
+    <color name="card_background">#F013272F</color>
+    <color name="card_background_hovered">#FA1A333C</color>
+    <color name="card_background_pressed">#203E48</color>
+    <color name="card_border">#2B52706F</color>
+
+    <color name="nav_surface">#F2172A35</color>
+    <color name="nav_item_active">#2CCB91</color>
+    <color name="nav_item_inactive">#A8BBB7</color>
+
+    <color name="divider">#18DDF8F3</color>
+    <color name="divider_light">#24DDF8F3</color>
+    <color name="ripple">#242CCB91</color>
+
+    <color name="nvidia_green">#53D38C</color>
+    <color name="background_light">#071318</color>
+    <color name="background_dark">#071318</color>
+    <color name="surface_light">#0D1E25</color>
+    <color name="surface_dark">#0D1E25</color>
+    <color name="surface_variant">#17303A</color>
+    <color name="primary_variant">#084B37</color>
+    <color name="text_primary_dark">#F1FAF8</color>
+    <color name="text_secondary_dark">#A8BBB7</color>
+</resources>

@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.simpleattendance.data.repository.SettingsRepository
 import com.simpleattendance.data.repository.UserSettings
+import com.simpleattendance.data.repository.toNightMode
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -54,11 +55,6 @@ class SettingsViewModel @Inject constructor(
     }
     
     private fun applyTheme(theme: String) {
-        val mode = when (theme) {
-            "light" -> AppCompatDelegate.MODE_NIGHT_NO
-            "dark" -> AppCompatDelegate.MODE_NIGHT_YES
-            else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
-        }
-        AppCompatDelegate.setDefaultNightMode(mode)
+        AppCompatDelegate.setDefaultNightMode(theme.toNightMode())
     }
 }

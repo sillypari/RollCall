@@ -4,6 +4,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -28,6 +29,9 @@ class CreateClassActivity : AppCompatActivity() {
     
     @Inject
     lateinit var hapticUtils: HapticUtils
+
+    private var isPopulatingFields = false
+    private var hasUnsavedChanges = false
     
     private val csvPicker = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         uri?.let { handleCsvFile(it) }
@@ -56,29 +60,36 @@ class CreateClassActivity : AppCompatActivity() {
         setupInputFields()
         setupButtons()
         observeState()
+        onBackPressedDispatcher.addCallback(this) {
+            confirmDiscardChanges()
+        }
     }
     
     private fun setupToolbar() {
         binding.toolbar.setNavigationOnClickListener {
             hapticUtils.lightTap()
-            finish()
+            confirmDiscardChanges()
         }
     }
     
     private fun setupInputFields() {
         binding.branchInput.doAfterTextChanged {
+            if (!isPopulatingFields) hasUnsavedChanges = true
             viewModel.updateBranch(it.toString())
         }
         
         binding.semesterInput.doAfterTextChanged {
+            if (!isPopulatingFields) hasUnsavedChanges = true
             viewModel.updateSemester(it.toString())
         }
         
         binding.sectionInput.doAfterTextChanged {
+            if (!isPopulatingFields) hasUnsavedChanges = true
             viewModel.updateSection(it.toString())
         }
         
         binding.subjectInput.doAfterTextChanged {
+            if (!isPopulatingFields) hasUnsavedChanges = true
             viewModel.updateSubject(it.toString())
         }
     }
@@ -106,6 +117,7 @@ class CreateClassActivity : AppCompatActivity() {
                 viewModel.uiState.collect { state ->
                     // Update input fields when editing or duplicating
                     if ((state.isEditing || state.isDuplicating) && binding.branchInput.text.isNullOrEmpty()) {
+                        isPopulatingFields = true
                         binding.branchInput.setText(state.branch)
                         binding.semesterInput.setText(state.semester)
                         binding.sectionInput.setText(state.section)
@@ -116,6 +128,7 @@ class CreateClassActivity : AppCompatActivity() {
                         if (state.isDuplicating) {
                             binding.subjectInput.requestFocus()
                         }
+                        isPopulatingFields = false
                     }
                     
                     // Update CSV status
@@ -141,17 +154,14 @@ class CreateClassActivity : AppCompatActivity() {
                         binding.saveButton.alpha = 0.5f
                     }
                     
-                    // Snake outline border animation on select CSV button until students are loaded
-                    if (state.students.isEmpty()) {
-                        binding.csvBorderAnimation.visibility = android.view.View.VISIBLE
-                        binding.csvBorderAnimation.startAnimation()
-                    } else {
-                        binding.csvBorderAnimation.stopAnimation()
-                        binding.csvBorderAnimation.visibility = android.view.View.GONE
-                    }
+                    // Keep the import action calm and immediately available.
+                    binding.csvBorderAnimation.stopAnimation()
+                    binding.csvBorderAnimation.visibility = View.GONE
                     
                     // Handle save success
                     state.savedClassId?.let {
+                        viewModel.onSavedHandled()
+                        hasUnsavedChanges = false
                         hapticUtils.successPattern()
                         Toast.makeText(this@CreateClassActivity, "Class saved successfully!", Toast.LENGTH_SHORT).show()
                         finish()
@@ -169,6 +179,7 @@ class CreateClassActivity : AppCompatActivity() {
     }
     
     private fun handleCsvFile(uri: Uri) {
+        hasUnsavedChanges = true
         // Parsing is done on Dispatchers.IO inside the ViewModel.
         // Haptic and toast feedback is driven by UiState changes observed below.
         viewModel.parseCsvFile(uri, contentResolver)
@@ -193,6 +204,20 @@ class CreateClassActivity : AppCompatActivity() {
                 • Empty rows are ignored
             """.trimIndent())
             .setPositiveButton("Got it", null)
+            .show()
+    }
+
+    private fun confirmDiscardChanges() {
+        if (!hasUnsavedChanges) {
+            finish()
+            return
+        }
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Discard changes?")
+            .setMessage("Your class details and imported roster have not been saved.")
+            .setPositiveButton("Discard") { _, _ -> finish() }
+            .setNegativeButton("Keep editing", null)
             .show()
     }
 }

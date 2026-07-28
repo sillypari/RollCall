@@ -10,7 +10,6 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import com.simpleattendance.R
 
 class CircularGaugeView @JvmOverloads constructor(
@@ -21,6 +20,7 @@ class CircularGaugeView @JvmOverloads constructor(
 
     private var progress: Float = 0f
     private var animatedProgress: Float = 0f
+    private var progressAnimator: ValueAnimator? = null
     
     private val strokeWidthSize = 24f
     private val padding = 30f
@@ -46,31 +46,34 @@ class CircularGaugeView @JvmOverloads constructor(
     init {
         trackPaint.color = ContextCompat.getColor(context, R.color.background_tertiary)
         
-        // Load custom Outfit font for percentage text if available, fallback to bold system
-        val customFont = try {
-            ResourcesCompat.getFont(context, R.font.outfit)
-        } catch (e: Exception) {
-            Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
-        }
-        textPaint.typeface = customFont
+        textPaint.typeface = Typeface.create("sans-serif", Typeface.BOLD)
         textPaint.color = ContextCompat.getColor(context, R.color.text_primary)
     }
     
     fun setProgress(value: Float) {
-        progress = value.coerceIn(0f, 100f)
+        val newProgress = value.coerceIn(0f, 100f)
+        if (newProgress == progress && animatedProgress == newProgress) return
+        progress = newProgress
         animateProgress()
     }
     
     private fun animateProgress() {
-        val animator = ValueAnimator.ofFloat(0f, progress).apply {
-            duration = 1200
+        progressAnimator?.cancel()
+        progressAnimator = ValueAnimator.ofFloat(animatedProgress, progress).apply {
+            duration = 500
             interpolator = AccelerateDecelerateInterpolator()
             addUpdateListener { animation ->
                 animatedProgress = animation.animatedValue as Float
                 invalidate()
             }
         }
-        animator.start()
+        progressAnimator?.start()
+    }
+
+    override fun onDetachedFromWindow() {
+        progressAnimator?.cancel()
+        progressAnimator = null
+        super.onDetachedFromWindow()
     }
     
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {

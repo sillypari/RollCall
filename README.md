@@ -1,158 +1,205 @@
 <p align="center">
-  <img src="RollCallLogo.png" alt="Roll Call Logo" width="120" height="120">
+  <img src="RollCallLogo.png" alt="RollCall app icon" width="112">
 </p>
 
-<h1 align="center">Roll Call</h1>
+<h1 align="center">RollCall</h1>
 
 <p align="center">
-  <strong>A Simple, Beautiful Attendance App for Android</strong>
+  A fast, private attendance app for Android with modern motion, focused workflows,
+  searchable history, and shareable reports.
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Platform-Android-green.svg" alt="Platform">
-  <img src="https://img.shields.io/badge/Min%20SDK-24%20(Android%207.0)-blue.svg" alt="Min SDK">
-  <img src="https://img.shields.io/badge/Language-Kotlin-purple.svg" alt="Language">
-  <img src="https://img.shields.io/badge/UI-XML%20%2B%20Material%203-orange.svg" alt="UI Framework">
-  <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License">
+  <img src="https://img.shields.io/badge/version-3.0.0%20Stable-087F78" alt="Version 3.0.0 Stable">
+  <img src="https://img.shields.io/badge/Android-7.0%2B-3DDC84" alt="Android 7.0 or newer">
+  <img src="https://img.shields.io/badge/Kotlin-100%25-7F52FF" alt="Kotlin">
+  <img src="https://img.shields.io/badge/data-offline-17303A" alt="Offline data">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-3E73D9" alt="MIT License"></a>
 </p>
 
----
+## Overview
 
-## About Roll Call
+RollCall is designed for teachers, lecturers, and group coordinators who need to
+take attendance quickly without creating an account or sending student data to a
+server. Classes, rosters, sessions, settings, and reports stay on the device.
 
-Roll Call is a **simple and elegant** attendance management app built for teachers, professors, and group leaders. Track attendance with just a few taps – no complicated setup, no cloud sync required. Just you and your students.
-
-### Why Roll Call?
-
-- **100% Offline** - Your data stays on your device. No internet required.
-- **Lightning Fast** - Take attendance in seconds with intuitive swipe or tap gestures
-- **Beautiful UI** - Clean, modern Material 3 dark theme with smooth animations
-- **Comprehensive Reports** - View attendance history with detailed statistics
-- **Free & Open Source** - No ads, no subscriptions, no data collection
-
----
-
-## Features
-
-### Class Management
-- **Multiple Classes** - Create and manage unlimited classes
-- **Student Lists** - Add students manually or import from text
-- **Roll Numbers** - Support for custom roll/enrollment numbers
-- **Alphabetical Sorting** - Sort students by name or original order
-
-### Attendance Taking
-- **Large Present/Absent Buttons** - Easy to tap, impossible to miss
-- **Visual Feedback** - Color-coded cards show marked status instantly
-- **Live Stats** - See Present/Absent/Remaining counts in real-time
-- **Animated Progress Bar** - Visual progress with satisfying animations
-- **Navigation Controls** - Easily go back to previous students
-- **Haptic Feedback** - Subtle vibrations for tactile confirmation
-
-### Attendance Reports
-- **Session History** - View all past attendance sessions
-- **Date Grouping** - Sessions grouped by date for easy navigation
-- **Expandable Details** - Tap to see full student-by-student breakdown
-- **Present/Absent Counts** - Quick summary for each session
-- **Time Tracking** - See exactly when attendance was taken
-
-### Statistics & Analytics
-- **Overall Attendance Rate** - Track class performance over time
-- **Individual Reports** - See attendance history per student
-- **Visual Indicators** - Color-coded status (green = present, red = absent)
-
-### Settings & Customization
-- **Numbering Mode** - Choose between Absolute (1, 2, 3...) or Relative (based on marked count) numbering
-- **Haptic Feedback** - Enable or disable vibration feedback
-- **Dark Theme** - Easy on the eyes, optimized for AMOLED screens
-
----
-
-## Technical Details
-
-### Built With
-- **Language**: Kotlin 100%
-- **UI Framework**: XML Layouts with Material Design 3 Components
-- **Architecture**: MVVM with Clean Architecture principles
-- **Dependency Injection**: Hilt
-- **Database**: Room for local data persistence
-- **Async Operations**: Kotlin Coroutines & StateFlow
-- **Data Storage**: DataStore for preferences
-
-### Permissions
-| Permission | Usage |
-|------------|-------|
-| `VIBRATE` | Haptic feedback |
-
-**No internet permission** - Roll Call works completely offline.
-
----
-
-## Getting Started
-
-### Requirements
-- Android 7.0 (API 24) or higher
-- ~15 MB storage space
-
-### Installation
-
-#### Option 1: Build from Source
-```bash
-# Clone the repository
-git clone https://github.com/ANewSoftwareDeveloper/RollCall.git
-
-# Open in Android Studio
-# Build and run on your device
-```
-
-#### Option 2: Download APK
-Download the latest release from the [Releases](https://github.com/ANewSoftwareDeveloper/RollCall/releases) page.
-
-### Quick Start
-1. Launch Roll Call
-2. Tap "+" to create a new class
-3. Add students (manually or paste from list)
-4. Tap "Take Attendance" to start marking
-5. Tap Present (✓) or Absent (✗) for each student
-6. Save when done - view reports anytime!
-
----
+Version 3.0 introduces a complete visual refresh with light, dark, and system
+themes; filled class accents; spring-based interaction feedback; continuous
+edge-to-edge headers; a floating navigation dock; and a much more capable
+attendance archive.
 
 ## Screenshots
 
-*Coming soon*
-
----
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
----
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## Support
-
-If you encounter any issues or have suggestions:
-- Open an [Issue](https://github.com/ANewSoftwareDeveloper/RollCall/issues)
-- Start a [Discussion](https://github.com/ANewSoftwareDeveloper/RollCall/discussions)
-
----
-
 <p align="center">
-  <strong>Made with ❤️ for educators</strong>
+  <img src="Screenshots_latest/01-classes-dark.png" alt="Class groups in dark theme" width="23%">
+  <img src="Screenshots_latest/02-history-dark.png" alt="Searchable attendance history in dark theme" width="23%">
+  <img src="Screenshots_latest/03-attendance-dark.png" alt="Attendance workflow in dark theme" width="23%">
+  <img src="Screenshots_latest/04-results-dark.png" alt="Attendance results in dark theme" width="23%">
 </p>
 
 <p align="center">
-  <em>Simple. Fast. Reliable.</em>
+  <img src="Screenshots_latest/06-history-light.png" alt="Attendance history in light theme" width="30%">
+  <img src="Screenshots_latest/07-attendance-light.png" alt="Attendance workflow in light theme" width="30%">
+  <img src="Screenshots_latest/08-settings-light.png" alt="Appearance and interaction settings" width="30%">
+</p>
+
+## Highlights
+
+### Class and roster management
+
+- Group related subjects by branch, semester, and section.
+- Distinguish subjects with consistent color-filled cards.
+- Create, edit, duplicate, and delete classes.
+- Import names and optional roll numbers from CSV files.
+- Preserve historical attendance when a roster is edited.
+
+### Fast attendance
+
+- Mark Present or Absent with large buttons, swipe gestures, or both.
+- Get immediate filled-card confirmation and optional haptic feedback.
+- Review previous and next students without losing progress.
+- Track present, absent, remaining, and completion counts live.
+- Sort the roster or reset the current session when needed.
+
+### Useful history
+
+- Search by subject, branch, or section.
+- Filter by class and start/end date.
+- Browse sessions grouped by day.
+- Open a session for its complete report or safely delete it.
+- See attendance rates and present/absent counts at a glance.
+
+### Reports and sharing
+
+- View a percentage gauge and session summary.
+- Inspect a detailed text report.
+- Copy the report to the clipboard.
+- Share the summary as plain text or a generated PNG card.
+
+### Modern, accessible interface
+
+- Light, Dark, and Follow System appearance modes.
+- Teal interaction accents with class-specific blue, green, amber, and red tones.
+- Spring presses, hero-style screen transitions, and reduced visual clutter.
+- Consistent rounded surfaces, readable contrast, and 48 dp touch targets.
+- Configurable haptics, attendance input mode, report template, and numbering.
+
+## Privacy
+
+RollCall is offline-first:
+
+- No account is required.
+- No ads or analytics are included.
+- No tracking SDK is included.
+- No internet permission is declared.
+- Attendance data is stored locally with Room.
+- Preferences are stored locally with DataStore.
+
+| Permission | Reason |
+| --- | --- |
+| `VIBRATE` | Optional haptic confirmation |
+| `READ_EXTERNAL_STORAGE` on Android 12 and older | Legacy compatibility for selecting roster CSV files |
+
+## Technology
+
+| Area | Implementation |
+| --- | --- |
+| Language | Kotlin |
+| UI | Jetpack Compose and Material 3 Views |
+| Architecture | MVVM with StateFlow |
+| Persistence | Room database |
+| Preferences | DataStore |
+| Dependency injection | Hilt |
+| Async work | Kotlin Coroutines |
+| Minimum Android version | Android 7.0 / API 24 |
+| Target SDK | API 34 |
+
+The app currently uses a pragmatic Compose-and-Views architecture while the UI
+migration continues. Shared colors, shapes, motion, and spacing keep both layers
+visually consistent.
+
+## Install
+
+Download an APK from the
+[GitHub Releases](https://github.com/sillypari/RollCall/releases) page, then allow
+installation from your chosen file manager when Android asks.
+
+## Build from source
+
+### Requirements
+
+- Android Studio with Android SDK 34
+- JDK 17
+- An Android 7.0 or newer device or emulator
+
+```bash
+git clone https://github.com/sillypari/RollCall.git
+cd RollCall
+./gradlew assembleDebug
+```
+
+On Windows PowerShell:
+
+```powershell
+git clone https://github.com/sillypari/RollCall.git
+Set-Location RollCall
+.\gradlew.bat assembleDebug
+```
+
+The universal debug APK is generated at:
+
+```text
+app/build/outputs/apk/debug/app-universal-debug.apk
+```
+
+Install it on a connected device:
+
+```bash
+adb install -r app/build/outputs/apk/debug/app-universal-debug.apk
+```
+
+Run the static Android checks:
+
+```bash
+./gradlew lintDebug
+```
+
+## CSV roster format
+
+RollCall accepts either a two-column roster:
+
+```csv
+Roll No,Name
+101,Alex Morgan
+102,Sam Rivera
+```
+
+or a single name column:
+
+```csv
+Name
+Alex Morgan
+Sam Rivera
+```
+
+Header rows are detected automatically and empty rows are ignored.
+
+## Contributing
+
+Issues and pull requests are welcome.
+
+1. Fork the repository.
+2. Create a focused branch: `git checkout -b feature/short-description`.
+3. Build and run lint before committing.
+4. Open a pull request describing the user-facing change and verification.
+
+Use the existing Material icons and design tokens for interface additions. Do
+not use emoji characters as application icons.
+
+## License
+
+RollCall is available under the [MIT License](LICENSE).
+
+<p align="center">
+  <strong>Simple attendance. Private by default.</strong>
 </p>

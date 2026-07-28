@@ -8,10 +8,15 @@
     android:fitsSystemWindows="true"
     tools:context=".ui.main.MainActivity">
 
+    <com.simpleattendance.ui.components.AmbientBackgroundView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:importantForAccessibility="no" />
+
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/background_primary"
+        android:background="@drawable/top_app_bar_gradient"
         android:fitsSystemWindows="true"
         app:elevation="0dp"
         app:liftOnScroll="false">
@@ -20,9 +25,53 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:title="@string/app_name"
-            app:titleTextColor="@color/text_primary"
-            app:titleTextAppearance="@style/TextAppearance.Material3.TitleLarge" />
+            app:title="">
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="start">
+
+                <LinearLayout
+                    android:id="@+id/brandWordmark"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/brandRoll"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif"
+                        android:text="Roll"
+                        android:textColor="@color/text_primary"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/brandCall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif"
+                        android:text="Call"
+                        android:textColor="@color/text_primary"
+                        android:textSize="24sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/pageTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:fontFamily="sans-serif"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/text_primary"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    tools:text="History" />
+            </FrameLayout>
+        </com.google.android.material.appbar.MaterialToolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -33,20 +82,31 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
+    <View
+        android:id="@+id/bottomDockScrim"
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        android:layout_gravity="bottom"
+        android:background="@drawable/bottom_dock_scrim"
+        android:clickable="false"
+        android:focusable="false"
+        android:importantForAccessibility="no" />
+
     <!-- FAB -->
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="100dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="112dp"
         android:text="New Class"
         android:textColor="@color/on_primary"
         app:backgroundTint="@color/primary"
         app:icon="@drawable/ic_add"
         app:iconTint="@color/on_primary"
-        app:elevation="8dp" />
+        app:elevation="6dp"
+        app:shapeAppearanceOverlay="@style/ShapeAppearance.RollCall.Pill" />
 
     <!-- Bottom Navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -54,7 +114,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="@color/background_secondary"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/navigation_frosted_background"
+        android:elevation="8dp"
         app:itemIconTint="@color/bottom_nav_colors"
         app:itemTextColor="@color/bottom_nav_colors"
         app:menu="@menu/bottom_navigation_menu"

@@ -1,6 +1,5 @@
 ﻿package com.simpleattendance.ui.components
 
-import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -12,8 +11,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
-import com.simpleattendance.ui.theme.GlassBorder
-import com.simpleattendance.ui.theme.SurfaceContainerHigh
 
 /**
  * Glass surface abstraction per redesign guide section 8.
@@ -31,7 +28,7 @@ fun GlassSurface(
     modifier: Modifier = Modifier,
     shape: Shape = MaterialTheme.shapes.extraLarge,
     /** The opaque tonal background color when blur is not used. */
-    tonalColor: Color = SurfaceContainerHigh,
+    tonalColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.94f),
     /** Show the subtle white border highlight. */
     showBorder: Boolean = true,
     content: @Composable BoxScope.() -> Unit
@@ -39,7 +36,7 @@ fun GlassSurface(
     val borderModifier = if (showBorder) {
         Modifier.border(
             width = 1.dp,
-            color = GlassBorder,
+            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.55f),
             shape = shape
         )
     } else Modifier

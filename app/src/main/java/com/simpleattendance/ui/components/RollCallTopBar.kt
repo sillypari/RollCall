@@ -15,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
-import com.simpleattendance.ui.theme.SurfaceContainerHigh
 
 /**
  * RollCall top app bar — glass-style surface color, edge-to-edge aware.
@@ -29,7 +28,7 @@ fun RollCallTopBar(
     subtitle: String? = null,
     onNavigateUp: (() -> Unit)? = null,
     actions: @Composable RowScope.() -> Unit = {},
-    containerColor: Color = SurfaceContainerHigh,
+    containerColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.94f),
     windowInsets: WindowInsets = TopAppBarDefaults.windowInsets
 ) {
     TopAppBar(

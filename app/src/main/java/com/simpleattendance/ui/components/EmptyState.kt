@@ -29,7 +29,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.simpleattendance.ui.theme.RollCallMotion
 import com.simpleattendance.ui.theme.RollCallSpacing
-import com.simpleattendance.ui.theme.SurfaceContainer
 
 /**
  * Empty state component: soft tonal icon container, clear title, short explanation.
@@ -68,7 +67,7 @@ fun EmptyState(
         ) {
             RollCallSurface(
                 modifier = Modifier.matchParentSize(),
-                color = SurfaceContainer,
+                color = MaterialTheme.colorScheme.primaryContainer,
                 shape = CircleShape
             ) {}
             Icon(

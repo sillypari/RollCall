@@ -3,16 +3,20 @@ package com.simpleattendance.data.repository
 import com.simpleattendance.data.local.dao.ClassDao
 import com.simpleattendance.data.local.dao.StudentDao
 import com.simpleattendance.data.local.dao.AttendanceDao
+import com.simpleattendance.data.local.dao.ClassStudentCount
+import com.simpleattendance.data.local.AppDatabase
 import com.simpleattendance.data.local.entity.ClassEntity
 import com.simpleattendance.data.local.entity.StudentEntity
 import com.simpleattendance.data.local.entity.AttendanceSessionEntity
 import com.simpleattendance.data.local.entity.AttendanceRecordEntity
 import kotlinx.coroutines.flow.Flow
+import androidx.room.withTransaction
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class AttendanceRepository @Inject constructor(
+    private val database: AppDatabase,
     private val classDao: ClassDao,
     private val studentDao: StudentDao,
     private val attendanceDao: AttendanceDao
@@ -34,6 +38,8 @@ class AttendanceRepository @Inject constructor(
     fun getStudentsByClass(classId: Long): Flow<List<StudentEntity>> = studentDao.getStudentsByClass(classId)
     
     suspend fun getStudentsByClassSync(classId: Long): List<StudentEntity> = studentDao.getStudentsByClassSync(classId)
+
+    fun getStudentCounts(): Flow<List<ClassStudentCount>> = studentDao.getStudentCounts()
     
     suspend fun insertStudents(students: List<StudentEntity>) = studentDao.insertStudents(students)
 
@@ -52,6 +58,17 @@ class AttendanceRepository @Inject constructor(
     suspend fun getSessionById(id: Long): AttendanceSessionEntity? = attendanceDao.getSessionById(id)
     
     suspend fun insertSession(session: AttendanceSessionEntity): Long = attendanceDao.insertSession(session)
+
+    suspend fun insertSessionWithRecords(
+        session: AttendanceSessionEntity,
+        records: List<AttendanceRecordEntity>
+    ): Long = database.withTransaction {
+        val sessionId = attendanceDao.insertSession(session)
+        attendanceDao.insertRecords(
+            records.map { record -> record.copy(sessionId = sessionId) }
+        )
+        sessionId
+    }
     
     suspend fun updateSession(session: AttendanceSessionEntity) = attendanceDao.updateSession(session)
     

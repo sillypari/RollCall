@@ -1,7 +1,10 @@
 package com.simpleattendance.data.repository
 
+import android.content.Context
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -18,8 +21,12 @@ data class UserSettings(
 
 @Singleton
 class SettingsRepository @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val dataStore: DataStore<Preferences>
 ) {
+    private val themeCache by lazy {
+        context.getSharedPreferences("rollcall_theme_cache", Context.MODE_PRIVATE)
+    }
     private object Keys {
         val THEME = stringPreferencesKey("theme")
         val HAPTICS_ENABLED = booleanPreferencesKey("haptics_enabled")
@@ -41,8 +48,11 @@ class SettingsRepository @Inject constructor(
         }
     
     suspend fun setTheme(theme: String) {
+        themeCache.edit().putString(Keys.THEME.name, theme).apply()
         dataStore.edit { it[Keys.THEME] = theme }
     }
+
+    fun cachedTheme(): String = themeCache.getString(Keys.THEME.name, "system") ?: "system"
     
     suspend fun setHapticsEnabled(enabled: Boolean) {
         dataStore.edit { it[Keys.HAPTICS_ENABLED] = enabled }
@@ -59,4 +69,10 @@ class SettingsRepository @Inject constructor(
     suspend fun setAttendanceMode(mode: String) {
         dataStore.edit { it[Keys.ATTENDANCE_MODE] = mode }
     }
+}
+
+fun String.toNightMode(): Int = when (this) {
+    "light" -> AppCompatDelegate.MODE_NIGHT_NO
+    "dark" -> AppCompatDelegate.MODE_NIGHT_YES
+    else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
 }

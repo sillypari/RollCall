@@ -7,8 +7,6 @@ import androidx.compose.animation.core.SpringSpec
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Immutable
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 
 /**
  * RollCall centralized motion specification.
@@ -57,6 +55,12 @@ object RollCallMotion {
 
     /** Gentle spring for large surface transitions */
     val GentleSpring: SpringSpec<Float> = spring(
+        dampingRatio = Spring.DampingRatioNoBouncy,
+        stiffness = Spring.StiffnessMediumLow
+    )
+
+    /** Type-safe gentle spring for bounds, offsets and other non-Float values. */
+    fun <T> gentleSpring(): SpringSpec<T> = spring(
         dampingRatio = Spring.DampingRatioNoBouncy,
         stiffness = Spring.StiffnessMediumLow
     )

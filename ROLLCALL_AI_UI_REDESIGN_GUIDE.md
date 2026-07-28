@@ -71,7 +71,7 @@ This snapshot was checked against the repository on 14 July 2026:
 
 | Area | Current implementation |
 |---|---|
-| App version | `2.0.1` (`versionCode = 2`) |
+| App version | `3.0.0` stable (`versionCode = 4`) |
 | Android SDK | compile/target 34, minimum 24 |
 | Build tooling | AGP 8.2.2, Gradle 8.5, Kotlin 1.9.22, KSP 1.9.22-1.0.17, Java bytecode target 11 |
 | UI | XML, View Binding, Material Components, Activities, Fragments, ViewPager2 and RecyclerView |

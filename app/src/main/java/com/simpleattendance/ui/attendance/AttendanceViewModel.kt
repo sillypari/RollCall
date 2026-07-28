@@ -166,26 +166,22 @@ class AttendanceViewModel @Inject constructor(
 
         viewModelScope.launch {
             try {
-                // Create session
                 val session = AttendanceSessionEntity(
                     classId = classId,
                     presentCount = state.presentCount,
                     absentCount = state.absentCount,
                     totalCount = state.students.size
                 )
-                val sessionId = repository.insertSession(session)
-
-                // Create records for only marked students
                 val records = state.students.mapNotNull { sa ->
                     sa.status?.let { status ->
                         AttendanceRecordEntity(
-                            sessionId = sessionId,
+                            sessionId = 0,
                             studentId = sa.student.id,
                             status = status
                         )
                     }
                 }
-                repository.insertRecords(records)
+                val sessionId = repository.insertSessionWithRecords(session, records)
 
                 // Only update state after full transaction succeeds
                 _uiState.update { it.copy(isSaving = false, savedSessionId = sessionId) }

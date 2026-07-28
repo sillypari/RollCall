@@ -32,7 +32,7 @@
 - Dark-theme-only. Apple-inspired dark color palette optimized for AMOLED.
 - Material Design 3 components (cards, buttons, switches, bottom nav, toolbar).
 - MVVM architecture with Hilt dependency injection, Kotlin coroutines, StateFlow.
-- Version 2.0.0. Min SDK 24 (Android 7.0). Target SDK 34.
+- Version 3.0.0 stable. Min SDK 24 (Android 7.0). Target SDK 34.
 
 ---
 
@@ -601,7 +601,7 @@ Two view types:
 - **Numbering Mode card**: Radio group: "Absolute (Position in class list)" (default), "Relative (1, 2, 3...)".
 
 **About Tab:**
-- Card with centered content: app icon (80dp, 20dp radius), app name (HeadlineSmall, bold), version ("Version: 2.0"), developer ("Parikshit Singh Bais").
+- Card with centered content: app icon (80dp, 20dp radius), app name (HeadlineSmall, bold), version ("Version 3.0.0 Stable"), developer ("Parikshit Singh Bais").
 
 **Behavior:**
 - Tab switching shows/hides the 3 containers (generalSettingsContainer, reportsSettingsContainer, aboutSettingsContainer).

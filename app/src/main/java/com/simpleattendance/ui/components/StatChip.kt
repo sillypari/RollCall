@@ -21,7 +21,6 @@ import androidx.compose.ui.text.style.TextAlign
 import com.simpleattendance.ui.theme.RollCallMotion
 import com.simpleattendance.ui.theme.RollCallShapes
 import com.simpleattendance.ui.theme.RollCallSpacing
-import com.simpleattendance.ui.theme.SurfaceContainerHigh
 
 /**
  * Compact stat chip with an animated rolling number.
@@ -32,7 +31,7 @@ fun StatChip(
     label: String,
     count: Int,
     modifier: Modifier = Modifier,
-    containerColor: Color = SurfaceContainerHigh,
+    containerColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh,
     countColor: Color = MaterialTheme.colorScheme.onSurface
 ) {
     RollCallSurface(

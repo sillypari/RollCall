@@ -2,6 +2,8 @@ package com.simpleattendance.di
 
 import android.content.Context
 import androidx.room.Room
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.simpleattendance.data.local.AppDatabase
 import com.simpleattendance.data.local.dao.ClassDao
 import com.simpleattendance.data.local.dao.StudentDao
@@ -16,6 +18,14 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
+
+    private val MIGRATION_1_2 = object : Migration(1, 2) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL(
+                "ALTER TABLE students ADD COLUMN isActive INTEGER NOT NULL DEFAULT 1"
+            )
+        }
+    }
     
     @Provides
     @Singleton
@@ -24,7 +34,9 @@ object DatabaseModule {
             context,
             AppDatabase::class.java,
             "rollcall.db"
-        ).build()
+        )
+            .addMigrations(MIGRATION_1_2)
+            .build()
     }
     
     @Provides

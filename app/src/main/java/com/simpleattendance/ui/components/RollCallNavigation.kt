@@ -15,8 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import com.simpleattendance.ui.theme.Primary
-import com.simpleattendance.ui.theme.SurfaceContainerHigh
 
 /**
  * Bottom navigation destinations.
@@ -44,7 +42,7 @@ fun RollCallNavigationBar(
 ) {
     NavigationBar(
         modifier = modifier,
-        containerColor = SurfaceContainerHigh,
+        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.96f),
         contentColor = MaterialTheme.colorScheme.onSurface,
         tonalElevation = 0.dp,
         windowInsets = windowInsets
@@ -68,8 +66,8 @@ fun RollCallNavigationBar(
                 },
                 alwaysShowLabel = true,
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = Primary,
-                    selectedTextColor = Primary,
+                    selectedIconColor = MaterialTheme.colorScheme.primary,
+                    selectedTextColor = MaterialTheme.colorScheme.primary,
                     indicatorColor = MaterialTheme.colorScheme.primaryContainer,
                     unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant

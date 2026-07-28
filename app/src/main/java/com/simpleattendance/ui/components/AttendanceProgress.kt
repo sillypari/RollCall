@@ -5,6 +5,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -13,10 +14,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.simpleattendance.ui.theme.RCError
 import com.simpleattendance.ui.theme.RollCallMotion
-import com.simpleattendance.ui.theme.Success
-import com.simpleattendance.ui.theme.SurfaceContainerHigh
 
 /**
  * Segmented attendance progress bar.
@@ -29,9 +27,9 @@ fun AttendanceProgressBar(
     presentCount: Int,
     absentCount: Int,
     modifier: Modifier = Modifier,
-    presentColor: Color = Success,
-    absentColor: Color = RCError,
-    unmarkedColor: Color = SurfaceContainerHigh
+    presentColor: Color = MaterialTheme.colorScheme.tertiary,
+    absentColor: Color = MaterialTheme.colorScheme.error,
+    unmarkedColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh
 ) {
     if (totalStudents <= 0) return
 

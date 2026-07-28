@@ -11,9 +11,11 @@ import androidx.fragment.app.activityViewModels
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.simpleattendance.data.local.entity.ClassEntity
 import com.simpleattendance.ui.attendance.AttendanceActivity
+import com.simpleattendance.ui.components.LaunchOrigin
 import com.simpleattendance.ui.createclass.CreateClassActivity
 import com.simpleattendance.ui.screens.ClassListScreen
 import com.simpleattendance.ui.theme.RollCallTheme
+import com.simpleattendance.util.HeroTransitionLauncher
 import com.simpleattendance.util.HapticUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -36,9 +38,9 @@ class ClassListFragment : Fragment() {
                 RollCallTheme {
                     ClassListScreen(
                         viewModel = viewModel,
-                        onClassClick = { classEntity ->
+                        onClassClick = { classEntity, origin ->
                             hapticUtils.lightTap()
-                            startAttendance(classEntity)
+                            startAttendance(classEntity, origin)
                         },
                         onClassOptionsClick = { classEntity ->
                             hapticUtils.mediumImpact()
@@ -50,10 +52,13 @@ class ClassListFragment : Fragment() {
         }
     }
     
-    private fun startAttendance(classEntity: ClassEntity) {
+    private fun startAttendance(
+        classEntity: ClassEntity,
+        origin: LaunchOrigin
+    ) {
         val intent = Intent(requireContext(), AttendanceActivity::class.java)
         intent.putExtra("classId", classEntity.id)
-        startActivity(intent)
+        HeroTransitionLauncher.start(requireActivity(), intent, origin)
     }
     
     private fun showClassOptions(classEntity: ClassEntity) {

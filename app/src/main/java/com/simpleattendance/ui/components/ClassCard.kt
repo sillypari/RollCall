@@ -23,19 +23,19 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.foundation.border
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.simpleattendance.data.local.entity.ClassEntity
-import com.simpleattendance.ui.theme.Primary
-import com.simpleattendance.ui.theme.PrimaryContainer
 import com.simpleattendance.ui.theme.RollCallMotion
 import com.simpleattendance.ui.theme.RollCallSpacing
-import com.simpleattendance.ui.theme.SurfaceContainer
 
 /**
  * Class card — solid tonal surface with subject accent.
@@ -46,9 +46,10 @@ import com.simpleattendance.ui.theme.SurfaceContainer
 fun ClassCard(
     classEntity: ClassEntity,
     studentCount: Int,
-    onClick: () -> Unit,
+    onClick: (LaunchOrigin) -> Unit,
     onLongClick: () -> Unit,
     onMenuClick: () -> Unit,
+    showBorder: Boolean = true,
     modifier: Modifier = Modifier
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -58,22 +59,38 @@ fun ClassCard(
         animationSpec = RollCallMotion.SnapSpring,
         label = "class_card_scale"
     )
+    var launchOrigin by remember { mutableStateOf(LaunchOrigin.Unspecified) }
 
     val cardDescription = "${classEntity.subject} — ${classEntity.branch} Sem ${classEntity.semester} Sec ${classEntity.section}, $studentCount students"
 
     RollCallSurface(
         modifier = modifier
+            .captureLaunchOrigin { launchOrigin = it }
             .scale(scale)
             .fillMaxWidth()
+            .then(
+                if (showBorder) {
+                    Modifier.border(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.72f),
+                        shape = MaterialTheme.shapes.large
+                    )
+                } else {
+                    Modifier
+                }
+            )
             .semantics { contentDescription = cardDescription }
             .combinedClickable(
                 interactionSource = interactionSource,
                 indication = null,
-                onClick = onClick,
+                onClick = { onClick(launchOrigin) },
                 onLongClick = onLongClick
-            ),
+        ),
         shape = MaterialTheme.shapes.large,
-        color = SurfaceContainer
+        brush = classCardBrush(
+            classId = classEntity.id,
+            nested = !showBorder
+        )
     ) {
         Row(
             modifier = Modifier
@@ -81,21 +98,7 @@ fun ClassCard(
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Icon container accent
-            RollCallSurface(
-                modifier = Modifier.size(52.dp),
-                shape = MaterialTheme.shapes.medium,
-                color = PrimaryContainer
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.Groups,
-                    contentDescription = null,
-                    tint = Primary,
-                    modifier = Modifier
-                        .padding(12.dp)
-                        .size(28.dp)
-                )
-            }
+            ClassAccentBadge(classId = classEntity.id)
 
             Spacer(Modifier.width(RollCallSpacing.lg))
 

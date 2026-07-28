@@ -17,7 +17,7 @@ import com.simpleattendance.data.local.entity.AttendanceRecordEntity
         AttendanceSessionEntity::class,
         AttendanceRecordEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {

@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
@@ -40,6 +41,9 @@ class ReportActivity : AppCompatActivity() {
         setupToolbar()
         setupButtons()
         observeState()
+        onBackPressedDispatcher.addCallback(this) {
+            handleBack()
+        }
     }
     
     private fun setupToolbar() {
@@ -175,8 +179,4 @@ class ReportActivity : AppCompatActivity() {
         finish()
     }
     
-    @Deprecated("Deprecated in Java")
-    override fun onBackPressed() {
-        handleBack()
-    }
 }

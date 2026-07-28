@@ -1,6 +1,7 @@
 package com.simpleattendance.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
@@ -15,6 +16,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.simpleattendance.BuildConfig
@@ -22,15 +25,9 @@ import com.simpleattendance.ui.components.InfoSettingRow
 import com.simpleattendance.ui.components.RollCallSurface
 import com.simpleattendance.ui.components.SegmentedSettingRow
 import com.simpleattendance.ui.components.SwitchSettingRow
-import com.simpleattendance.ui.theme.RollCallSpacing
-import com.simpleattendance.ui.theme.SurfaceContainer
 import com.simpleattendance.ui.settings.SettingsViewModel
+import com.simpleattendance.ui.theme.RollCallSpacing
 
-/**
- * Compose Settings screen — Phase C.
- * Preserves all existing DataStore keys and setting semantics.
- * Settings are grouped into tonal section cards, not individual outlined cards.
- */
 @Composable
 fun SettingsScreen(
     viewModel: SettingsViewModel,
@@ -42,104 +39,146 @@ fun SettingsScreen(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = RollCallSpacing.screenHorizontal),
-        verticalArrangement = Arrangement.spacedBy(RollCallSpacing.lg)
+            .padding(horizontal = RollCallSpacing.screenHorizontal)
+            .padding(top = RollCallSpacing.xl),
+        verticalArrangement = Arrangement.spacedBy(RollCallSpacing.xl)
     ) {
-        Spacer(Modifier.height(RollCallSpacing.sm))
+        SettingsSectionCard(title = "Appearance", accented = true) {
+            SegmentedSettingRow(
+                title = "Theme",
+                description = "Follow your device or choose a fixed appearance",
+                options = listOf(
+                    "System" to "system",
+                    "Light" to "light",
+                    "Dark" to "dark"
+                ),
+                selectedValue = settings.theme,
+                onValueSelected = viewModel::setTheme
+            )
+        }
 
-        // ── Interaction ─────────────────────────────────────────────────────
         SettingsSectionCard(title = "Interaction") {
             SwitchSettingRow(
                 title = "Haptic Feedback",
-                description = "Vibration on mark actions and saves",
+                description = "Tactile response for marks and saves",
                 checked = settings.hapticsEnabled,
-                onCheckedChange = { viewModel.setHapticsEnabled(it) }
+                onCheckedChange = viewModel::setHapticsEnabled
             )
             SettingsDivider()
             SegmentedSettingRow(
-                title = "Attendance Input Mode",
-                description = "How to mark students during attendance",
+                title = "Attendance Input",
+                description = "Choose how students are marked",
                 options = listOf(
                     "Buttons" to "buttons",
                     "Swipe" to "swipe",
                     "Both" to "both"
                 ),
                 selectedValue = settings.attendanceMode,
-                onValueSelected = { viewModel.setAttendanceMode(it) }
+                onValueSelected = viewModel::setAttendanceMode
             )
         }
 
-        // ── Reports ─────────────────────────────────────────────────────────
         SettingsSectionCard(title = "Reports") {
             SegmentedSettingRow(
                 title = "Report Template",
-                description = "Which students appear in generated reports",
+                description = "Choose which students appear in reports",
                 options = listOf(
                     "Both" to "both",
                     "Absent" to "absent_only",
                     "Present" to "present_only"
                 ),
                 selectedValue = settings.reportTemplate,
-                onValueSelected = { viewModel.setReportTemplate(it) }
+                onValueSelected = viewModel::setReportTemplate
             )
             SettingsDivider()
             SegmentedSettingRow(
-                title = "Numbering Mode",
-                description = "Student numbering in reports",
+                title = "Numbering",
+                description = "Student numbering used in reports",
                 options = listOf(
                     "Relative" to "relative",
                     "Absolute" to "absolute"
                 ),
                 selectedValue = settings.numberingMode,
-                onValueSelected = { viewModel.setNumberingMode(it) }
+                onValueSelected = viewModel::setNumberingMode
             )
         }
 
-        // ── About ────────────────────────────────────────────────────────────
         SettingsSectionCard(title = "About") {
-            InfoSettingRow(title = "Version", value = BuildConfig.VERSION_NAME)
+            InfoSettingRow(
+                title = "Version",
+                value = "v${BuildConfig.VERSION_NAME} Stable"
+            )
             SettingsDivider()
             InfoSettingRow(title = "Developer", value = "Parikshit Singh Bais")
             SettingsDivider()
-            InfoSettingRow(title = "Data", value = "Offline only · No ads · No tracking")
+            InfoSettingRow(title = "Privacy", value = "Offline, no ads, no tracking")
         }
 
-        Spacer(Modifier.height(RollCallSpacing.epic))
+        Spacer(Modifier.height(104.dp))
     }
 }
 
-/** Tonal section card that groups related settings. */
 @Composable
 private fun SettingsSectionCard(
     title: String,
+    accented: Boolean = false,
     content: @Composable ColumnScope.() -> Unit
 ) {
     Column {
         Text(
-            text = title.uppercase(),
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.primary,
+            text = title,
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(
-                horizontal = RollCallSpacing.xs,
-                vertical = RollCallSpacing.xs
+                start = RollCallSpacing.lg,
+                end = RollCallSpacing.lg,
+                bottom = RollCallSpacing.sm
             )
         )
+        val brush = if (accented) {
+            Brush.linearGradient(
+                listOf(
+                    MaterialTheme.colorScheme.surface,
+                    lerp(
+                        MaterialTheme.colorScheme.surface,
+                        MaterialTheme.colorScheme.primaryContainer,
+                        0.22f
+                    )
+                )
+            )
+        } else {
+            Brush.linearGradient(
+                listOf(
+                    MaterialTheme.colorScheme.surface,
+                    lerp(
+                        MaterialTheme.colorScheme.surface,
+                        MaterialTheme.colorScheme.surfaceContainerHigh,
+                        0.35f
+                    )
+                )
+            )
+        }
         RollCallSurface(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.72f),
+                    shape = MaterialTheme.shapes.large
+                ),
             shape = MaterialTheme.shapes.large,
-            color = SurfaceContainer
+            brush = brush
         ) {
             Column { content() }
         }
     }
 }
 
-/** Subtle horizontal divider between setting rows inside a card. */
 @Composable
 private fun SettingsDivider() {
     androidx.compose.material3.HorizontalDivider(
         modifier = Modifier.padding(horizontal = RollCallSpacing.lg),
         thickness = 0.5.dp,
-        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
+        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.65f)
     )
 }

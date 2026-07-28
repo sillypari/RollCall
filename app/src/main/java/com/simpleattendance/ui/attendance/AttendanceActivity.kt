@@ -1,13 +1,19 @@
 package com.simpleattendance.ui.attendance
 
 import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.content.Intent
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.View
+import android.view.accessibility.AccessibilityManager
 import android.view.animation.AccelerateDecelerateInterpolator
+import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.ColorUtils
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -16,8 +22,11 @@ import com.simpleattendance.R
 import com.simpleattendance.databinding.ActivityAttendanceBinding
 import com.simpleattendance.ui.report.ReportActivity
 import com.simpleattendance.util.AnimationUtils
+import com.simpleattendance.util.HeroTransitionLauncher
 import com.simpleattendance.util.HapticUtils
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -35,6 +44,9 @@ class AttendanceActivity : AppCompatActivity() {
     
     private var hasShownCompleteDialog = false
     private var currentFillAnimator: ObjectAnimator? = null
+    private var presentProgressAnimator: ValueAnimator? = null
+    private var absentProgressAnimator: ValueAnimator? = null
+    private var markConfirmationJob: Job? = null
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +62,9 @@ class AttendanceActivity : AppCompatActivity() {
         setupButtons()
         observeState()
         observeSettings()
+        onBackPressedDispatcher.addCallback(this) {
+            confirmExit()
+        }
     }
     
     private fun setupToolbar() {
@@ -105,24 +120,16 @@ class AttendanceActivity : AppCompatActivity() {
         binding.presentButton.setOnClickListener {
             hapticUtils.lightTap()
             AnimationUtils.applySpringScale(it)
-            animateButtonFill(binding.presentFill, binding.presentText, true)
-            animateNameFlash(true) // Flash name green
-            // Delay moving to next student so user sees the feedback
-            binding.studentCard.postDelayed({
-                viewModel.markPresent()
-            }, 250)
+            animateButtonFill(binding.presentFill, binding.presentText)
+            markWithCardConfirmation(true)
         }
         
         // Absent button - strong haptic with spring scale and glass fill animation
         binding.absentButton.setOnClickListener {
             hapticUtils.heavyImpact()
             AnimationUtils.applySpringScale(it)
-            animateButtonFill(binding.absentFill, binding.absentText, false)
-            animateNameFlash(false) // Flash name red
-            // Delay moving to next student so user sees the feedback
-            binding.studentCard.postDelayed({
-                viewModel.markAbsent()
-            }, 250)
+            animateButtonFill(binding.absentFill, binding.absentText)
+            markWithCardConfirmation(false)
         }
         
         binding.previousButton.setOnClickListener {
@@ -171,11 +178,9 @@ class AttendanceActivity : AppCompatActivity() {
                     
                     // Dynamic border tint based on drag direction
                     if (dx > 50f) {
-                        binding.studentCard.strokeColor = ContextCompat.getColor(this, R.color.success_green)
-                        binding.studentName.setTextColor(ContextCompat.getColor(this, R.color.success_green))
+                        updateCardVisualsForStatus("P")
                     } else if (dx < -50f) {
-                        binding.studentCard.strokeColor = ContextCompat.getColor(this, R.color.error_red)
-                        binding.studentName.setTextColor(ContextCompat.getColor(this, R.color.error_red))
+                        updateCardVisualsForStatus("A")
                     } else {
                         val state = viewModel.uiState.value
                         state.currentStudent?.let { student ->
@@ -186,6 +191,7 @@ class AttendanceActivity : AppCompatActivity() {
                 }
                 android.view.MotionEvent.ACTION_UP -> {
                     val dx = event.rawX - startX
+                    view.performClick()
                     if (dx > swipeThreshold) {
                         animateSwipeAndMark(true)
                     } else if (dx < -swipeThreshold) {
@@ -214,47 +220,92 @@ class AttendanceActivity : AppCompatActivity() {
     }
 
     private fun updateCardVisualsForStatus(status: String?) {
-        when (status) {
+        val density = resources.displayMetrics.density
+        val neutralColor = ContextCompat.getColor(this, R.color.card_background)
+        val (gradientStart, gradientEnd) = when (status) {
             "P" -> {
-                binding.studentName.setTextColor(ContextCompat.getColor(this, R.color.success_green))
-                binding.studentCard.strokeColor = ContextCompat.getColor(this, R.color.success_green)
+                val present = ContextCompat.getColor(this, R.color.success_green_light)
+                present to ColorUtils.blendARGB(present, neutralColor, 0.58f)
             }
             "A" -> {
-                binding.studentName.setTextColor(ContextCompat.getColor(this, R.color.error_red))
+                val absent = ContextCompat.getColor(this, R.color.error_red_light)
+                absent to ColorUtils.blendARGB(absent, neutralColor, 0.58f)
+            }
+            else -> {
+                ContextCompat.getColor(this, R.color.secondary_variant) to
+                    ContextCompat.getColor(this, R.color.primary_dark)
+            }
+        }
+        binding.studentCardContent.background = GradientDrawable(
+            GradientDrawable.Orientation.TL_BR,
+            intArrayOf(gradientStart, gradientEnd)
+        ).apply {
+            cornerRadius = 20f * density
+        }
+
+        when (status) {
+            "P" -> {
+                binding.studentCard.strokeColor = ContextCompat.getColor(this, R.color.success_green)
+                binding.studentCard.strokeWidth = (2f * density).toInt()
+                binding.studentName.setTextColor(ContextCompat.getColor(this, R.color.text_primary))
+            }
+            "A" -> {
                 binding.studentCard.strokeColor = ContextCompat.getColor(this, R.color.error_red)
+                binding.studentCard.strokeWidth = (2f * density).toInt()
+                binding.studentName.setTextColor(ContextCompat.getColor(this, R.color.text_primary))
             }
             else -> {
                 binding.studentName.setTextColor(ContextCompat.getColor(this, R.color.text_primary))
-                binding.studentCard.strokeColor = ContextCompat.getColor(this, R.color.glass_border)
+                binding.studentCard.strokeColor = ContextCompat.getColor(this, R.color.card_border)
+                binding.studentCard.strokeWidth = density.toInt().coerceAtLeast(1)
             }
+        }
+    }
+
+    private fun markWithCardConfirmation(isPresent: Boolean) {
+        if (markConfirmationJob?.isActive == true) return
+        animateNameFlash(isPresent)
+        binding.presentButton.isEnabled = false
+        binding.absentButton.isEnabled = false
+        binding.previousButton.isEnabled = false
+        binding.nextButton.isEnabled = false
+        markConfirmationJob = lifecycleScope.launch {
+            delay(160L)
+            if (isPresent) viewModel.markPresent() else viewModel.markAbsent()
+            animateStudentAdvance()
+            binding.presentButton.isEnabled = true
+            binding.absentButton.isEnabled = true
+            val state = viewModel.uiState.value
+            binding.previousButton.isEnabled = state.currentIndex > 0
+            binding.nextButton.isEnabled = state.currentIndex < state.students.size - 1
         }
     }
 
     private fun animateSwipeAndMark(isPresent: Boolean) {
         val screenWidth = resources.displayMetrics.widthPixels.toFloat()
         val targetX = if (isPresent) screenWidth else -screenWidth
+
+        if (isPresent) {
+            hapticUtils.lightTap()
+            viewModel.markPresent()
+        } else {
+            hapticUtils.heavyImpact()
+            viewModel.markAbsent()
+        }
         
         binding.studentCard.animate()
             .translationX(targetX)
             .alpha(0f)
-            .setDuration(250)
+            .setDuration(180)
             .setInterpolator(AccelerateDecelerateInterpolator())
             .withEndAction {
-                if (isPresent) {
-                    hapticUtils.lightTap()
-                    viewModel.markPresent()
-                } else {
-                    hapticUtils.heavyImpact()
-                    viewModel.markAbsent()
-                }
-                // Animate card back in from top
                 binding.studentCard.translationX = 0f
-                binding.studentCard.translationY = -200f
+                binding.studentCard.translationY = -48f * resources.displayMetrics.density
                 binding.studentCard.rotation = 0f
                 binding.studentCard.animate()
                     .translationY(0f)
                     .alpha(1f)
-                    .setDuration(300)
+                    .setDuration(240)
                     .setInterpolator(AccelerateDecelerateInterpolator())
                     .start()
             }
@@ -262,13 +313,7 @@ class AttendanceActivity : AppCompatActivity() {
     }
     
     private fun animateNameFlash(isPresent: Boolean) {
-        val color = if (isPresent) getColor(R.color.success_green) else getColor(R.color.error_red)
-        
-        // Smooth color transition on name
-        binding.studentName.setTextColor(color)
-        
-        // Smooth card border color transition
-        binding.studentCard.strokeColor = color
+        updateCardVisualsForStatus(if (isPresent) "P" else "A")
         
         // Trigger progress bar glow animation
         animateProgressGlow(isPresent)
@@ -291,7 +336,7 @@ class AttendanceActivity : AppCompatActivity() {
             animate()
                 .translationX(trackWidth)
                 .alpha(0f)
-                .setDuration(700)
+                .setDuration(260)
                 .setInterpolator(AccelerateDecelerateInterpolator())
                 .start()
         }
@@ -312,31 +357,36 @@ class AttendanceActivity : AppCompatActivity() {
         val presentWidth = (presentCount.toFloat() / totalCount * trackWidth).toInt()
         val absentWidth = (absentCount.toFloat() / totalCount * trackWidth).toInt()
         
-        // Animate present bar width
-        binding.progressPresent.animate()
-            .setDuration(200)
-            .setInterpolator(AccelerateDecelerateInterpolator())
-            .setUpdateListener { animator ->
+        presentProgressAnimator?.cancel()
+        absentProgressAnimator?.cancel()
+
+        val currentPresentWidth = binding.progressPresent.width
+        presentProgressAnimator = ValueAnimator.ofInt(currentPresentWidth, presentWidth).apply {
+            duration = 220
+            interpolator = AccelerateDecelerateInterpolator()
+            addUpdateListener { animator ->
                 val params = binding.progressPresent.layoutParams
-                params.width = (presentWidth * animator.animatedFraction).toInt()
+                params.width = animator.animatedValue as Int
                 binding.progressPresent.layoutParams = params
             }
-            .start()
-        
-        // Animate absent bar (positioned after present)
-        binding.progressAbsent.animate()
-            .setDuration(200)
-            .setInterpolator(AccelerateDecelerateInterpolator())
-            .setUpdateListener { animator ->
+            start()
+        }
+
+        val currentAbsentWidth = binding.progressAbsent.width
+        absentProgressAnimator = ValueAnimator.ofInt(currentAbsentWidth, absentWidth).apply {
+            duration = 220
+            interpolator = AccelerateDecelerateInterpolator()
+            addUpdateListener { animator ->
                 val params = binding.progressAbsent.layoutParams
-                params.width = (absentWidth * animator.animatedFraction).toInt()
+                params.width = animator.animatedValue as Int
                 binding.progressAbsent.layoutParams = params
-                binding.progressAbsent.translationX = presentWidth.toFloat()
+                binding.progressAbsent.translationX = binding.progressPresent.width.toFloat()
             }
-            .start()
+            start()
+        }
     }
     
-    private fun animateButtonFill(fillView: View, textView: View, isPresent: Boolean) {
+    private fun animateButtonFill(fillView: View, textView: View) {
         // Cancel any running animation
         currentFillAnimator?.cancel()
         
@@ -452,30 +502,12 @@ class AttendanceActivity : AppCompatActivity() {
                         binding.studentNumber.text = "${state.currentIndex + 1} / ${state.students.size}"
                         binding.rollNumber.text = studentAttendance.student.rollNo.ifEmpty { "#${state.currentIndex + 1}" }
                         
-                        // Update name color and card border based on status
-                        when (studentAttendance.status) {
-                            "P" -> {
-                                binding.studentName.setTextColor(getColor(R.color.success_green))
-                                binding.studentCard.strokeColor = getColor(R.color.success_green)
-                            }
-                            "A" -> {
-                                binding.studentName.setTextColor(getColor(R.color.error_red))
-                                binding.studentCard.strokeColor = getColor(R.color.error_red)
-                            }
-                            else -> {
-                                binding.studentName.setTextColor(getColor(R.color.text_primary))
-                                binding.studentCard.strokeColor = getColor(R.color.glass_border)
-                            }
-                        }
+                        updateCardVisualsForStatus(studentAttendance.status)
                         
                         // Update A/P button visuals based on current student's status
                         updateButtonVisuals(studentAttendance.status)
                     }
                     
-                    // Progress
-                    val progressPercent = if (state.students.isNotEmpty()) {
-                        ((state.currentIndex + 1).toFloat() / state.students.size * 100).toInt()
-                    } else 0
                     binding.progressText.text = "${state.markedCount}/${state.students.size} marked"
                     
                     // Update animated progress bar
@@ -491,9 +523,8 @@ class AttendanceActivity : AppCompatActivity() {
                     binding.previousButton.isEnabled = state.currentIndex > 0
                     binding.nextButton.isEnabled = state.currentIndex < state.students.size - 1
                     
-                    // Finish button - always enabled, can save anytime
-                    binding.finishButton.isEnabled = true
-                    binding.finishButton.alpha = 1f
+                    binding.finishButton.isEnabled = !state.isSaving
+                    binding.finishButton.alpha = if (state.isSaving) 0.55f else 1f
                     
                     // Show completion dialog when all are marked
                     if (state.allMarked && !hasShownCompleteDialog) {
@@ -502,22 +533,37 @@ class AttendanceActivity : AppCompatActivity() {
                     
                     // Handle save complete
                     state.savedSessionId?.let { sessionId ->
+                        viewModel.onSaveNavigationHandled()
                         navigateToReport(sessionId)
+                    }
+
+                    state.saveError?.let { error ->
+                        Toast.makeText(
+                            this@AttendanceActivity,
+                            error.ifBlank { "Attendance could not be saved" },
+                            Toast.LENGTH_LONG
+                        ).show()
+                        viewModel.onSaveErrorHandled()
                     }
                 }
             }
         }
     }
 
+    @android.annotation.SuppressLint("ClickableViewAccessibility")
     private fun observeSettings() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 settingsRepository.settings.collect { settings ->
+                    val accessibilityManager =
+                        getSystemService(ACCESSIBILITY_SERVICE) as AccessibilityManager
+                    val touchExplorationEnabled =
+                        accessibilityManager.isEnabled && accessibilityManager.isTouchExplorationEnabled
+
                     // Configure card size and visibility of A/P buttons
                     val params = binding.studentCard.layoutParams
-                    if (settings.attendanceMode == "swipe") {
+                    if (settings.attendanceMode == "swipe" && !touchExplorationEnabled) {
                         binding.apButtonsContainer.visibility = View.GONE
-                        // Large Tinder card
                         params.height = (210 * resources.displayMetrics.density).toInt()
                         binding.swipeHintLayout.visibility = View.VISIBLE
                     } else {
@@ -529,7 +575,7 @@ class AttendanceActivity : AppCompatActivity() {
                     binding.studentCard.layoutParams = params
 
                     // Enable/disable swipe touch listener dynamically
-                    if (settings.attendanceMode == "buttons") {
+                    if (settings.attendanceMode == "buttons" || touchExplorationEnabled) {
                         binding.studentCard.setOnTouchListener(null)
                     } else {
                         setupSwipeGesture()
@@ -542,9 +588,20 @@ class AttendanceActivity : AppCompatActivity() {
     private fun navigateToReport(sessionId: Long) {
         val intent = Intent(this, ReportActivity::class.java)
         intent.putExtra("sessionId", sessionId)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-        startActivity(intent)
+        HeroTransitionLauncher.start(this, intent, binding.finishButton)
         finish()
+    }
+
+    private fun animateStudentAdvance() {
+        binding.studentCard.animate().cancel()
+        binding.studentCard.alpha = 0.82f
+        binding.studentCard.translationY = 10f * resources.displayMetrics.density
+        binding.studentCard.animate()
+            .alpha(1f)
+            .translationY(0f)
+            .setDuration(220)
+            .setInterpolator(AccelerateDecelerateInterpolator())
+            .start()
     }
     
     private fun confirmExit() {
@@ -561,8 +618,4 @@ class AttendanceActivity : AppCompatActivity() {
         }
     }
     
-    @Deprecated("Deprecated in Java")
-    override fun onBackPressed() {
-        confirmExit()
-    }
 }

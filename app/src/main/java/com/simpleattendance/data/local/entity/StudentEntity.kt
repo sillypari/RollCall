@@ -22,7 +22,9 @@ data class StudentEntity(
     val id: Long = 0,
     val classId: Long,
     val rollNo: String,
-    val name: String
+    val name: String,
+    /** Inactive students remain available to historical attendance records. */
+    val isActive: Boolean = true
 ) {
     val displayName: String
         get() = if (rollNo.isNotEmpty()) "$rollNo - $name" else name

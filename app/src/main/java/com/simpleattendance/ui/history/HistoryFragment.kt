@@ -8,11 +8,13 @@ import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.simpleattendance.data.local.entity.AttendanceSessionEntity
+import com.simpleattendance.ui.components.LaunchOrigin
+import com.simpleattendance.ui.main.MainActivity
 import com.simpleattendance.ui.report.ReportActivity
 import com.simpleattendance.ui.screens.HistoryScreen
 import com.simpleattendance.ui.theme.RollCallTheme
+import com.simpleattendance.util.HeroTransitionLauncher
 import com.simpleattendance.util.HapticUtils
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -35,13 +37,16 @@ class HistoryFragment : Fragment() {
                 RollCallTheme {
                     HistoryScreen(
                         viewModel = viewModel,
-                        onSessionClick = { session ->
+                        onSessionClick = { session, origin ->
                             hapticUtils.lightTap()
-                            openReport(session)
+                            openReport(session, origin)
                         },
                         onSessionDeleteClick = { session ->
                             hapticUtils.mediumImpact()
-                            confirmDelete(session)
+                            viewModel.deleteSession(session)
+                        },
+                        onSearchFocusChanged = { focused ->
+                            (activity as? MainActivity)?.setSearchInteractionActive(focused)
                         }
                     )
                 }
@@ -49,23 +54,19 @@ class HistoryFragment : Fragment() {
         }
     }
     
-    private fun openReport(session: AttendanceSessionEntity) {
+    private fun openReport(
+        session: AttendanceSessionEntity,
+        origin: LaunchOrigin
+    ) {
         val intent = Intent(requireContext(), ReportActivity::class.java)
         intent.putExtra("sessionId", session.id)
         intent.putExtra("fromHistory", true)
-        startActivity(intent)
+        HeroTransitionLauncher.start(requireActivity(), intent, origin)
     }
-    
-    private fun confirmDelete(session: AttendanceSessionEntity) {
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Delete Session")
-            .setMessage("Are you sure you want to delete this attendance session? All records associated with this session will be permanently deleted.")
-            .setPositiveButton("Delete") { _, _ ->
-                hapticUtils.mediumImpact()
-                viewModel.deleteSession(session)
-            }
-            .setNegativeButton("Cancel", null)
-            .show()
+
+    override fun onDestroyView() {
+        (activity as? MainActivity)?.setSearchInteractionActive(false)
+        super.onDestroyView()
     }
 }
 

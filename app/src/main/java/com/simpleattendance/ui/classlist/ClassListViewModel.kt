@@ -19,6 +19,7 @@ data class ClassGroup(
 data class ClassListUiState(
     val classes: List<ClassEntity> = emptyList(),
     val groupedClasses: List<ClassGroup> = emptyList(),
+    val studentCounts: Map<Long, Int> = emptyMap(),
     val isLoading: Boolean = true,
     val isEmpty: Boolean = false
 )
@@ -39,12 +40,17 @@ class ClassListViewModel @Inject constructor(
     
     private fun loadClasses() {
         viewModelScope.launch {
-            repository.getAllClasses()
-                .collect { classes ->
+            combine(
+                repository.getAllClasses(),
+                repository.getStudentCounts()
+            ) { classes, counts ->
+                classes to counts.associate { it.classId to it.studentCount }
+            }.collect { (classes, studentCounts) ->
                     val grouped = groupClasses(classes)
                     _uiState.value = ClassListUiState(
                         classes = classes,
                         groupedClasses = grouped,
+                        studentCounts = studentCounts,
                         isLoading = false,
                         isEmpty = classes.isEmpty()
                     )

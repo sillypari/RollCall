@@ -11,8 +11,12 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -32,11 +36,21 @@ class HapticUtils @Inject constructor(
     }
     
     private val hapticsEnabledKey = booleanPreferencesKey("haptics_enabled")
-    
-    private val isEnabled: Boolean
-        get() = runBlocking {
-            dataStore.data.first()[hapticsEnabledKey] ?: true
+
+    @Volatile
+    private var isEnabled: Boolean = true
+
+    private val preferenceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
+    init {
+        preferenceScope.launch {
+            dataStore.data
+                .catch { emit(androidx.datastore.preferences.core.emptyPreferences()) }
+                .collectLatest { preferences ->
+                    isEnabled = preferences[hapticsEnabledKey] ?: true
+                }
         }
+    }
     
     fun lightTap() {
         if (!isEnabled) return

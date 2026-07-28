@@ -6,10 +6,15 @@
     android:background="@color/background_primary"
     android:fitsSystemWindows="true">
 
+    <com.simpleattendance.ui.components.AmbientBackgroundView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:importantForAccessibility="no" />
+
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/background_primary"
+        android:background="@drawable/top_app_bar_gradient"
         android:fitsSystemWindows="true"
         app:elevation="0dp">
 
@@ -50,8 +55,7 @@
                 app:cardBackgroundColor="@color/card_background"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp"
-                app:strokeColor="@color/glass_border"
-                app:strokeWidth="1dp">
+                app:strokeWidth="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -61,11 +65,11 @@
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/branchLayout"
-                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                        style="@style/Widget.Material3.TextInputLayout.FilledBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/branch_hint"
-                        app:boxStrokeColor="@color/primary"
+                        app:boxBackgroundColor="@color/background_tertiary"
                         app:hintTextColor="@color/text_secondary">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -79,12 +83,12 @@
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/semesterLayout"
-                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                        style="@style/Widget.Material3.TextInputLayout.FilledBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:hint="@string/semester_hint"
-                        app:boxStrokeColor="@color/primary"
+                        app:boxBackgroundColor="@color/background_tertiary"
                         app:hintTextColor="@color/text_secondary">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -98,12 +102,12 @@
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/sectionLayout"
-                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                        style="@style/Widget.Material3.TextInputLayout.FilledBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:hint="@string/section_hint"
-                        app:boxStrokeColor="@color/primary"
+                        app:boxBackgroundColor="@color/background_tertiary"
                         app:hintTextColor="@color/text_secondary">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -117,12 +121,12 @@
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/subjectLayout"
-                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                        style="@style/Widget.Material3.TextInputLayout.FilledBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:hint="@string/subject_hint"
-                        app:boxStrokeColor="@color/primary"
+                        app:boxBackgroundColor="@color/background_tertiary"
                         app:hintTextColor="@color/text_secondary">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -154,8 +158,7 @@
                 app:cardBackgroundColor="@color/card_background"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp"
-                app:strokeColor="@color/glass_border"
-                app:strokeWidth="1dp">
+                app:strokeWidth="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -287,7 +290,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:text="@string/select_csv_file"
-                                app:backgroundTint="@color/nvidia_green"
+                                app:backgroundTint="@color/primary"
                                 android:textColor="@color/on_primary"
                                 app:iconTint="@color/on_primary"
                                 app:icon="@drawable/ic_file" />

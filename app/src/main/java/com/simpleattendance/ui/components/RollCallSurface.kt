@@ -9,9 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import com.simpleattendance.ui.theme.Surface
-import com.simpleattendance.ui.theme.SurfaceContainer
-import com.simpleattendance.ui.theme.SurfaceContainerHigh
+import androidx.compose.ui.graphics.Brush
 
 /**
  * Solid tonal surface. The primary building block for cards and sections.
@@ -21,13 +19,18 @@ import com.simpleattendance.ui.theme.SurfaceContainerHigh
 fun RollCallSurface(
     modifier: Modifier = Modifier,
     shape: Shape = MaterialTheme.shapes.large,
-    color: Color = Surface,
+    color: Color? = null,
+    brush: Brush? = null,
     content: @Composable BoxScope.() -> Unit
 ) {
+    val resolvedColor = color ?: MaterialTheme.colorScheme.surface
     Box(
         modifier = modifier
             .clip(shape)
-            .background(color),
+            .then(
+                if (brush != null) Modifier.background(brush)
+                else Modifier.background(resolvedColor)
+            ),
         content = content
     )
 }
@@ -38,7 +41,12 @@ fun RollCallContainerSurface(
     modifier: Modifier = Modifier,
     shape: Shape = MaterialTheme.shapes.large,
     content: @Composable BoxScope.() -> Unit
-) = RollCallSurface(modifier, shape, SurfaceContainer, content)
+) = RollCallSurface(
+    modifier = modifier,
+    shape = shape,
+    color = MaterialTheme.colorScheme.surfaceContainer,
+    content = content
+)
 
 /** High surface — for selected, floating or most prominent content */
 @Composable
@@ -46,4 +54,9 @@ fun RollCallHighSurface(
     modifier: Modifier = Modifier,
     shape: Shape = MaterialTheme.shapes.large,
     content: @Composable BoxScope.() -> Unit
-) = RollCallSurface(modifier, shape, SurfaceContainerHigh, content)
+) = RollCallSurface(
+    modifier = modifier,
+    shape = shape,
+    color = MaterialTheme.colorScheme.surfaceContainerHigh,
+    content = content
+)

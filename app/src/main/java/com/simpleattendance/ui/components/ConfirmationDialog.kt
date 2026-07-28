@@ -5,8 +5,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
-import com.simpleattendance.ui.theme.RCError
 
 /**
  * Reusable confirmation dialog.
@@ -46,7 +44,8 @@ fun ConfirmationDialog(
             }) {
                 Text(
                     text = confirmText,
-                    color = if (isDestructive) RCError else MaterialTheme.colorScheme.primary,
+                    color = if (isDestructive) MaterialTheme.colorScheme.error
+                    else MaterialTheme.colorScheme.primary,
                     style = MaterialTheme.typography.labelLarge
                 )
             }
